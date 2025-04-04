@@ -1,4 +1,4 @@
-import { ExecutionContext, CallHandler } from "@nestjs/common";
+import { ExecutionContext, CallHandler, ForbiddenException, HttpException } from "@nestjs/common";
 import Aspect from "./abstract/aspect";
 
 export class ExceptionAspcet extends Aspect {
