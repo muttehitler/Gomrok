@@ -4,16 +4,19 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import PerformanceAspect from '@app/contracts/utils/aspects/performanceAspect';
 import { ExceptionAspcet } from '@app/contracts/utils/aspects/exceptionAspect';
 import { AllExceptionsFilter } from '@app/contracts/utils/crossCuttingConcerns/exception/rcpExceptionFilter';
+import * as dotenv from 'dotenv';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AuthModule,{
-    transport:Transport.REDIS,
-    options:{
-      host: 'localhost',
-      port: 6379,
+  dotenv.config();
+
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AuthModule, {
+    transport: Transport.REDIS,
+    options: {
+      host: process.env.REDIS_HOST ?? 'localhosts',
+      port: parseInt(process.env.REDIS_PORT ?? '63792')
     }
   });
-  
+
   app.useGlobalInterceptors(new ExceptionAspcet())
   app.useGlobalInterceptors(new PerformanceAspect())
 
