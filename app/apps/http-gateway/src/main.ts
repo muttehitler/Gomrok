@@ -1,7 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { HttpGatewayModule } from './http-gateway.module';
-import { EExceptionFilter } from '@app/contracts/utils/crossCuttingConcerns/exception/rcpE';
-import { ExceptionAspcet } from '@app/contracts/utils/aspects/exceptionAspect';
 import { ThrowExceptionAspcet } from '@app/contracts/utils/aspects/throwExceptionAspect';
 
 async function bootstrap() {
