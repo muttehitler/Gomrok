@@ -11,7 +11,13 @@ mongoose.connect(process.env.AUTH_MONGO_STRING ?? ''
     }
 )
 const userSchema = new mongoose.Schema<User>({
-    name: { type: String, required: true },
+    chatId: { type: Number, required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: false },
+    username: { type: String, required: false },
+    allowsWriteToPm: { type: Boolean, required: false },
+    languageCode: { type: String, required: false },
+    photoUrl: { type: String, required: false },
     passwordHash: { type: String, required: true }
 })
 
