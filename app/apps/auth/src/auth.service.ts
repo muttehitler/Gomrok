@@ -52,7 +52,7 @@ export class AuthService {
       const accessToken: AccessTokenDto = {
         type: 'Bearer',
         token: token,
-        exporation: expiration
+        expiration: expiration
       }
 
       return accessToken
@@ -76,7 +76,7 @@ export class AuthService {
     const accessToken: AccessTokenDto = {
       type: 'Bearer',
       token: token,
-      exporation: expiration
+      expiration: expiration
     }
 
     return accessToken
