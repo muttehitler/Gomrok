@@ -8,6 +8,7 @@ import { I18nProvider } from '@/core/i18n/provider';
 import '@telegram-apps/telegram-ui/dist/styles.css';
 import 'normalize.css/normalize.css';
 import './_assets/globals.css';
+import CheckAuth from '@/components/auth/CheckAuth';
 
 export const metadata: Metadata = {
   title: 'Your Application Title Goes Here',
@@ -22,6 +23,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     <body>
       <I18nProvider>
         <Root>
+          <CheckAuth />
           {children}
         </Root>
       </I18nProvider>
