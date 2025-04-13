@@ -7,9 +7,8 @@ import { initData, useSignal } from "@telegram-apps/sdk-react"
 import { useEffect } from "react"
 
 export default function CheckAuth() {
-    console.log(useSignal(initData.raw))
     let token = getCookie('token')
-    console.log(token)
+    
     if (!token) {
         const raw = useSignal(initData.raw)
 

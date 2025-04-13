@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import User from "../../models/concrete/user";
+import User from "../../concrete/user";
 import MEntityRepository from "../../../../../libs/contracts/src/db/contract/mEntityRepository";
 import UserDal from "../abstract/userDal";
 import { userModel } from "./context/mongooseContext";
