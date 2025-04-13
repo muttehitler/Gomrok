@@ -1,6 +1,6 @@
 import { BadGatewayException, ForbiddenException, Injectable } from '@nestjs/common';
 import UserDal from '../db/abstract/userDal';
-import User from '../concrete/user';
+import User from '../models/concrete/user';
 import { Types } from 'mongoose';
 import { HashHelper } from '@app/contracts/utils/hashing/hashHelper';
 import TelegramLoginDto from '@app/contracts/models/dtos/telegramLogin.dto';

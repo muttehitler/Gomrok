@@ -1,5 +1,5 @@
 import mongoose, { MongooseOptions } from "mongoose"
-import User from "../../../concrete/user"
+import User from "../../../models/concrete/user"
 import * as dotenv from 'dotenv'
 import * as bcrypt from 'bcrypt'
 
