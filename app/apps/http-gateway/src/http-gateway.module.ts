@@ -23,8 +23,8 @@ import { ConfigModule } from '@nestjs/config';
       }
     ]),
     AuthModule],
-  controllers: [HttpGatewayController, AuthController],
-  providers: [HttpGatewayService, AuthService],
+  controllers: [HttpGatewayController],
+  providers: [HttpGatewayService],
   exports:[ClientsModule]
 })
 export class HttpGatewayModule { }

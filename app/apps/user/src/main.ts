@@ -1,15 +1,15 @@
 import { NestFactory } from '@nestjs/core';
-import { AuthModule } from './auth.module';
+import { UserModule } from './user.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import PerformanceAspect from '@app/contracts/utils/aspects/performanceAspect';
 import { ExceptionAspcet } from '@app/contracts/utils/aspects/exceptionAspect';
+import PerformanceAspect from '@app/contracts/utils/aspects/performanceAspect';
 import { AllExceptionsFilter } from '@app/contracts/utils/crossCuttingConcerns/exception/rcpExceptionFilter';
 import * as dotenv from 'dotenv';
 
 async function bootstrap() {
   dotenv.config();
 
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AuthModule, {
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(UserModule, {
     transport: Transport.REDIS,
     options: {
       host: process.env.REDIS_HOST ?? 'localhosts',

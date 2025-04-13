@@ -7,5 +7,6 @@ export async function login(raw: string) {
         raw: raw,
         botId: process.env.BOT_ID
     })
+    console.log(response.data)
     return response.data
 }
