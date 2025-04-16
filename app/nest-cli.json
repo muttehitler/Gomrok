@@ -46,6 +46,33 @@
         "tsConfigPath": "apps/http-gateway/tsconfig.app.json"
       }
     },
+    "order": {
+      "type": "application",
+      "root": "apps/order",
+      "entryFile": "main",
+      "sourceRoot": "apps/order/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/order/tsconfig.app.json"
+      }
+    },
+    "panel": {
+      "type": "application",
+      "root": "apps/panel",
+      "entryFile": "main",
+      "sourceRoot": "apps/panel/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/panel/tsconfig.app.json"
+      }
+    },
+    "product": {
+      "type": "application",
+      "root": "apps/product",
+      "entryFile": "main",
+      "sourceRoot": "apps/product/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/product/tsconfig.app.json"
+      }
+    },
     "user": {
       "type": "application",
       "root": "apps/user",
