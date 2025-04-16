@@ -2,7 +2,7 @@ import { Body, Controller, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { MessagePattern } from '@nestjs/microservices';
 import { AUTH_PATTERNS } from '@app/contracts/patterns/authPattern';
-import User from '../concrete/user';
+import User from '../models/concrete/user';
 import TelegramLoginDto from '@app/contracts/models/dtos/telegramLogin.dto';
 
 @Controller()
