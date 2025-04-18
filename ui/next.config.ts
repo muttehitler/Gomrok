@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
   },
-  allowedDevOrigins: ['https://transmit-combining-partner-hundred.trycloudflare.com/'],
+  allowedDevOrigins: ['https://cadillac-preserve-satisfy-ma.trycloudflare.com'],
 };
 
 export default nextConfig;
