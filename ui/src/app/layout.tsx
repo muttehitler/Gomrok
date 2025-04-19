@@ -27,9 +27,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             <CheckAuth />
             {children}
             <Navbar />
-          </Root>
-        </I18nProvider>
-      </body>
-    </html>
+            <div className="min-h-[90px]"></div>
+        </Root>
+      </I18nProvider>
+    </body>
+    </html >
   );
 }

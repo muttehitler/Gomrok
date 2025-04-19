@@ -64,6 +64,15 @@
         "tsConfigPath": "apps/panel/tsconfig.app.json"
       }
     },
+    "payment": {
+      "type": "application",
+      "root": "apps/payment",
+      "entryFile": "main",
+      "sourceRoot": "apps/payment/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/payment/tsconfig.app.json"
+      }
+    },
     "product": {
       "type": "application",
       "root": "apps/product",
