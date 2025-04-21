@@ -9,6 +9,7 @@ import '@telegram-apps/telegram-ui/dist/styles.css';
 import 'normalize.css/normalize.css';
 import './_assets/globals.css';
 import CheckAuth from '@/components/auth/CheckAuth';
+import { Navbar } from '@/components/navbar/navbar';
 
 export const metadata: Metadata = {
   title: 'Your Application Title Goes Here',
@@ -20,14 +21,16 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     <html lang={locale}>
-    <body>
-      <I18nProvider>
-        <Root>
-          <CheckAuth />
-          {children}
+      <body>
+        <I18nProvider>
+          <Root>
+            <CheckAuth />
+            {children}
+            <Navbar />
+            <div className="min-h-[90px]"></div>
         </Root>
       </I18nProvider>
     </body>
-    </html>
+    </html >
   );
 }
