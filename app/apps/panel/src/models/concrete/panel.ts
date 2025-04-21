@@ -1,12 +1,14 @@
 import IEntity from "@app/contracts/models/abstract/iEntity";
-import { Types } from "mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Document } from "mongoose";
 
-export default interface Panel extends IEntity {
-    _id?: Types.ObjectId | undefined
+@Schema({ timestamps: true })
+export default class Panel extends Document implements IEntity {
+    @Prop()
     name: string
-    username:string
-    password:string
-    url:string
-
-    __v?: number
+    @Prop()
+    panelType: string
 }
+
+export type PanelDocument = Panel & Document
+export const PanelSchema = SchemaFactory.createForClass(Panel)
