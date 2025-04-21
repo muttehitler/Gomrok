@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AUTH_PATTERNS } from '@app/contracts/patterns/authPattern';
 import { ConfigModule } from '@nestjs/config';
+import { PaymentModule } from './payment/payment.module';
+import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
 
 @Global()
 @Module({
@@ -22,9 +24,21 @@ import { ConfigModule } from '@nestjs/config';
         }
       }
     ]),
-    AuthModule],
+    ClientsModule.register([
+      {
+        name: PAYMENT_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      }
+    ]),
+    AuthModule,
+    PaymentModule
+  ],
   controllers: [HttpGatewayController],
   providers: [HttpGatewayService],
-  exports:[ClientsModule]
+  exports: [ClientsModule]
 })
 export class HttpGatewayModule { }
