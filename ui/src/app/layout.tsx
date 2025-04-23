@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import type { Metadata } from 'next';
-import { getLocale } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 import { Root } from '@/components/Root/Root';
 import { I18nProvider } from '@/core/i18n/provider';
@@ -18,9 +18,10 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const locale = await getLocale();
+  const t = await getTranslations('i18n');
 
   return (
-    <html lang={locale}>
+    <html lang={locale} dir={t('dir')}>
       <body>
         <I18nProvider>
           <Root>
@@ -28,9 +29,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             {children}
             <Navbar />
             <div className="min-h-[90px]"></div>
-        </Root>
-      </I18nProvider>
-    </body>
+          </Root>
+        </I18nProvider>
+      </body>
     </html >
   );
 }
