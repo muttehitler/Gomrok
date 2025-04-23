@@ -21,6 +21,8 @@ export default class User extends Document implements IEntity {
     photoUrl: string
     @Prop()
     passwordHash: string
+    @Prop({ type: Number, default: 0 })
+    balance: number
 }
 
 export type UserDocument = User & Document;
