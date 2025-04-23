@@ -1,0 +1,5 @@
+@import url('@/app/globals.css');
+
+.add-deposit-button {
+    margin: 10px;
+}

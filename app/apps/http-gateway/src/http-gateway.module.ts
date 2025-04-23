@@ -9,6 +9,8 @@ import { AUTH_PATTERNS } from '@app/contracts/patterns/authPattern';
 import { ConfigModule } from '@nestjs/config';
 import { PaymentModule } from './payment/payment.module';
 import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from '@app/contracts/utils/jwt_token/strategies/jwt.strategy';
 
 @Global()
 @Module({
@@ -34,11 +36,18 @@ import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
         }
       }
     ]),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: {
+        expiresIn: process.env.JWT_EXPIRATION
+      },
+      global: true
+    }),
     AuthModule,
     PaymentModule
   ],
   controllers: [HttpGatewayController],
-  providers: [HttpGatewayService],
+  providers: [HttpGatewayService, JwtStrategy],
   exports: [ClientsModule]
 })
 export class HttpGatewayModule { }

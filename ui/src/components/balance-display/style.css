@@ -1,0 +1,13 @@
+@import url('@/app/globals.css');
+
+.balance-div {
+    min-height: 200px;
+    text-align: center;
+    vertical-align: middle;
+    align-content: center;
+    align-items: center;
+}
+
+.balance-amount {
+    font-size: 30px;
+}

@@ -37,11 +37,6 @@ export default function Home() {
           header="Application Launch Data"
           footer="These pages help developer to learn more about current launch information"
         >
-          <Link href="/balance">
-            <Cell subtitle="balance">
-              Balance
-            </Cell>
-          </Link>
           <Link href="/init-data">
             <Cell subtitle="User data, chat information, technical data">
               Init Data

@@ -4,7 +4,7 @@ import './style.css'
 type NavbarButtonProps = {
     href: string;
     text: string;
-    children?: ReactNode; // ✅ Add this!
+    children?: ReactNode;
 };
 
 export const NavbarButton: FC<NavbarButtonProps> = ({ children, href, text }: NavbarButtonProps) => {
