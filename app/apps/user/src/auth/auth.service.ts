@@ -1,18 +1,18 @@
 import { BadGatewayException, ForbiddenException, Injectable } from '@nestjs/common';
-import UserDal from '../db/abstract/userDal';
-import User from '../models/concrete/user';
-import { Types } from 'mongoose';
+import User, { UserDocument } from '../models/concrete/user';
+import { Model, Types } from 'mongoose';
 import { HashHelper } from '@app/contracts/utils/hashing/hashHelper';
 import TelegramLoginDto from '@app/contracts/models/dtos/telegramLogin.dto';
 import * as crypto from 'crypto'
 import * as dotenv from 'dotenv'
 import { JwtService } from '@nestjs/jwt';
 import AccessTokenDto from '@app/contracts/models/dtos/accessToken.dto';
+import { InjectModel } from '@nestjs/mongoose';
 
 
 @Injectable()
 export class AuthService {
-  constructor(private userDal: UserDal, private jwt: JwtService) {
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>, private jwt: JwtService) {
     dotenv.config();
 
   }
@@ -42,7 +42,7 @@ export class AuthService {
 
     const rawUser = JSON.parse(parsed.get("user") ?? '')
 
-    let user = await this.userDal.findOne({ chatId: rawUser.id })
+    let user = await this.userModel.findOne({ chatId: rawUser.id })
 
     const expiration = new Date(new Date().getTime() + 1 * 60 * 60 * 1000)
 
@@ -58,7 +58,7 @@ export class AuthService {
       return accessToken
     }
 
-    const userToCreate: User = {
+    const userToAdd = await this.userModel.create({
       chatId: rawUser.id,
       firstName: rawUser.first_name,
       lastName: rawUser.last_name,
@@ -67,9 +67,9 @@ export class AuthService {
       allowsWriteToPm: rawUser.allows_write_to_pm,
       photoUrl: rawUser.photo_url,
       passwordHash: rawUser.chatId + parsed.get('auth_date')
-    }
+    })
 
-    await this.userDal.add(userToCreate)
+    await userToAdd.save()
 
     const token = await this.jwt.signAsync({ chatId: rawUser.id, claims: ['user'] })
 

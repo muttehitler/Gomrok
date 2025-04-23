@@ -3,11 +3,10 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import UserDal from './db/abstract/userDal';
-import MUserDal from './db/mongoose/mUserDal';
 import { AuthModule } from './auth/auth.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Global()
 @Module({
@@ -19,16 +18,13 @@ import { AuthService } from './auth/auth.service';
       signOptions: {
         expiresIn: process.env.JWT_EXPIRATION
       },
-      global:true
+      global: true
     }),
+    MongooseModule.forRoot(process.env.AUTH_MONGO_STRING?.toString() ?? '', { dbName: 'userdb' }),
   ],
   controllers: [UserController],
-  providers: [UserService,
-    {
-      provide: UserDal,
-      useClass: MUserDal
-    }
-  ],
-  exports: [ UserDal]
+  providers: [
+    UserService
+  ]
 })
 export class UserModule { }
