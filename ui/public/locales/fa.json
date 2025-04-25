@@ -7,6 +7,17 @@
         "wallet-logs-header": "تاریخچه کیف پول",
         "deposit": "واریز",
         "withdraw": "برداشت",
-        "add-deposit": "افزایش موجودی"
+        "add-deposit": "افزایش موجودی",
+        "add-panel": "افزودن پنل",
+        "cancel": "لغو",
+        "add": "افزودن",
+        "panel-name":"نام پنل",
+        "panel-type":"نوع پنل",
+        "choose-a-panel-type":"نوع پنل را انتخاب نمایید",
+        "marzneshin":"مرزنشین",
+        "panel-url" :"آدرس پنل",
+        "panel-username":"نام کاربری",
+        "panel_password":"رمز عبور",
+        "test-panel-connection":"تست اتصال"
     }
 }
