@@ -7,6 +7,9 @@
         "wallet-logs-header": "تاریخچه کیف پول",
         "deposit": "واریز",
         "withdraw": "برداشت",
-        "add-deposit": "افزایش موجودی"
+        "add-deposit": "افزایش موجودی",
+        "add-panel": "افزودن پنل",
+        "cancel": "لغو",
+        "add": "افزودن"
     }
 }

@@ -6,7 +6,10 @@
     "toman": "Toman",
     "wallet-logs-header": "Wallet History",
     "deposit": "Deposit",
-    "withdraw":"Withdraw",
-    "add-deposit":"Add Deposit"
+    "withdraw": "Withdraw",
+    "add-deposit": "Add Deposit",
+    "add-panel": "Add Panel",
+    "cancel": "Cancel",
+    "add": "Add"
   }
 }
