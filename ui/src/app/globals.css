@@ -35,3 +35,10 @@ body {
   background-color: var(--tg-theme-secondary-bg-color);
   width: 100%;
 }
+
+.section {
+  border-radius: 5px;
+  margin: 10px;
+  padding: 10px;
+  background-color: var(--tg-theme-section-bg-color);
+}
