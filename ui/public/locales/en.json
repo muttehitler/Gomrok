@@ -10,6 +10,14 @@
     "add-deposit": "Add Deposit",
     "add-panel": "Add Panel",
     "cancel": "Cancel",
-    "add": "Add"
+    "add": "Add",
+    "panel-name": "Panel Name",
+    "panel-type": "Panel Type",
+    "choose-a-panel-type": "Choose a panel type",
+    "marzneshin": "Marzneshin",
+    "panel-url": "Panel url",
+    "panel-username": "Username",
+    "panel-password": "Password",
+    "test-panel-connection":"Test Connection"
   }
 }

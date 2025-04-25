@@ -1,9 +1,1 @@
 @import url('@/app/globals.css');
-
-.add-panel-button {
-    margin: 5px;
-}
-
-.add-button {
-    align-self: self-end;
-}

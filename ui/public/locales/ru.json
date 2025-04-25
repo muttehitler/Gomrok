@@ -10,6 +10,14 @@
     "add-deposit": "Add Deposit",
     "add-panel": "add panelevski",
     "cencel": "niet",
-    "add":"davay"
+    "add": "davay",
+    "panel-name": "panel-name",
+    "panel-type": "panel type",
+    "choose-a-panel-type": "Choose a panel type",
+    "marzneshin": "marzneshin",
+    "panel-url": "panel-url",
+    "panel-username": "panel-username",
+    "panel_password": "panel_password",
+    "test-panel-connection": "test-panel-connection"
   }
 }
