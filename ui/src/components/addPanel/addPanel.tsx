@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { FC, useRef, useState } from "react";
 import './style.css'
-import { testConnection } from "@/actions/panel.action";
+import { addPanel, testConnection } from "@/actions/panel.action";
 
 export const AddPanel: FC = () => {
     const t = useTranslations('i18n');
@@ -33,6 +33,14 @@ export const AddPanel: FC = () => {
         setTestConnectionText(t("fail"))
     }
 
+    const addPanelHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        const result = await addPanel(new FormData(e.currentTarget))
+
+        alert(result)
+    }
+
     return (
         <div>
             <button onClick={openAddPanel} className='add-panel-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
@@ -40,7 +48,7 @@ export const AddPanel: FC = () => {
             </button>
             {isAddPanelOpen && (
                 <div className='container add-panel-container'>
-                    <form ref={formRef}>
+                    <form ref={formRef} onSubmit={addPanelHandler}>
                         <div className='add-panel-field-div'>
                             <div className='panel-field'>
                                 <label htmlFor="panel_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('panel-name')}</label>
