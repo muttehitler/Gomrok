@@ -10,4 +10,9 @@ export class PanelController {
     async testConnection(@Body() panelDto: AddPanelDto) {
         return await this.panelService.testConnection(panelDto)
     }
+
+    @Post('add')
+    async add(@Body() panelDto: AddPanelDto) {
+        return await this.panelService.add(panelDto)
+    }
 }

@@ -7,7 +7,7 @@ export default class Panel extends Document implements IEntity {
     @Prop()
     name: string
     @Prop()
-    panelType: string
+    type: string
 }
 
 export type PanelDocument = Panel & Document
