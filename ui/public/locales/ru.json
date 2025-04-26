@@ -18,6 +18,7 @@
     "panel-url": "panel-url",
     "panel-username": "panel-username",
     "panel_password": "panel_password",
-    "test-panel-connection": "test-panel-connection"
+    "test-panel-connection": "test-panel-connection",
+    "panels": "panels"
   }
 }

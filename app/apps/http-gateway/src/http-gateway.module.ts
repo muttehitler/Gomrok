@@ -11,6 +11,8 @@ import { PaymentModule } from './payment/payment.module';
 import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from '@app/contracts/utils/jwt_token/strategies/jwt.strategy';
+import { PanelModule } from './panel/panel.module';
+import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
 
 @Global()
 @Module({
@@ -36,6 +38,16 @@ import { JwtStrategy } from '@app/contracts/utils/jwt_token/strategies/jwt.strat
         }
       }
     ]),
+    ClientsModule.register([
+      {
+        name: PANEL_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      }
+    ]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: {
@@ -44,7 +56,8 @@ import { JwtStrategy } from '@app/contracts/utils/jwt_token/strategies/jwt.strat
       global: true
     }),
     AuthModule,
-    PaymentModule
+    PaymentModule,
+    PanelModule
   ],
   controllers: [HttpGatewayController],
   providers: [HttpGatewayService, JwtStrategy],

@@ -4,6 +4,8 @@ import { PanelService } from './panel.service';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import Panel, { PanelSchema } from './models/concrete/panel';
+import { PanelType } from './patterns/panelType';
+import MarzneshinPanel from './panelServices/concrete/marzneshinPanel';
 
 @Global()
 @Module({
@@ -13,6 +15,12 @@ import Panel, { PanelSchema } from './models/concrete/panel';
     MongooseModule.forFeature([{ name: Panel.name, schema: PanelSchema }])
   ],
   controllers: [PanelController],
-  providers: [PanelService],
+  providers: [
+    PanelService,
+    {
+      provide: PanelType.marzneshin,
+      useClass: MarzneshinPanel
+    }
+  ],
 })
 export class PanelModule { }
