@@ -1,12 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { PanelService } from './panel.service';
+import AddPanelDto from '@app/contracts/models/dtos/panel/addPanelDto';
 
 @Controller('panel')
 export class PanelController {
     constructor(private panelService: PanelService) { }
 
-    @Get('testConnection')
-    async testConnection() {
-        return await this.panelService.testConnection()
+    @Post('test_connection')
+    async testConnection(@Body() panelDto: AddPanelDto) {
+        return await this.panelService.testConnection(panelDto)
     }
 }
