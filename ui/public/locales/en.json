@@ -19,6 +19,9 @@
     "panel-username": "Username",
     "panel-password": "Password",
     "test-panel-connection": "Test Connection",
-    "panels": "Panels"
+    "panels": "Panels",
+    "testing": "Testing",
+    "successed": "Successed",
+    "fail": "Fail"
   }
 }

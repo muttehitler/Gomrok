@@ -19,6 +19,9 @@
         "panel-username": "نام کاربری",
         "panel_password": "رمز عبور",
         "test-panel-connection": "تست اتصال",
-        "panels": "پنل ها"
+        "panels": "پنل ها",
+        "testing": "در حال تست",
+        "successed": "موفق",
+        "fail": "ناموفق"
     }
 }
