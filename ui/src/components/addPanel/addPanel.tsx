@@ -8,23 +8,29 @@ import { testConnection } from "@/actions/panel.action";
 export const AddPanel: FC = () => {
     const t = useTranslations('i18n');
 
-    const formRef = useRef<HTMLFormElement>(null);
+    const formRef = useRef<HTMLFormElement>(null)
+    const [testConnectionText, setTestConnectionText] = useState(t('test-panel-connection'))
 
     const [isAddPanelOpen, setIsAddPanelOpen] = useState(false);
 
     const openAddPanel = () => { setIsAddPanelOpen(true) }
     const closeAddPanel = () => { setIsAddPanelOpen(false) }
 
-    const [resultMessage, setResultMessage] = useState(false)
-
     const testConnectionHandler = async () => {
         if (!formRef.current) return
 
         const dataAsJson = Object.fromEntries(new FormData(formRef.current).entries())
-        
+
+        setTestConnectionText(t("testing"))
+
         const result = await testConnection(dataAsJson)
 
-        setResultMessage(result)
+        if (result == 200) {
+            setTestConnectionText(t("successed"))
+            return;
+        }
+
+        setTestConnectionText(t("fail"))
     }
 
     return (
@@ -65,14 +71,11 @@ export const AddPanel: FC = () => {
                                 {t('cancel')}
                             </button>
                             <button onClick={testConnectionHandler} type="button" className='add-button ml-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
-                                {t('test-panel-connection')}
+                                {testConnectionText}
                             </button>
                             <button className='add-button ml-auto bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full'>
                                 {t('add')}
                             </button>
-                        </div>
-                        <div>
-                            <p>{resultMessage}</p>
                         </div>
                     </form>
                 </div>
