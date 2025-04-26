@@ -1,3 +1,5 @@
+import AddPanelDto from "@app/contracts/models/dtos/panel/addPanelDto";
+
 export default abstract class PanelBase {
-    abstract testConnection(): any
+    abstract testConnection(panelDto: AddPanelDto): any
 }

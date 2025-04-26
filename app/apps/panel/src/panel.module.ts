@@ -6,13 +6,15 @@ import { MongooseModule } from '@nestjs/mongoose';
 import Panel, { PanelSchema } from './models/concrete/panel';
 import { PanelType } from './patterns/panelType';
 import MarzneshinPanel from './panelServices/concrete/marzneshinPanel';
+import { HttpModule } from '@nestjs/axios';
 
 @Global()
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.AUTH_MONGO_STRING?.toString() ?? '', { dbName: 'paneldb' }),
-    MongooseModule.forFeature([{ name: Panel.name, schema: PanelSchema }])
+    MongooseModule.forFeature([{ name: Panel.name, schema: PanelSchema }]),
+    HttpModule
   ],
   controllers: [PanelController],
   providers: [
