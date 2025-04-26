@@ -1,5 +1,4 @@
 'use server'
-import { initData, useSignal } from '@telegram-apps/sdk-react';
 import axios from 'axios'
 
 export async function login(raw: string) {
