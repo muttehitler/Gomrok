@@ -22,6 +22,7 @@
     "panels": "Panels",
     "testing": "Testing",
     "successed": "Successed",
-    "fail": "Fail"
+    "fail": "Fail",
+    "panel-weight": "Panel Weight"
   }
 }

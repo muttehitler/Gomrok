@@ -22,7 +22,7 @@ export class PanelService {
   async add(panelDto: AddPanelDto) {
     const panelService = await this.moduleRef.resolve<PanelBase>(panelDto.type)
     const testResult = await panelService.testConnection(panelDto)
-    
+
     if (testResult != 200)
       throw new BadRequestException(Messages.PANEL.PANEL_ISNT_VALID.message)
 
@@ -33,7 +33,8 @@ export class PanelService {
 
     const model = new this.panelModel({
       name: panelDto.name,
-      type: panelDto.type
+      type: panelDto.type,
+      weight: panelDto.weight
     })
     await model.save()
 

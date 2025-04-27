@@ -8,6 +8,8 @@ export default class Panel extends Document implements IEntity {
     name: string
     @Prop()
     type: string
+    @Prop({ type: Number })
+    weight: number
 }
 
 export type PanelDocument = Panel & Document
