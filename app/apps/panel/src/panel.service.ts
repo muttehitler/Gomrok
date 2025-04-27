@@ -6,13 +6,12 @@ import AddPanelDto from '@app/contracts/models/dtos/panel/addPanelDto';
 import Panel, { PanelDocument } from './models/concrete/panel';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import PanelConfig, { PanelConfigDocument } from './models/concrete/panelConfig';
 import { Messages } from '@app/contracts/messages/messages';
+import PanelDto from '@app/contracts/models/dtos/panel/panelDto';
 
 @Injectable()
 export class PanelService {
-  constructor(private moduleRef: ModuleRef, @InjectModel(Panel.name) private panelModel: Model<PanelDocument>,
-    @InjectModel(PanelConfig.name) private panelConfigModel: Model<PanelConfigDocument>) { }
+  constructor(private moduleRef: ModuleRef, @InjectModel(Panel.name) private panelModel: Model<PanelDocument>) { }
 
   async testConnection(panelDto: AddPanelDto) {
     const panelService = await this.moduleRef.resolve<PanelBase>(panelDto.type)
@@ -35,22 +34,21 @@ export class PanelService {
       name: panelDto.name,
       type: panelDto.type,
       weight: panelDto.weight,
-      user: new Types.ObjectId(authorUser)
-    })
-    await model.save()
-
-    const configModel = new this.panelConfigModel({
+      user: new Types.ObjectId(authorUser),
       url: panelDto.url,
       username: panelDto.username,
       password: panelDto.password,
-      panel: model._id
     })
-    await configModel.save()
+    await model.save()
 
     return {
       success: true,
       message: Messages.PANEL.PANEL_ADDED_SUCCESSFULLY.message,
       statusCode: Messages.PANEL.PANEL_ADDED_SUCCESSFULLY.code
     }
+  }
+
+  async getList(): Promise<PanelDto[]> {
+    return (await this.panelModel.find({ status: true })).map<PanelDto>(x => { return { name: x.name, type: x.type, url: x.url, weight: x.weight } })
   }
 }

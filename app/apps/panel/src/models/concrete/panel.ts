@@ -12,6 +12,17 @@ export default class Panel extends Document implements IEntity {
     weight: number
     @Prop({ type: Types.ObjectId, ref: 'User' })
     user: Types.ObjectId
+    @Prop({ type: Boolean, default: true })
+    status: boolean
+
+    @Prop()
+    username: string
+    @Prop()
+    password: string
+    @Prop()
+    url: string
+    @Prop()
+    subPrefix: string
 }
 
 export type PanelDocument = Panel & Document
