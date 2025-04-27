@@ -10,4 +10,8 @@ export class PanelService {
     async testConnection(panelDto: AddPanelDto) {
         return await this.paymentClient.send(PANEL_PATTERNS.TEST_CONNECTION, panelDto).toPromise()
     }
+
+    async add(panelDto: AddPanelDto, authorUser: string) {
+        return await this.paymentClient.send(PANEL_PATTERNS.ADD, { panelDto: panelDto, authorUser: authorUser }).toPromise()
+    }
 }

@@ -22,6 +22,7 @@
         "panels": "پنل ها",
         "testing": "در حال تست",
         "successed": "موفق",
-        "fail": "ناموفق"
+        "fail": "ناموفق",
+        "panel-weight": "وزن پنل"
     }
 }

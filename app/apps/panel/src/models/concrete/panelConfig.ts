@@ -14,7 +14,7 @@ export default class PanelConfig extends Document implements IEntity {
     subPrefix: string
 
     @Prop({ type: Types.ObjectId, ref: 'Panel' })
-    Panel: Types.ObjectId
+    panel: Types.ObjectId
 }
 
 export type PanelConfigDocument = PanelConfig & Document

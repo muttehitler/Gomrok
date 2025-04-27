@@ -4,4 +4,5 @@ export default interface AddPanelDto {
     url: string
     username: string
     password: string
+    weight: number
 }

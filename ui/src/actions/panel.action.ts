@@ -11,3 +11,14 @@ export async function testConnection(formData: any) {
     })
     return response.data
 }
+
+export async function addPanel(formData: any) {
+    const response = await axios.post(process.env.API_ADDRESS + '/panel/add', formData, {
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        validateStatus: () => true
+    })
+    return JSON.stringify(response.data)
+}

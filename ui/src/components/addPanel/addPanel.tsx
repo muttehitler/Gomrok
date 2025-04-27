@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { FC, useRef, useState } from "react";
 import './style.css'
-import { testConnection } from "@/actions/panel.action";
+import { addPanel, testConnection } from "@/actions/panel.action";
 
 export const AddPanel: FC = () => {
     const t = useTranslations('i18n');
@@ -33,6 +33,14 @@ export const AddPanel: FC = () => {
         setTestConnectionText(t("fail"))
     }
 
+    const addPanelHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        const result = await addPanel(new FormData(e.currentTarget))
+
+        alert(result)
+    }
+
     return (
         <div>
             <button onClick={openAddPanel} className='add-panel-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
@@ -40,7 +48,7 @@ export const AddPanel: FC = () => {
             </button>
             {isAddPanelOpen && (
                 <div className='container add-panel-container'>
-                    <form ref={formRef}>
+                    <form ref={formRef} onSubmit={addPanelHandler}>
                         <div className='add-panel-field-div'>
                             <div className='panel-field'>
                                 <label htmlFor="panel_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('panel-name')}</label>
@@ -64,6 +72,10 @@ export const AddPanel: FC = () => {
                             <div className='panel-field'>
                                 <label htmlFor="panel_password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('panel-password')}</label>
                                 <input name="password" type="password" id="panel_password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={t('panel-password')} required />
+                            </div>
+                            <div className='panel-field'>
+                                <label htmlFor="panel_weight" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('panel-weight')}</label>
+                                <input name="weight" type="number" id="panel_weight" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={t('panel-weight')} required />
                             </div>
                         </div>
                         <div className='flex'>

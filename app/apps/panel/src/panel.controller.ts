@@ -12,4 +12,9 @@ export class PanelController {
   async testConnection(panelDto: AddPanelDto) {
     return await this.panelService.testConnection(panelDto);
   }
+
+  @MessagePattern(PANEL_PATTERNS.ADD)
+  async add(data: { panelDto: AddPanelDto, authorUser: string }) {
+    return await this.panelService.add(data.panelDto, data.authorUser)
+  }
 }
