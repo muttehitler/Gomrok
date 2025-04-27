@@ -19,7 +19,7 @@ export class PanelService {
     return await panelService.testConnection(panelDto)
   }
 
-  async add(panelDto: AddPanelDto) {
+  async add(panelDto: AddPanelDto, authorUser: string) {
     const panelService = await this.moduleRef.resolve<PanelBase>(panelDto.type)
     const testResult = await panelService.testConnection(panelDto)
 
@@ -34,7 +34,8 @@ export class PanelService {
     const model = new this.panelModel({
       name: panelDto.name,
       type: panelDto.type,
-      weight: panelDto.weight
+      weight: panelDto.weight,
+      user: new Types.ObjectId(authorUser)
     })
     await model.save()
 

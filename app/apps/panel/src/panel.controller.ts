@@ -14,7 +14,7 @@ export class PanelController {
   }
 
   @MessagePattern(PANEL_PATTERNS.ADD)
-  async add(panelDto: AddPanelDto) {
-    return await this.panelService.add(panelDto)
+  async add(data: { panelDto: AddPanelDto, authorUser: string }) {
+    return await this.panelService.add(data.panelDto, data.authorUser)
   }
 }
