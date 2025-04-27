@@ -1,4 +1,5 @@
 import AddPanelDto from '@app/contracts/models/dtos/panel/addPanelDto';
+import PanelDto from '@app/contracts/models/dtos/panel/panelDto';
 import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -13,5 +14,9 @@ export class PanelService {
 
     async add(panelDto: AddPanelDto, authorUser: string) {
         return await this.paymentClient.send(PANEL_PATTERNS.ADD, { panelDto: panelDto, authorUser: authorUser }).toPromise()
+    }
+
+    async getList(): Promise<PanelDto[]> {
+        return await this.paymentClient.send(PANEL_PATTERNS.GET_LIST, {}).toPromise()
     }
 }
