@@ -20,6 +20,7 @@ export class PanelController {
     }
 
     @Get('get_list')
+    @UseGuards(new JwtAuthGuard(['user']))
     async getList(): Promise<PanelDto[]> {
         return await this.panelService.getList()
     }
