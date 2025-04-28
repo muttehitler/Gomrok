@@ -18,6 +18,7 @@ export const AddPanel: FC = () => {
 
     useEffect(() => {
         (async () => {
+            console.log("ksdlfj");
             setCsrfToken(generateCsrfToken(getCookie('csrf') ?? ''))
         })()
     }, [])
@@ -45,7 +46,9 @@ export const AddPanel: FC = () => {
     const addPanelHandler = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        const result = await addPanel(new FormData(e.currentTarget))
+        const dataAsJson = Object.fromEntries(new FormData(e.currentTarget).entries())
+
+        const result = await addPanel(dataAsJson)
 
         alert(result)
     }
