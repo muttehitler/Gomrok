@@ -20,11 +20,11 @@ export const PanelList: FC = () => {
 
     useEffect(() => {
         (async () => {
-            const panels = await getPanelList(generateCsrfToken(getCookie('csrf') ?? ''))
+            const panels = await getPanelList({ csrf: generateCsrfToken(getCookie('csrf') ?? '') })
 
             setPanels(JSON.parse(panels))
         })()
-    })
+    }, [])
 
     return (
         <div className='container'>
@@ -46,7 +46,7 @@ export const PanelList: FC = () => {
                             </MenuButton>
                         </div>
 
-                        <MenuItems transition className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
+                        <MenuItems transition className="absolute right-0 z-10 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
                             <div className="py-1">
                                 <MenuItem>
                                     <a href="#" className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
