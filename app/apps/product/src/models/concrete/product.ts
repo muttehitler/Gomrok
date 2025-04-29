@@ -1,12 +1,26 @@
 import IEntity from "@app/contracts/models/abstract/iEntity";
-import { Types } from "mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Types, Document } from "mongoose";
 
-export default interface Product extends IEntity {
-    _id: Types.ObjectId | undefined,
+@Schema({ timestamps: true })
+export default class Product extends Document implements IEntity {
+    @Prop()
     name: string
+    @Prop({ type: Boolean })
     payAsYouGo: boolean
+    @Prop({ type: Number })
     usageDuration: number
+    @Prop({ type: Number })
     dataLimit: number
+    @Prop({ type: Number })
     userLimit: number
+    @Prop({ type: Boolean })
     onHold: boolean
+
+    @Prop({ type: Types.ObjectId, ref: 'Panel' })
+    panel: Types.ObjectId
 }
+
+
+export type ProductDocument = Product & Document
+export const ProductSchema = SchemaFactory.createForClass(Product)
