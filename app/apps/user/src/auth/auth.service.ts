@@ -47,7 +47,7 @@ export class AuthService {
     const expiration = new Date(new Date().getTime() + 1 * 60 * 60 * 1000)
 
     if (user) {
-      const token = await this.jwt.signAsync({ chatId: user.chatId, claims: ['user'], sub: String(user._id) })
+      const token = await this.jwt.signAsync({ chatId: user.chatId, claims: user.claims, sub: String(user._id) })
 
       const accessToken: AccessTokenDto = {
         type: 'Bearer',
@@ -71,7 +71,7 @@ export class AuthService {
 
     await userToAdd.save()
 
-    const token = await this.jwt.signAsync({ chatId: rawUser.id, claims: ['user'], sub: String(userToAdd._id) })
+    const token = await this.jwt.signAsync({ chatId: rawUser.id, claims: userToAdd.claims, sub: String(userToAdd._id) })
 
     const accessToken: AccessTokenDto = {
       type: 'Bearer',

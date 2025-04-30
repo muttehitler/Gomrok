@@ -9,18 +9,19 @@ export class PanelController {
     constructor(private panelService: PanelService) { }
 
     @Post('test_connection')
+    @UseGuards(new JwtAuthGuard(['admin']))
     async testConnection(@Body() panelDto: AddPanelDto) {
         return await this.panelService.testConnection(panelDto)
     }
 
     @Post('add')
-    @UseGuards(new JwtAuthGuard(['user']))
+    @UseGuards(new JwtAuthGuard(['admin']))
     async add(@Body() panelDto: AddPanelDto, @Req() req) {
         return await this.panelService.add(panelDto, req.user['sub'])
     }
 
     @Get('get_list')
-    @UseGuards(new JwtAuthGuard(['user']))
+    @UseGuards(new JwtAuthGuard(['admin']))
     async getList(): Promise<PanelDto[]> {
         return await this.panelService.getList()
     }
