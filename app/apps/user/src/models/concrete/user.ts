@@ -23,6 +23,9 @@ export default class User extends Document implements IEntity {
     passwordHash: string
     @Prop({ type: Number, default: 0 })
     balance: number
+
+    @Prop({ type: [String], default: ['user'] })
+    claims: string[]
 }
 
 export type UserDocument = User & Document;
