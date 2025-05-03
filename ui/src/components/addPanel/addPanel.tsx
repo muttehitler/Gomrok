@@ -18,7 +18,6 @@ export const AddPanel: FC = () => {
 
     useEffect(() => {
         (async () => {
-            console.log("ksdlfj");
             setCsrfToken(generateCsrfToken(getCookie('csrf') ?? ''))
         })()
     }, [])

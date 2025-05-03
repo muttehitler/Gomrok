@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { PanelService } from './panel.service';
 import AddPanelDto from '@app/contracts/models/dtos/panel/addPanelDto';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
@@ -20,9 +20,15 @@ export class PanelController {
         return await this.panelService.add(panelDto, req.user['sub'])
     }
 
-    @Get('get_list')
+    @Get()
     @UseGuards(new JwtAuthGuard(['admin']))
     async getList(): Promise<PanelDto[]> {
         return await this.panelService.getList()
+    }
+
+    @Get(':id')
+    @UseGuards(new JwtAuthGuard(['admin']))
+    async get(@Param('id') id: string): Promise<PanelDto> {
+        return await this.panelService.get(id)
     }
 }

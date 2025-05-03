@@ -41,3 +41,16 @@ export async function getPanelList(data: any) {
     })
     return JSON.stringify(response.data)
 }
+
+export async function getPanel(data: any) {
+    validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
+    const response = await axios.get(process.env.API_ADDRESS + PANEL_PATTERNS.GET + data.id, {
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + (await cookies()).get('token')?.value
+        },
+        validateStatus: () => true
+    })
+    return JSON.stringify(response.data)
+}

@@ -8,6 +8,7 @@ import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Messages } from '@app/contracts/messages/messages';
 import PanelDto from '@app/contracts/models/dtos/panel/panelDto';
+import { url } from 'inspector';
 
 @Injectable()
 export class PanelService {
@@ -49,6 +50,20 @@ export class PanelService {
   }
 
   async getList(): Promise<PanelDto[]> {
-    return (await this.panelModel.find({ status: true })).map<PanelDto>(x => { return { name: x.name, type: x.type, url: x.url, weight: x.weight } })
+    return (await this.panelModel.find({ status: true })).map<PanelDto>(x => { return { id: String(x._id), name: x.name, type: x.type, url: x.url, weight: x.weight } })
+  }
+
+  async get(id: string): Promise<PanelDto> {
+    const panel = await this.panelModel.findById(new Types.ObjectId(id))
+    const panelDto: PanelDto = {
+      id: String(panel?._id),
+      name: panel?.name!,
+      url: panel?.url!,
+      type: panel?.type!,
+      username: panel?.username,
+      password: panel?.password,
+      weight: panel?.weight!
+    }
+    return panelDto
   }
 }
