@@ -13,6 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from '@app/contracts/utils/jwt_token/strategies/jwt.strategy';
 import { PanelModule } from './panel/panel.module';
 import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
+import { ProductModule } from './product/product.module';
 
 @Global()
 @Module({
@@ -57,7 +58,8 @@ import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
     }),
     AuthModule,
     PaymentModule,
-    PanelModule
+    PanelModule,
+    ProductModule
   ],
   controllers: [HttpGatewayController],
   providers: [HttpGatewayService, JwtStrategy],

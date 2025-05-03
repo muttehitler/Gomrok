@@ -1,12 +1,13 @@
 import { useTranslations } from "next-intl";
 import { FC, useEffect, useRef, useState } from "react";
 import './style.css'
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { getPanelList } from "@/actions/panel.action";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getCookie } from "@/lib/utils/cookie.helper";
+import { PanelItem } from "./panelItem";
 
 type Panel = {
+    id: string
     name: string
     type: string
     url: string
@@ -32,31 +33,7 @@ export const PanelList: FC = () => {
             <br />
             <div className='section'>
                 {panels.length > 0 ? panels.map(x =>
-                (<div className='flex' key={x.name}>
-                    <div>
-                        <p>{x.name}</p>
-                        <span>{x.url}</span>
-                    </div>
-                    <Menu as="div" className="relative ml-auto inline-block text-left">
-                        <div>
-                            <MenuButton className="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-                                <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 4 15">
-                                    <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
-                                </svg>
-                            </MenuButton>
-                        </div>
-
-                        <MenuItems transition className="absolute right-0 z-10 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
-                            <div className="py-1">
-                                <MenuItem>
-                                    <a href="#" className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                        Account settings
-                                    </a>
-                                </MenuItem>
-                            </div>
-                        </MenuItems>
-                    </Menu>
-                </div>)
+                    (<PanelItem id={x.id} name={x.name} type={x.type} url={x.url} weight={x.weight} key={x.name} />)
                 ) :
                     (<div role="status">
                         <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

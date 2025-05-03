@@ -23,6 +23,9 @@
         "testing": "در حال تست",
         "successed": "موفق",
         "fail": "ناموفق",
-        "panel-weight": "وزن پنل"
+        "panel-weight": "وزن پنل",
+        "edit": "ویرایش",
+        "delete": "حذف",
+        "Update": "بروزرسانی"
     }
 }

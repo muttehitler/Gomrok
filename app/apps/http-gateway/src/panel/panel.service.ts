@@ -6,17 +6,21 @@ import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class PanelService {
-    constructor(@Inject(PANEL_PATTERNS.CLIENT) private paymentClient: ClientProxy) { }
+    constructor(@Inject(PANEL_PATTERNS.CLIENT) private panelClient: ClientProxy) { }
 
     async testConnection(panelDto: AddPanelDto) {
-        return await this.paymentClient.send(PANEL_PATTERNS.TEST_CONNECTION, panelDto).toPromise()
+        return await this.panelClient.send(PANEL_PATTERNS.TEST_CONNECTION, panelDto).toPromise()
     }
 
     async add(panelDto: AddPanelDto, authorUser: string) {
-        return await this.paymentClient.send(PANEL_PATTERNS.ADD, { panelDto: panelDto, authorUser: authorUser }).toPromise()
+        return await this.panelClient.send(PANEL_PATTERNS.ADD, { panelDto: panelDto, authorUser: authorUser }).toPromise()
     }
 
     async getList(): Promise<PanelDto[]> {
-        return await this.paymentClient.send(PANEL_PATTERNS.GET_LIST, {}).toPromise()
+        return await this.panelClient.send(PANEL_PATTERNS.GET_LIST, {}).toPromise()
+    }
+
+    async get(id: string): Promise<PanelDto> {
+        return await this.panelClient.send(PANEL_PATTERNS.GET, { id }).toPromise()
     }
 }

@@ -23,6 +23,9 @@
     "testing": "testing",
     "successed": "successed",
     "fail": "fail",
-    "panel-weight": "panel-weight"
+    "panel-weight": "panel-weight",
+    "edit": "edit",
+    "delete": "حذف",
+    "update": "update"
   }
 }

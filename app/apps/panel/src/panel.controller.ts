@@ -23,4 +23,9 @@ export class PanelController {
   async getList(): Promise<PanelDto[]> {
     return await this.panelService.getList()
   }
+
+  @MessagePattern(PANEL_PATTERNS.GET)
+  async get(id: string): Promise<PanelDto> {
+    return await this.panelService.get(id)
+  }
 }
