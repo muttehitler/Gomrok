@@ -11,6 +11,10 @@ export const Messages = {
         PANEL_HAS_EXISTS: {
             message: "Panel has exists",
             code: 3
+        },
+        PANEL_UPDATED_SUCCESSFULLY: {
+            message: "Panel updated successfully.",
+            code: 1
         }
     }
 }

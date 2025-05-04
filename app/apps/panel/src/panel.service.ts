@@ -9,6 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Messages } from '@app/contracts/messages/messages';
 import PanelDto from '@app/contracts/models/dtos/panel/panelDto';
 import { url } from 'inspector';
+import ResultDto from '@app/contracts/models/dtos/resultDto';
 
 @Injectable()
 export class PanelService {
@@ -65,5 +66,23 @@ export class PanelService {
       weight: panel?.weight!
     }
     return panelDto
+  }
+
+  async update(id: string, panel: PanelDto): Promise<ResultDto> {
+    const p = await this.panelModel.updateOne({ _id: id }, {
+      $set: {
+        name: panel.name,
+        url: panel.url,
+        type: panel.type,
+        username: panel.username,
+        password: panel.password,
+        weight: panel.weight
+      }
+    })
+    return {
+      success: true,
+      message: Messages.PANEL.PANEL_UPDATED_SUCCESSFULLY.message,
+      statusCode: Messages.PANEL.PANEL_UPDATED_SUCCESSFULLY.code
+    }
   }
 }

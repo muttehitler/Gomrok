@@ -4,6 +4,7 @@ import { MessagePattern } from '@nestjs/microservices';
 import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
 import AddPanelDto from '@app/contracts/models/dtos/panel/addPanelDto';
 import PanelDto from '@app/contracts/models/dtos/panel/panelDto';
+import ResultDto from '@app/contracts/models/dtos/resultDto';
 
 @Controller()
 export class PanelController {
@@ -27,5 +28,10 @@ export class PanelController {
   @MessagePattern(PANEL_PATTERNS.GET)
   async get(id: string): Promise<PanelDto> {
     return await this.panelService.get(id)
+  }
+
+  @MessagePattern(PANEL_PATTERNS.UPDATE)
+  async update(data: { id: string, panel: PanelDto }): Promise<ResultDto> {
+    return await this.panelService.update(data.id, data.panel)
   }
 }
