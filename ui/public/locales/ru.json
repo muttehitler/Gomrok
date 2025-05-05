@@ -26,6 +26,7 @@
     "panel-weight": "panel-weight",
     "edit": "edit",
     "delete": "حذف",
-    "update": "update"
+    "update": "update",
+    "test": "test"
   }
 }
