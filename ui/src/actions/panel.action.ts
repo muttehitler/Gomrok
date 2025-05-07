@@ -11,6 +11,7 @@ export async function testConnection(formData: any) {
         headers: {
             'accept': 'application/json',
             'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + (await cookies()).get('token')?.value
         }
     })
     return response.data
@@ -45,6 +46,32 @@ export async function getPanelList(data: any) {
 export async function getPanel(data: any) {
     validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
     const response = await axios.get(process.env.API_ADDRESS + PANEL_PATTERNS.GET + data.id, {
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + (await cookies()).get('token')?.value
+        },
+        validateStatus: () => true
+    })
+    return JSON.stringify(response.data)
+}
+
+export async function updatePanel(data: any) {
+    validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
+    const response = await axios.put(process.env.API_ADDRESS + PANEL_PATTERNS.UPDATE + data.id, data, {
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + (await cookies()).get('token')?.value
+        },
+        validateStatus: () => true
+    })
+    return JSON.stringify(response.data)
+}
+
+export async function deletePanel(data: any) {
+    validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
+    const response = await axios.delete(process.env.API_ADDRESS + PANEL_PATTERNS.DELETE + data.id, {
         headers: {
             'accept': 'application/json',
             'Content-Type': 'application/json',

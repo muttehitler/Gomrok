@@ -34,4 +34,9 @@ export class PanelController {
   async update(data: { id: string, panel: PanelDto }): Promise<ResultDto> {
     return await this.panelService.update(data.id, data.panel)
   }
+
+  @MessagePattern(PANEL_PATTERNS.DELETE)
+  async delete(id: string): Promise<ResultDto> {
+    return await this.panelService.delete(id)
+  }
 }

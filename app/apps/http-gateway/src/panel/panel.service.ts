@@ -28,4 +28,8 @@ export class PanelService {
     async update(id: string, panel: PanelDto): Promise<ResultDto> {
         return await this.panelClient.send(PANEL_PATTERNS.UPDATE, { id: id, panel: panel }).toPromise()
     }
+
+    async delete(id: string): Promise<ResultDto> {
+        return await this.panelClient.send(PANEL_PATTERNS.DELETE, id).toPromise()
+    }
 }

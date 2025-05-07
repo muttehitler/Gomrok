@@ -15,6 +15,10 @@ export const Messages = {
         PANEL_UPDATED_SUCCESSFULLY: {
             message: "Panel updated successfully.",
             code: 1
+        },
+        PANEL_DELETED_SUCCESSFULLY: {
+            message: "Panel deleted successfully.",
+            code: 1
         }
     }
 }

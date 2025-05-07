@@ -85,4 +85,13 @@ export class PanelService {
       statusCode: Messages.PANEL.PANEL_UPDATED_SUCCESSFULLY.code
     }
   }
+
+  async delete(id: string): Promise<ResultDto> {
+    await this.panelModel.deleteOne({ _id: new Types.ObjectId(id) })
+    return {
+      success: true,
+      message: Messages.PANEL.PANEL_DELETED_SUCCESSFULLY.message,
+      statusCode: Messages.PANEL.PANEL_DELETED_SUCCESSFULLY.code
+    }
+  }
 }

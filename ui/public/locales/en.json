@@ -26,6 +26,10 @@
     "panel-weight": "Panel Weight",
     "edit": "Edit",
     "delete": "Delete",
-    "update": "Update"
+    "update": "Update",
+    "test": "Test",
+    "if-you-are-sure-delete-panel": "If you are sure you want to delete this panel, input %s to box.",
+    "no-cancel": "No, cancel",
+    "yes-im-sure": "Yes, I'm sure"
   }
 }
