@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { PanelService } from './panel.service';
 import AddPanelDto from '@app/contracts/models/dtos/panel/addPanelDto';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
@@ -38,5 +38,11 @@ export class PanelController {
     @UseGuards(new JwtAuthGuard(['admin']))
     async update(@Param('id') id: string, @Body() panel: PanelDto): Promise<ResultDto> {
         return await this.panelService.update(id, panel)
+    }
+
+    @Delete(':id')
+    @UseGuards(new JwtAuthGuard(['admin']))
+    async delete(@Param('id') id: string) {
+        return await this.panelService.delete(id)
     }
 }

@@ -1,5 +1,9 @@
 @import url('@/app/globals.css');
 
-.url{
+.url {
     font-size: small;
+}
+
+.panel-item {
+    margin-bottom: 10px !important;
 }
