@@ -4,6 +4,8 @@ import { PaymentService } from './payment.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import Payment, { PaymentSchema } from './models/concrete/payment';
+import { PaymentType } from './patterns/paymentType';
+import TRXPayment from './paymentServices/concrete/trxPayment';
 
 @Global()
 @Module({
@@ -13,6 +15,12 @@ import Payment, { PaymentSchema } from './models/concrete/payment';
     MongooseModule.forFeature([{ name: Payment.name, schema: PaymentSchema }])
   ],
   controllers: [PaymentController],
-  providers: [PaymentService],
+  providers: [
+    PaymentService,
+    {
+      provide: PaymentType.trxWallet,
+      useClass: TRXPayment
+    }
+  ],
 })
 export class PaymentModule { }
