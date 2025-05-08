@@ -22,8 +22,9 @@ export const PanelList: FC = () => {
 
     const [panels, setPanels] = useState<Panel[]>([])
     const [panelsLength, setPanelsLength] = useState(0)
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1)
     const currentPageRef = useRef(currentPage)
+    const [pageSize, setPageSize] = useState(10)
 
     useEffect(() => {
         currentPageRef.current = currentPage
@@ -34,7 +35,7 @@ export const PanelList: FC = () => {
         emitter.on('listPanels', async () => {
             setPanels([])
 
-            const result = JSON.parse(await getPanelList({ csrf: generateCsrfToken(getCookie('csrf') ?? ''), startIndex: (currentPageRef.current - 1) * 1, limit: 1, order: -1 }))
+            const result = JSON.parse(await getPanelList({ csrf: generateCsrfToken(getCookie('csrf') ?? ''), startIndex: (currentPageRef.current - 1) * pageSize, limit: pageSize, order: -1 }))
 
             if (!result.success) {
                 toast.error(t('list-unsuccessfully') + ": " + result.message.toString(), {
@@ -67,7 +68,7 @@ export const PanelList: FC = () => {
                     <span className="sr-only">Loading...</span>
                 </div>)
             }
-            <Pagination currentPageState={[currentPage, setCurrentPage]} pageCount={Math.ceil(panelsLength / 1)} key={"pagination"} />
+            <Pagination currentPageState={[currentPage, setCurrentPage]} pageCount={Math.ceil(panelsLength / pageSize)} key={"pagination"} />
         </div>
     )
 }
