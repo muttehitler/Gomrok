@@ -5,9 +5,8 @@
     "footer": "Вы можете выбрать другой язык в выпадающем меню.",
     "toman": "Tomen",
     "wallet-logs-header": "pul brat",
-    "deposit": "deposito davay",
-    "withdraw": "withdraw davay",
-    "add-deposit": "Add Deposit",
+    "buy": "withdraw davay",
+    "top-up": "Add Deposit",
     "add-panel": "add panelevski",
     "cencel": "niet",
     "add": "davay",
@@ -37,6 +36,7 @@
     "add-unsuccessfully": "Update unsuccessfully",
     "deleted-successfully": "Deleted successfully",
     "delete-unsuccessfully": "Delete unsuccessfully",
-    "list-unsuccessfully": "List unsuccessfully"
+    "list-unsuccessfully": "List unsuccessfully",
+    "amount": "Amount"
   }
 }

@@ -5,9 +5,8 @@
         "footer": "شما میتوانید زبانی دیگر از کمد انتخاب نمایید.",
         "toman": "تومان",
         "wallet-logs-header": "تاریخچه کیف پول",
-        "deposit": "واریز",
-        "withdraw": "برداشت",
-        "add-deposit": "افزایش موجودی",
+        "buy": "خرید",
+        "top-up": "افزایش موجودی",
         "add-panel": "افزودن پنل",
         "cancel": "لغو",
         "add": "افزودن",
@@ -37,6 +36,7 @@
         "add-unsuccessfully": "افزودن ناموفق شد",
         "deleted-successfully": "با موفقیت حذف شد",
         "delete-unsuccessfully": "حذف ناموفق شد",
-        "list-unsuccessfully": "لیست ناموفق"
+        "list-unsuccessfully": "لیست ناموفق",
+        "amount": "مقدار"
     }
 }

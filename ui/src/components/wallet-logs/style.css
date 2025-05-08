@@ -14,10 +14,10 @@
     background-color: var(--tg-theme-section-bg-color);
 }
 
-.deposit{
+.top-up{
     color: var(--tg-theme-section-header-text-color);
 }
 
-.withdraw{
-    color: var(--tg-theme-destructive-text-color);
+.buy{
+    color: var(--tg-theme-text-color);
 }

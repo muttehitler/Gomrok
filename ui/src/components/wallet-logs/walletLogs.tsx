@@ -10,8 +10,8 @@ export const WalletLogs: FC = () => {
         <div className='wallet-logs-div'>
             <h4>{t('wallet-logs-header')}:</h4>
             <br />
-            <WalletLog type="deposit" amount={5} />
-            <WalletLog type="withdraw" amount={4} />
+            <WalletLog type="top-up" amount={5} />
+            <WalletLog type="buy" amount={4} />
         </div>
     )
 }
