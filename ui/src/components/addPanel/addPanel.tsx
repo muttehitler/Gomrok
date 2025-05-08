@@ -50,9 +50,7 @@ export const AddPanel: FC = () => {
         const dataAsJson = Object.fromEntries(new FormData(e.currentTarget).entries())
 
         const result = JSON.parse(await addPanel(dataAsJson))
-
-        emitter.emit('listPanels')
-
+        
         if (!result.success) {
             toast.error(t('add-unsuccessfully') + ": " + result.message.toString(), {
                 duration: 4000,
@@ -61,6 +59,8 @@ export const AddPanel: FC = () => {
             return
         }
 
+        emitter.emit('listPanels')
+        
         toast.success(t('added-successfully'), {
             duration: 2000,
             className: 'toast'

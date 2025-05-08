@@ -1,11 +1,13 @@
 import { useTranslations } from "next-intl";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import './style.css'
 import { getPanelList } from "@/actions/panel.action";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getCookie } from "@/lib/utils/cookie.helper";
 import { PanelItem } from "./panelItem";
 import emitter from "@/lib/utils/eventEmitter";
+import toast from "react-hot-toast";
+import { Pagination } from "../pagination/pagination";
 
 type Panel = {
     id: string
@@ -19,14 +21,34 @@ export const PanelList: FC = () => {
     const t = useTranslations('i18n');
 
     const [panels, setPanels] = useState<Panel[]>([])
-    
+    const [panelsLength, setPanelsLength] = useState(0)
+    const [currentPage, setCurrentPage] = useState(1);
+    const currentPageRef = useRef(currentPage)
+
+    useEffect(() => {
+        currentPageRef.current = currentPage
+        emitter.emit('listPanels')
+    }, [currentPage])
+
     useEffect(() => {
         emitter.on('listPanels', async () => {
-            const panels = await getPanelList({ csrf: generateCsrfToken(getCookie('csrf') ?? '') })
-            
-            setPanels(JSON.parse(panels))
+            setPanels([])
+
+            const result = JSON.parse(await getPanelList({ csrf: generateCsrfToken(getCookie('csrf') ?? ''), startIndex: (currentPageRef.current - 1) * 1, limit: 1, order: -1 }))
+
+            if (!result.success) {
+                toast.error(t('list-unsuccessfully') + ": " + result.message.toString(), {
+                    duration: 4000,
+                    className: 'toast'
+                })
+                return
+            }
+
+            setPanelsLength(result.data.length)
+
+            setPanels(result.data.items)
         })
-        
+
         emitter.emit('listPanels')
     }, [])
 
@@ -45,6 +67,7 @@ export const PanelList: FC = () => {
                     <span className="sr-only">Loading...</span>
                 </div>)
             }
+            <Pagination currentPageState={[currentPage, setCurrentPage]} pageCount={Math.ceil(panelsLength / 1)} key={"pagination"} />
         </div>
     )
 }

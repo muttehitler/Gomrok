@@ -36,6 +36,7 @@
         "added-successfully": "با موفقیت افزوده شد",
         "add-unsuccessfully": "افزودن ناموفق شد",
         "deleted-successfully": "با موفقیت حذف شد",
-        "delete-unsuccessfully": "حذف ناموفق شد"
+        "delete-unsuccessfully": "حذف ناموفق شد",
+        "list-unsuccessfully": "لیست ناموفق"
     }
 }

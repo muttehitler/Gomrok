@@ -1,10 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { PanelService } from './panel.service';
 import AddPanelDto from '@app/contracts/models/dtos/panel/addPanelDto';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
 import PanelDto from '@app/contracts/models/dtos/panel/panelDto';
 import { promises } from 'dns';
 import ResultDto from '@app/contracts/models/dtos/resultDto';
+import FilterDto from '@app/contracts/models/dtos/filterDto';
+import ListDto from '@app/contracts/models/dtos/listDto';
+import DataResultDto from '@app/contracts/models/dtos/dataResultDto';
 
 @Controller('panel')
 export class PanelController {
@@ -24,8 +27,8 @@ export class PanelController {
 
     @Get()
     @UseGuards(new JwtAuthGuard(['admin']))
-    async getList(): Promise<PanelDto[]> {
-        return await this.panelService.getList()
+    async getList(@Query() filter: FilterDto): Promise<DataResultDto<ListDto<PanelDto[]>>> {
+        return await this.panelService.getList(filter)
     }
 
     @Get(':id')

@@ -32,7 +32,8 @@ export async function addPanel(formData: any) {
 
 export async function getPanelList(data: any) {
     validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
-    const response = await axios.get(process.env.API_ADDRESS + PANEL_PATTERNS.GET_LIST, {
+    const response = await axios.get(process.env.API_ADDRESS + PANEL_PATTERNS.GET_LIST +
+        `?startIndex=${data.startIndex}&&limit=${data.limit}&&order=${data.order}`, {
         headers: {
             'accept': 'application/json',
             'Content-Type': 'application/json',
