@@ -1,15 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import PanelBase from './panelServices/abstract/panelBase';
-import { PanelType } from './patterns/panelType';
 import AddPanelDto from '@app/contracts/models/dtos/panel/addPanelDto';
 import Panel, { PanelDocument } from './models/concrete/panel';
-import { Model, Types } from 'mongoose';
+import { Model, SortOrder, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Messages } from '@app/contracts/messages/messages';
 import PanelDto from '@app/contracts/models/dtos/panel/panelDto';
-import { url } from 'inspector';
 import ResultDto from '@app/contracts/models/dtos/resultDto';
+import FilterDto from '@app/contracts/models/dtos/filterDto';
+import DataResultDto from '@app/contracts/models/dtos/dataResultDto';
+import ListDto from '@app/contracts/models/dtos/listDto';
 
 @Injectable()
 export class PanelService {
@@ -50,8 +51,19 @@ export class PanelService {
     }
   }
 
-  async getList(): Promise<PanelDto[]> {
-    return (await this.panelModel.find({ status: true })).map<PanelDto>(x => { return { id: String(x._id), name: x.name, type: x.type, url: x.url, weight: x.weight } })
+  async getList({ startIndex, limit, order }: FilterDto): Promise<DataResultDto<ListDto<PanelDto[]>>> {
+    const query = this.panelModel.find({ status: true })
+    const list = (await query.skip(startIndex).limit(limit).sort({ createdAt: order == 1 ? 1 : -1 })).map<PanelDto>(x => { return { id: String(x._id), name: x.name, type: x.type, url: x.url, weight: x.weight } })
+
+    return {
+      success: true,
+      message: Messages.PANEL.PANEL_LISTED_SUCCESSFULLY.message,
+      statusCode: Messages.PANEL.PANEL_LISTED_SUCCESSFULLY.code,
+      data: {
+        items: list,
+        length: (await this.panelModel.find({ status: true })).length
+      }
+    }
   }
 
   async get(id: string): Promise<PanelDto> {

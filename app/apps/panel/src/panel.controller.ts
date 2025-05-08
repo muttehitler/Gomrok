@@ -5,6 +5,9 @@ import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
 import AddPanelDto from '@app/contracts/models/dtos/panel/addPanelDto';
 import PanelDto from '@app/contracts/models/dtos/panel/panelDto';
 import ResultDto from '@app/contracts/models/dtos/resultDto';
+import FilterDto from '@app/contracts/models/dtos/filterDto';
+import ListDto from '@app/contracts/models/dtos/listDto';
+import DataResultDto from '@app/contracts/models/dtos/dataResultDto';
 
 @Controller()
 export class PanelController {
@@ -21,8 +24,8 @@ export class PanelController {
   }
 
   @MessagePattern(PANEL_PATTERNS.GET_LIST)
-  async getList(): Promise<PanelDto[]> {
-    return await this.panelService.getList()
+  async getList(filter: FilterDto): Promise<DataResultDto<ListDto<PanelDto[]>>> {
+    return await this.panelService.getList(filter)
   }
 
   @MessagePattern(PANEL_PATTERNS.GET)

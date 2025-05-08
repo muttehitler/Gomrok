@@ -1,3 +1,6 @@
+import DataResultDto from '@app/contracts/models/dtos/dataResultDto';
+import FilterDto from '@app/contracts/models/dtos/filterDto';
+import ListDto from '@app/contracts/models/dtos/listDto';
 import AddPanelDto from '@app/contracts/models/dtos/panel/addPanelDto';
 import PanelDto from '@app/contracts/models/dtos/panel/panelDto';
 import ResultDto from '@app/contracts/models/dtos/resultDto';
@@ -17,8 +20,8 @@ export class PanelService {
         return await this.panelClient.send(PANEL_PATTERNS.ADD, { panelDto: panelDto, authorUser: authorUser }).toPromise()
     }
 
-    async getList(): Promise<PanelDto[]> {
-        return await this.panelClient.send(PANEL_PATTERNS.GET_LIST, {}).toPromise()
+    async getList(filter: FilterDto): Promise<DataResultDto<ListDto<PanelDto[]>>> {
+        return await this.panelClient.send(PANEL_PATTERNS.GET_LIST, filter).toPromise()
     }
 
     async get(id: string): Promise<PanelDto> {

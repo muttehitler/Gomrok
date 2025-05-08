@@ -36,6 +36,7 @@
     "added-successfully": "Added successfully",
     "add-unsuccessfully": "Add unsuccessfully",
     "deleted-successfully": "Deleted successfully",
-    "delete-unsuccessfully": "Delete unsuccessfully"
+    "delete-unsuccessfully": "Delete unsuccessfully",
+    "list-unsuccessfully": "List unsuccessfully"
   }
 }
