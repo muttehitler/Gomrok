@@ -4,7 +4,7 @@ import { PaymentService } from './payment.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import Payment, { PaymentSchema } from './models/concrete/payment';
-import { PaymentType } from './patterns/paymentType';
+import { PaymentMethod } from './patterns/paymentMethod';
 import TRXPayment from './paymentServices/concrete/trxPayment';
 
 @Global()
@@ -18,7 +18,7 @@ import TRXPayment from './paymentServices/concrete/trxPayment';
   providers: [
     PaymentService,
     {
-      provide: PaymentType.trxWallet,
+      provide: PaymentMethod.trxWallet,
       useClass: TRXPayment
     }
   ],
