@@ -6,6 +6,8 @@ import './style.css'
 import { addPanel, testConnection } from "@/actions/panel.action";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getCookie } from "@/lib/utils/cookie.helper";
+import toast from "react-hot-toast";
+import emitter from "@/lib/utils/eventEmitter";
 
 export const AddPanel: FC = () => {
     const t = useTranslations('i18n');
@@ -47,9 +49,24 @@ export const AddPanel: FC = () => {
 
         const dataAsJson = Object.fromEntries(new FormData(e.currentTarget).entries())
 
-        const result = await addPanel(dataAsJson)
+        const result = JSON.parse(await addPanel(dataAsJson))
 
-        alert(result)
+        emitter.emit('listPanels')
+
+        if (!result.success) {
+            toast.error(t('add-unsuccessfully') + ": " + result.message.toString(), {
+                duration: 4000,
+                className: 'toast'
+            })
+            return
+        }
+
+        toast.success(t('added-successfully'), {
+            duration: 2000,
+            className: 'toast'
+        })
+
+        setIsAddPanelOpen(false)
     }
 
     return (
