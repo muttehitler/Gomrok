@@ -5,6 +5,7 @@ import { getPanelList } from "@/actions/panel.action";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getCookie } from "@/lib/utils/cookie.helper";
 import { PanelItem } from "./panelItem";
+import emitter from "@/lib/utils/eventEmitter";
 
 type Panel = {
     id: string
@@ -18,13 +19,15 @@ export const PanelList: FC = () => {
     const t = useTranslations('i18n');
 
     const [panels, setPanels] = useState<Panel[]>([])
-
+    
     useEffect(() => {
-        (async () => {
+        emitter.on('listPanels', async () => {
             const panels = await getPanelList({ csrf: generateCsrfToken(getCookie('csrf') ?? '') })
-
+            
             setPanels(JSON.parse(panels))
-        })()
+        })
+        
+        emitter.emit('listPanels')
     }, [])
 
     return (

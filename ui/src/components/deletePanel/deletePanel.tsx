@@ -7,6 +7,8 @@ import { deletePanel } from "@/actions/panel.action";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getCookie } from "@/lib/utils/cookie.helper";
 import { sprintf } from "sprintf-js";
+import emitter from "@/lib/utils/eventEmitter";
+import toast from "react-hot-toast";
 
 type DeletePanelProp = {
     id: string,
@@ -33,9 +35,22 @@ export const DeletePanel: FC<DeletePanelProp> = ({ id, visableState, name }: Del
             csrf: csrfToken
         }
 
-        const result = await deletePanel(dataAsJson)
+        const result = JSON.parse(await deletePanel(dataAsJson))
 
-        alert(result)
+        emitter.emit('listPanels')
+
+        if (!result.success) {
+            toast.error(t('delete-unsuccessfully') + ": " + result.message.toString(), {
+                duration: 4000,
+                className: 'toast'
+            })
+            return
+        }
+
+        toast.success(t('deleted-successfully'), {
+            duration: 2000,
+            className: 'toast'
+        })
 
         setVisablity(false)
     }

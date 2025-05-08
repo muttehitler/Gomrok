@@ -6,6 +6,7 @@ import './style.css'
 import { getPanel, testConnection, updatePanel } from "@/actions/panel.action";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getCookie } from "@/lib/utils/cookie.helper";
+import toast, { Toaster } from "react-hot-toast";
 
 type Panel = {
     id: string
@@ -73,7 +74,7 @@ export const EditPanel: FC<EditPanelProp> = ({ id, visableState }: EditPanelProp
         setTestConnectionText(t("fail"))
     }
 
-    const addPanelHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    const updatePanelHandler = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
         const formData = new FormData(e.currentTarget)
@@ -82,16 +83,29 @@ export const EditPanel: FC<EditPanelProp> = ({ id, visableState }: EditPanelProp
 
         const dataAsJson = Object.fromEntries(formData.entries())
 
-        const result = await updatePanel(dataAsJson)
+        const result = JSON.parse(await updatePanel(dataAsJson))
 
-        alert(result)
+        if (!result.success) {
+            toast.error(t('update-unsuccessfully') + ": " + result.message.toString(), {
+                duration: 4000,
+                className: 'toast'
+            })
+            return
+        }
+
+        toast.success(t('updated-successfully'), {
+            duration: 2000,
+            className: 'toast'
+        })
+
+        setVisablity(false)
     }
 
     return (
         <div>
             {isReady && (
                 <div className='container add-panel-container'>
-                    <form ref={formRef} onSubmit={addPanelHandler}>
+                    <form ref={formRef} onSubmit={updatePanelHandler}>
                         <div className='add-panel-field-div'>
                             <div className='panel-field'>
                                 <label htmlFor="panel_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('panel-name')}</label>

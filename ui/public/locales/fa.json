@@ -17,7 +17,7 @@
         "marzneshin": "مرزنشین",
         "panel-url": "آدرس پنل",
         "panel-username": "نام کاربری",
-        "panel_password": "رمز عبور",
+        "panel-password": "رمز عبور",
         "test-panel-connection": "تست اتصال",
         "panels": "پنل ها",
         "testing": "در حال تست",
@@ -26,10 +26,16 @@
         "panel-weight": "وزن پنل",
         "edit": "ویرایش",
         "delete": "حذف",
-        "Update": "بروزرسانی",
+        "update": "بروزرسانی",
         "test": "تست",
         "if-you-are-sure-delete-panel": "اگر از حذف این پنل اطمینان دارید, %s را در کادر وارد کنید.",
         "no-cancel": "خیر, لغو",
-        "yes-im-sure": "بله, مطمئنم!"
+        "yes-im-sure": "بله, مطمئنم!",
+        "updated-successfully": "بروزرسانی با موفقیت انجام شد",
+        "update-unsuccessfully": "بروزرسانی ناموفق شد",
+        "added-successfully": "با موفقیت افزوده شد",
+        "add-unsuccessfully": "افزودن ناموفق شد",
+        "deleted-successfully": "با موفقیت حذف شد",
+        "delete-unsuccessfully": "حذف ناموفق شد"
     }
 }
