@@ -24,5 +24,11 @@ export const Messages = {
             message: "Panels listed successfully.",
             code: 1
         }
+    },
+    PAYMENT: {
+        INVOICE_CREATED_SUCCESSFYLLY: {
+            message: "Invoice create successfully",
+            code: 1
+        }
     }
 }

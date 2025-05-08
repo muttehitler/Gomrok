@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
 
@@ -6,10 +6,9 @@ import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
 export class PaymentController {
     constructor(private paymentService: PaymentService) { }
 
-    @Get('add')
+    @Post()
     @UseGuards(new JwtAuthGuard(['user']))
-    async add(@Req() req) {
-        console.log(req.user['claims'])
-        return await this.paymentService.add()
+    async add(@Req() req, @Body() payment) {
+        return await this.paymentService.add(payment, req.user['sub'])
     }
 }

@@ -8,14 +8,17 @@ export default class Payment extends Document implements IEntity {
     status: boolean
     @Prop()
     completed: boolean
+    @Prop({ type: Types.ObjectId, ref: 'User' })
+    user: Types.ObjectId
     @Prop()
-    userId: Types.ObjectId
-    @Prop()
-    price: number
+    amount: number
     @Prop()
     currency: string
     @Prop()
     cardNumber: string
+    @Prop()
+    walletAddress: string
+
     @Prop()
     paymentMethod: string
 
