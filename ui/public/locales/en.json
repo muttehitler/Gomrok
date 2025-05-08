@@ -5,9 +5,8 @@
     "footer": "You can select a different language from the dropdown menu.",
     "toman": "Toman",
     "wallet-logs-header": "Wallet History",
-    "deposit": "Deposit",
-    "withdraw": "Withdraw",
-    "add-deposit": "Add Deposit",
+    "buy": "Buy",
+    "top-up": "Top-Up",
     "add-panel": "Add Panel",
     "cancel": "Cancel",
     "add": "Add",
@@ -37,6 +36,7 @@
     "add-unsuccessfully": "Add unsuccessfully",
     "deleted-successfully": "Deleted successfully",
     "delete-unsuccessfully": "Delete unsuccessfully",
-    "list-unsuccessfully": "List unsuccessfully"
+    "list-unsuccessfully": "List unsuccessfully",
+    "amount": "Amount"
   }
 }
