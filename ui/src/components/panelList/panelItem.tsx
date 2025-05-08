@@ -7,6 +7,7 @@ import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getCookie } from "@/lib/utils/cookie.helper";
 import { EditPanel } from "../editPanel/editPanel";
 import { DeletePanel } from "../deletePanel/deletePanel";
+import { Pencil, Trash2 } from "lucide-react";
 
 type Panel = {
     id: string
@@ -51,13 +52,13 @@ export const PanelItem: FC<Panel> = ({ id, name, type, url, weight }: Panel) => 
                         <MenuItems transition className="absolute right-0 z-10 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
                             <div className="py-1">
                                 <MenuItem>
-                                    <a onClick={() => { setEditVisablity(true) }} href="#" className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                        {t('edit')}
+                                    <a onClick={() => { setEditVisablity(true) }} href="#" className="flex px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        <Pencil size={16} />&ensp;{t('edit')}
                                     </a>
                                 </MenuItem>
                                 <MenuItem>
-                                    <a onClick={() => { setDeleteVisablity(true) }} href="#" className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                        {t('delete')}
+                                    <a onClick={() => { setDeleteVisablity(true) }} href="#" className="flex px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        <Trash2 size={16} />&ensp;{t('delete')}
                                     </a>
                                 </MenuItem>
                             </div>
