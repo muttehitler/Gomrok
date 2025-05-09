@@ -11,7 +11,7 @@ import { generateCsrfToken } from '@/lib/utils/csrf.helper';
 import { useEffect, useState } from 'react';
 import { getCookie } from '@/lib/utils/cookie.helper';
 import { createInvoice } from '@/actions/payment.action';
-import { TriangleAlert } from 'lucide-react';
+import { OctagonAlert, TriangleAlert } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
 const schema = z.object({
@@ -48,12 +48,14 @@ export default function TRXWallet() {
         <Page back={true}>
             <Toaster position="top-right" reverseOrder={false} />
             <div className='container'>
-                <h4>TRX Wallet</h4>
+                <h4>{t('trx-wallet')}</h4>
                 <br />
                 <form onSubmit={handleSubmit(createInvoiceHandler)}>
-                    <h4><TriangleAlert />&ensp;Notes:</h4>
-                    <p>"date alert"</p>
-                    <p>"amount alert"</p>
+                    <h4 className='flex'><TriangleAlert />&ensp;{t('notes')}:</h4>
+                    <br />
+                    <div className='flex'><OctagonAlert color='red' size={42} /><p>&ensp;{t("amount-alert")}</p></div>
+                    <div className='flex'><OctagonAlert color='red' size={32} /><p>&ensp;{t("date-alert")}</p></div>
+                    <br />
                     <label htmlFor="amount" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('amount')}</label>
                     <input {...register('amount')} name='amount' type="number" id="amount" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={t('amount')} required />
                     {errors.amount && <p style={{ color: 'red' }}>{errors.amount.message}</p>}

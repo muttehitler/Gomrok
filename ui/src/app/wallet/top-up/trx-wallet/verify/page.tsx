@@ -63,8 +63,6 @@ export default function Verify() {
         <Page back={true}>
             <Toaster position="top-right" reverseOrder={false} />
             <div className='container'>
-                <h4>TRX Wallet Validate</h4>
-                <br />
                 {isReady ? (<div>
                     <form onSubmit={handleSubmit(verifyInvoiceHandler)}>
                         <QRCodeSVG value={walletAddress} size={256} className='container qr-code' bgColor={Object.entries(tp).filter(([title, value]) => title == 'bgColor')[0][1]} fgColor={Object.entries(tp).filter(([title, value]) => title == 'buttonTextColor')[0][1]} imageSettings={{ src: "https://cdn-icons-png.flaticon.com/512/12114/12114250.png", height: 64, width: 64, opacity: 1, excavate: true, }} />
