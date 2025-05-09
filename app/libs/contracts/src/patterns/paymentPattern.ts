@@ -1,4 +1,5 @@
-export const PAYMENT_PATTERNS={
-    CLIENT:'payment_client',
-    ADD:'payment.add'
+export const PAYMENT_PATTERNS = {
+    CLIENT: 'payment_client',
+    ADD: 'payment.add',
+    GET: 'payment.get'
 }

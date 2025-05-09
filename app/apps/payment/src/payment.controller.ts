@@ -12,4 +12,9 @@ export class PaymentController {
   async addPayment(data: { payment: PaymentDto, authorId: string }) {
     return await this.paymentService.addPayment(data.payment, data.authorId);
   }
+
+  @MessagePattern(PAYMENT_PATTERNS.GET)
+  async get(data: { id: string, authorId: string }) {
+    return await this.paymentService.get(data.id, data.authorId)
+  }
 }
