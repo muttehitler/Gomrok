@@ -13,10 +13,10 @@ export default function TopUp() {
     return (
         <Page back={true}>
             <div className='container'>
-                <h4>Select top-up method:</h4>
+                <h4>{t('select-top-up-method')}:</h4>
                 <br />
                 <div className='section'>
-                    <a href='#' onClick={() => { router.push('/wallet/top-up/trx-wallet') }}>TRX Wallet</a>
+                    <a href='#' onClick={() => { router.push('/wallet/top-up/trx-wallet') }}>{t('trx-wallet')}</a>
                 </div>
             </div>
         </Page>
