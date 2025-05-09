@@ -1,10 +1,7 @@
 import { useTranslations } from "next-intl";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useState } from "react";
 import './style.css'
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { getPanelList } from "@/actions/panel.action";
-import { generateCsrfToken } from "@/lib/utils/csrf.helper";
-import { getCookie } from "@/lib/utils/cookie.helper";
 import { EditPanel } from "../editPanel/editPanel";
 import { DeletePanel } from "../deletePanel/deletePanel";
 import { Pencil, Trash2 } from "lucide-react";
@@ -20,17 +17,8 @@ type Panel = {
 export const PanelItem: FC<Panel> = ({ id, name, type, url, weight }: Panel) => {
     const t = useTranslations('i18n');
 
-    const [panels, setPanels] = useState<Panel[]>([])
     const [isEditVisable, setEditVisablity] = useState(false)
     const [isDeleteVisable, setDeleteVisablity] = useState(false)
-
-    useEffect(() => {
-        (async () => {
-            const panels = await getPanelList({ csrf: generateCsrfToken(getCookie('csrf') ?? '') })
-
-            setPanels(JSON.parse(panels))
-        })()
-    }, [])
 
     return (
         <div className='section'>
