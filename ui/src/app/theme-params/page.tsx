@@ -24,6 +24,16 @@ export default function ThemeParamsPage() {
               }))
           }
         />
+        <DisplayData
+          rows={
+            Object
+              .entries(tp)
+              .map(([title, value]) => ({
+                title: title,
+                value,
+              }))
+          }
+        />
       </List>
     </Page>
   );

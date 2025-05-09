@@ -29,6 +29,10 @@ export const Messages = {
         INVOICE_CREATED_SUCCESSFYLLY: {
             message: "Invoice create successfully",
             code: 1
+        },
+        INVOICE_GOT: {
+            message: "Invoice got",
+            code: 1
         }
     }
 }

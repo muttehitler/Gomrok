@@ -2,4 +2,5 @@ import PaymentOptionDto from "@app/contracts/models/dtos/payment/paymentOptionDt
 
 export default abstract class PaymentBase {
     abstract createInvoice(options: PaymentOptionDto, authorId: string)
+    abstract get(id: string, authorId: string)
 }

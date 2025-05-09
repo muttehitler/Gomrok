@@ -37,6 +37,13 @@
     "deleted-successfully": "Deleted successfully",
     "delete-unsuccessfully": "Delete unsuccessfully",
     "list-unsuccessfully": "List unsuccessfully",
-    "amount": "Amount"
+    "amount": "Amount",
+    "create-unsuccessfully": "Create unsuccessfully",
+    "get-unsuccessfully": "Not found!",
+    "copy-link": "Copy link",
+    "copied": "Copied!",
+    "wallet-address": "wallet-address",
+    "hash-code": "hash-code",
+    "verify": "verify"
   }
 }

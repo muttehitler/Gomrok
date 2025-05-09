@@ -37,6 +37,13 @@
         "deleted-successfully": "با موفقیت حذف شد",
         "delete-unsuccessfully": "حذف ناموفق شد",
         "list-unsuccessfully": "لیست ناموفق",
-        "amount": "مقدار"
+        "amount": "مقدار",
+        "create-unsuccessfully": "ساخته نشد!",
+        "get-unsuccessfully": "یافت نشد!",
+        "copy-link": "کپی لینک",
+        "copied": "کپی شد!",
+        "wallet-address": "آدرس ولت",
+        "hash-code": "کد hash",
+        "verify": "بررسی کد hash"
     }
 }
