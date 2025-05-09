@@ -35,7 +35,7 @@ export const PanelList: FC = () => {
         emitter.on('listPanels', async () => {
             setPanels([])
 
-            const result = JSON.parse(await getPanelList({ csrf: generateCsrfToken(getCookie('csrf') ?? ''), startIndex: (currentPageRef.current - 1) * pageSize, limit: pageSize, order: -1 }))
+            const result = JSON.parse(await getPanelList({ csrf: generateCsrfToken(getCookie('csrf')!), startIndex: (currentPageRef.current - 1) * pageSize, limit: pageSize, order: -1 }))
 
             if (!result.success) {
                 toast.error(t('list-unsuccessfully') + ": " + result.message.toString(), {

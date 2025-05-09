@@ -25,10 +25,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       <body>
         <I18nProvider>
           <Root>
-            <CheckAuth />
-            {children}
-            <Navbar />
-            <div className="min-h-[90px]"></div>
+            <CheckAuth>
+              {children}
+              <Navbar />
+              <div className="min-h-[90px]"></div>
+            </CheckAuth>
           </Root>
         </I18nProvider>
       </body>

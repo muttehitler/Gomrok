@@ -1,31 +1,41 @@
 'use client'
 
 import { login } from "@/actions/auth.action"
-import { init } from "@/core/init"
 import { getCookie, setCookie } from "@/lib/utils/cookie.helper"
-import { generateCsrfToken } from "@/lib/utils/csrf.helper"
 import { initData, useSignal } from "@telegram-apps/sdk-react"
-import { useEffect, useState } from "react"
+import { ReactNode, useEffect, useState } from "react"
 import crypto from 'crypto'
+type CheckAuthProps = {
+    children: ReactNode;
+};
 
-export default function CheckAuth() {
+export default function CheckAuth({ children }: CheckAuthProps) {
+    const [auth, setAuth] = useState(false)
+
     let token = getCookie('token')
+    let csrf = getCookie('csrf')
 
-    if (!token) {
-        const raw = useSignal(initData.raw)
+    const raw = useSignal(initData.raw)
 
-        useEffect(() => {
-            (async () => {
-                const data = await login(raw ?? '')
+    useEffect(() => {
+        (async () => {
+            if (token&&csrf) {
+                setAuth(true)
+                return
+            }
 
-                setCookie('token', data.token, new Date(data.expiration).getDate(), { path: '/', httpOnly: false })
+            const data = await login(raw ?? '')
 
-                const csrfSecret = crypto.randomBytes(64).toString('hex')
+            setCookie('token', data.token, new Date(data.expiration).getDate(), { path: '/', httpOnly: false })
 
-                setCookie('csrf', csrfSecret ?? 'sdkf', new Date(data.expiration).getDate(), { path: '/', httpOnly: false })
-            })()
-        }, []);
-    }
+            const csrfSecret = crypto.randomBytes(64).toString('hex')
+            
+            setCookie('csrf', csrfSecret ?? 'sdkf', new Date(data.expiration).getDate(), { path: '/', httpOnly: false })
 
-    return (<div></div>)
+            setAuth(true)
+        })()
+    }, []);
+
+
+    return auth ? (<>{children}</>) : (<div className="root__loading">Loading</div>)
 }
