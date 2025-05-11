@@ -1,4 +1,4 @@
 export const AUTH_PATTERNS={
-    CLIENT:'user_client',
+    CLIENT:'auth_client',
     LOGIN:'auth.login'
 }

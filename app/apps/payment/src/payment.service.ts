@@ -27,4 +27,11 @@ export class PaymentService {
 
     return result
   }
+
+  async verify(payment: PaymentDto, authorId: string) {
+    const paymentService = await this.moduleRef.resolve<PaymentBase>(payment.paymentMethod)
+    const result = await paymentService.verify(payment.paymentData, authorId)
+
+    return result
+  }
 }

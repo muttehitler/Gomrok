@@ -18,10 +18,14 @@ export default class Payment extends Document implements IEntity {
     cardNumber: string
     @Prop()
     walletAddress: string
+    @Prop({ type: String, unique: true })
+    hash: string
 
     @Prop()
     paymentMethod: string
 
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export type PaymentDocument = Payment & Document;

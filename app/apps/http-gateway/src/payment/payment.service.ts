@@ -14,4 +14,8 @@ export class PaymentService {
     async get(id: string, authorId: string) {
         return await this.paymentClient.send(PAYMENT_PATTERNS.GET, { id: id, authorId: authorId })
     }
+
+    async verify(payment: PaymentDto, authorId: string) {
+        return await this.paymentClient.send(PAYMENT_PATTERNS.VERIFY, { payment: payment, authorId: authorId })
+    }
 }

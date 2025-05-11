@@ -33,6 +33,40 @@ export const Messages = {
         INVOICE_GOT: {
             message: "Invoice got",
             code: 1
+        },
+        INVOICE_VERIFIED: {
+            message: "Invoice verified",
+            code: 1
+        },
+        HASH_USED: {
+            message: "Hash used",
+            code: 2
+        },
+        WALLET_ADDRESS_INVALID: {
+            message: "Wallet address invalid",
+            code: 3
+        },
+        TRANSACTION_ISNT_COMPLETED: {
+            message: "Transaction isn't completed",
+            code: 4
+        },
+        PAYMENT_DOESNT_EXIST: {
+            message: "Payment doesn't exist",
+            code: 5
+        },
+        HASH_ISNT_YOURS: {
+            message: "Hash isn't yours",
+            code: 6
+        },
+        CANNOT_INCREASE_BALANCE: {
+            message: "Cannot increase balance",
+            code: 7
+        }
+    },
+    USER: {
+        BALANCE_UPDATED_SUCCESSFULLY: {
+            message: "Balance updated successfully",
+            code: 1
         }
     }
 }
