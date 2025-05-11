@@ -7,6 +7,9 @@ import { AuthModule } from './auth/auth.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import User, { UserSchema } from './models/concrete/user';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
 
 @Global()
 @Module({
@@ -21,6 +24,17 @@ import { MongooseModule } from '@nestjs/mongoose';
       global: true
     }),
     MongooseModule.forRoot(process.env.AUTH_MONGO_STRING?.toString() ?? '', { dbName: 'userdb' }),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    ClientsModule.register([
+      {
+        name: USER_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      }
+    ])
   ],
   controllers: [UserController],
   providers: [
