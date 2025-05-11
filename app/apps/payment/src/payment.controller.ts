@@ -17,4 +17,9 @@ export class PaymentController {
   async get(data: { id: string, authorId: string }) {
     return await this.paymentService.get(data.id, data.authorId)
   }
+
+  @MessagePattern(PAYMENT_PATTERNS.VERIFY)
+  async verify(data: { payment: PaymentDto, authorId: string }) {
+    return await this.paymentService.verify(data.payment, data.authorId)
+  }
 }

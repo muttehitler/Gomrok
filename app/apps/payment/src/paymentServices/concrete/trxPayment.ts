@@ -1,16 +1,127 @@
 import PaymentOptionDto from "@app/contracts/models/dtos/payment/paymentOptionDto";
 import PaymentBase from "../abstract/paymentBase";
 import Payment, { PaymentDocument } from "../../models/concrete/payment";
-import { Model, Types } from "mongoose";
+import mongoose, { Model, Types } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { PaymentMethod } from "../../patterns/paymentMethod";
 import DataResultDto from "@app/contracts/models/dtos/dataResultDto";
 import PaymentResultDto from "@app/contracts/models/dtos/payment/paymentResultDto";
 import { Messages } from "@app/contracts/messages/messages";
-import { NotFoundException } from "@nestjs/common";
+import { Inject, NotFoundException } from "@nestjs/common";
+import PaymentDataDto from "@app/contracts/models/dtos/payment/paymentDataDto";
+import ResultDto from "@app/contracts/models/dtos/resultDto";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
+import { USER_PATTERNS } from "@app/contracts/patterns/userPattern";
+import { ClientProxy } from "@nestjs/microservices";
 
 export default class TRXPayment implements PaymentBase {
-    constructor(@InjectModel(Payment.name) private paymentModel: Model<PaymentDocument>) { }
+    constructor(@InjectModel(Payment.name) private paymentModel: Model<PaymentDocument>,
+        private httpService: HttpService,
+        @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy) { }
+
+    async verify(data: PaymentDataDto, authorId: string): Promise<ResultDto> {
+        let result: ResultDto = { success: false, message: '', statusCode: 0 }
+        const session = await mongoose.startSession()
+        try {
+            await session.withTransaction(async () => {
+                if (await this.paymentModel.findOne({ hash: data.hash })) {
+                    result = {
+                        success: true,
+                        message: Messages.PAYMENT.HASH_USED.message,
+                        statusCode: Messages.PAYMENT.HASH_USED.code
+                    }
+                    return
+                }
+                const userPayment = await this.paymentModel.findOne({ user: new Types.ObjectId(authorId) }).sort({ createdAt: -1 })
+
+                if (!userPayment) {
+                    result = {
+                        success: false,
+                        message: Messages.PAYMENT.PAYMENT_DOESNT_EXIST.message,
+                        statusCode: Messages.PAYMENT.PAYMENT_DOESNT_EXIST.code
+                    }
+                    return
+                }
+
+                const headers = {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json',
+                };
+
+                const response = await firstValueFrom(this.httpService.get("https://apilist.tronscanapi.com/api/transaction-info?hash=" + data.hash, { headers, validateStatus: () => true }))
+
+                if (response.data.toAddress != userPayment?.walletAddress) {
+                    result = {
+                        success: false,
+                        message: Messages.PAYMENT.WALLET_ADDRESS_INVALID.message,
+                        statusCode: Messages.PAYMENT.WALLET_ADDRESS_INVALID.code
+                    }
+                    return
+                }
+                if (response.data.contractRet != 'SUCCESS') {
+                    result = {
+                        success: false,
+                        message: Messages.PAYMENT.TRANSACTION_ISNT_COMPLETED.message,
+                        statusCode: Messages.PAYMENT.TRANSACTION_ISNT_COMPLETED.code
+                    }
+                    return
+                }
+
+                const trxAmount = response.data.contractData.amount / 1000000
+
+                if (userPayment.createdAt > new Date(response.data.timestamp / 1000)) {
+                    result = {
+                        success: false,
+                        message: Messages.PAYMENT.HASH_ISNT_YOURS.message,
+                        statusCode: Messages.PAYMENT.HASH_ISNT_YOURS.code
+                    }
+                    return
+                }
+
+                if ((userPayment.amount - 0.5) < trxAmount && (userPayment.amount + 0.5) > trxAmount) {
+                    result = {
+                        success: false,
+                        message: Messages.PAYMENT.HASH_ISNT_YOURS.message,
+                        statusCode: Messages.PAYMENT.HASH_ISNT_YOURS.code
+                    }
+                    return
+                }
+
+                const tronRateResponse = await firstValueFrom(this.httpService.get("https://api.muslum.ir/api/Info/rates", { headers, validateStatus: () => true }))
+
+                const usdtRate = tronRateResponse.data.fiats[0].price
+                const trxRate = tronRateResponse.data.coins[0].price * usdtRate
+
+                const rialPrice = Math.round(trxAmount / 1000000 * trxRate)
+
+                const userBalance = (Number)(await this.userClient.send(USER_PATTERNS.GET_USER_BALANCE, authorId))
+
+                const updateUserBalanceResult = await this.userClient.send(USER_PATTERNS.UPDATE_USER_BALANCE, { userId: authorId, balance: (userBalance + rialPrice) }).toPromise() as ResultDto
+
+                if (!updateUserBalanceResult.success) {
+                    result = {
+                        success: false,
+                        message: Messages.PAYMENT.CANNOT_INCREASE_BALANCE.message,
+                        statusCode: Messages.PAYMENT.CANNOT_INCREASE_BALANCE.code
+                    }
+                    return
+                }
+            })
+        } catch (error) {
+
+        } finally {
+            session.endSession()
+
+            result = {
+                success: true,
+                message: Messages.PAYMENT.INVOICE_VERIFIED.message,
+                statusCode: Messages.PAYMENT.INVOICE_VERIFIED.code
+            }
+        }
+
+        return result
+    }
 
     async get(id: string, authorId: string): Promise<DataResultDto<PaymentResultDto>> {
         const payment = await this.paymentModel.findById(new Types.ObjectId(id))
