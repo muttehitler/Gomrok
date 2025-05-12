@@ -6,6 +6,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { getCookie } from "@/lib/utils/cookie.helper";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getPanel } from "@/actions/panel.action";
+import { DeleteProduct } from "../deleteProduct/deleteProduct";
 
 type Product = {
     id: string
@@ -63,7 +64,7 @@ export const ProductItem: FC<Product> = ({ id, name, panel }: Product) => {
                     <br />
                 </div>
                 {/* {isEditVisable && (<EditProduct visableState={[isEditVisable, setEditVisablity]} id={id} />)} */}
-                {/* <DeleteProduct id={id} name={name} visableState={[isDeleteVisable, setDeleteVisablity]} /> */}
+                <DeleteProduct id={id} name={name} visableState={[isDeleteVisable, setDeleteVisablity]} />
             </div>
         </div>
     )

@@ -68,4 +68,13 @@ export class ProductService {
       }
     }
   }
+
+  async delete(id: string): Promise<ResultDto> {
+    await this.productModel.deleteOne({ _id: new Types.ObjectId(id) })
+    return {
+      success: true,
+      message: Messages.PRODUCT.PRODUCT_DELETED_SUCCESSFULLY.message,
+      statusCode: Messages.PRODUCT.PRODUCT_DELETED_SUCCESSFULLY.code
+    }
+  }
 }

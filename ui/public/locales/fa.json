@@ -38,6 +38,7 @@
         "update": "بروزرسانی",
         "test": "تست",
         "if-you-are-sure-delete-panel": "اگر از حذف این پنل اطمینان دارید, %s را در کادر وارد کنید.",
+        "if-you-are-sure-delete-product": "اگر از حذف این محصول اطمینان دارید, %s را در کادر وارد کنید.",
         "no-cancel": "خیر, لغو",
         "yes-im-sure": "بله, مطمئنم!",
         "updated-successfully": "بروزرسانی با موفقیت انجام شد",

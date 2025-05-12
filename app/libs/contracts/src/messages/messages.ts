@@ -85,6 +85,10 @@ export const Messages = {
         PRODUCT_LISTED_SUCCESSFULLY: {
             message: "Product listed successfully.",
             code: 1
+        },
+        PRODUCT_DELETED_SUCCESSFULLY: {
+            message: "Product deleted successfully.",
+            code: 1
         }
     }
 }
