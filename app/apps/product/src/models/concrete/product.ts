@@ -16,9 +16,18 @@ export default class Product extends Document implements IEntity {
     userLimit: number
     @Prop({ type: Boolean })
     onHold: boolean
+    @Prop({ type: Number })
+    price: number
+    @Prop()
+    code: string
+    @Prop({ type: Number })
+    weight: number
 
     @Prop({ type: Types.ObjectId, ref: 'Panel' })
     panel: Types.ObjectId
+
+    @Prop({ type: Types.ObjectId, ref: 'User' })
+    author: Types.ObjectId
 }
 
 

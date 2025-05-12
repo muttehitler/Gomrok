@@ -72,5 +72,15 @@ export const Messages = {
             message: "Balance got successfully",
             code: 1
         }
+    },
+    PRODUCT: {
+        PRODUCT_ADDED_SUCCESSFULLY: {
+            message: "Product added successfully",
+            code: 1
+        },
+        PRODUCT_IS_EXIST: {
+            message: "Product is exist",
+            code: 2
+        }
     }
 }

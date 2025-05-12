@@ -42,6 +42,11 @@ export default function Home() {
               Admin Panel
             </Cell>
           </Link>
+          <Link href="/admin/product">
+            <Cell subtitle="admin product">
+              Admin Product
+            </Cell>
+          </Link>
           <Link href="/balance">
             <Cell subtitle="balance">
               Balance
