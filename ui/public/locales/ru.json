@@ -49,6 +49,7 @@
     "notes": "Notes",
     "amount-alert": "Be sure to send the specified amount to the wallet. Otherwise, your payment will not be confirmed!",
     "date-alert": "Please do not send anything to the wallet before generating the invoice.",
-    "select-top-up-method": "Select top-up method"
+    "select-top-up-method": "Select top-up method",
+    "get-balance-unsuccessfully": "Cannot get balance"
   }
 }
