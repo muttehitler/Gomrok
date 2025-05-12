@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
 import FilterDto from '@app/contracts/models/dtos/filterDto';
@@ -17,5 +17,11 @@ export class ProductController {
     @UseGuards(new JwtAuthGuard(['admin']))
     async getList(@Query() filter: FilterDto) {
         return await this.productService.getList(filter)
+    }
+
+    @Delete(':id')
+    @UseGuards(new JwtAuthGuard(['admin']))
+    async delete(@Param('id') id: string) {
+        return await this.productService.delete(id)
     }
 }

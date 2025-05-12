@@ -18,4 +18,9 @@ export class ProductController {
   async getList(filter: FilterDto) {
     return await this.productService.getList(filter)
   }
+
+  @MessagePattern(PRODUCT_PATTERNS.DELETE)
+  async delete(id: string) {
+    return await this.productService.delete(id)
+  }
 }

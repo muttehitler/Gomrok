@@ -15,4 +15,8 @@ export class ProductService {
     async getList(filter: FilterDto) {
         return await this.productClient.send(PRODUCT_PATTERNS.GET_LIST, filter)
     }
+
+    async delete(id: string) {
+        return await this.productClient.send(PRODUCT_PATTERNS.DELETE, id)
+    }
 }

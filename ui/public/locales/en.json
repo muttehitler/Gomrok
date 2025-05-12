@@ -38,6 +38,7 @@
     "update": "Update",
     "test": "Test",
     "if-you-are-sure-delete-panel": "If you are sure you want to delete this panel, input %s to box.",
+    "if-you-are-sure-delete-product": "If you are sure you want to delete this product, input %s to box.",
     "no-cancel": "No, cancel",
     "yes-im-sure": "Yes, I'm sure",
     "updated-successfully": "Updated successfully",
