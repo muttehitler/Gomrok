@@ -14,6 +14,9 @@ import { JwtStrategy } from '@app/contracts/utils/jwt_token/strategies/jwt.strat
 import { PanelModule } from './panel/panel.module';
 import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
 import { ProductModule } from './product/product.module';
+import { UserController } from './user/user.controller';
+import { UserService } from './user/user.service';
+import { UserModule } from './user/user.module';
 
 @Global()
 @Module({
@@ -59,7 +62,8 @@ import { ProductModule } from './product/product.module';
     AuthModule,
     PaymentModule,
     PanelModule,
-    ProductModule
+    ProductModule,
+    UserModule
   ],
   controllers: [HttpGatewayController],
   providers: [HttpGatewayService, JwtStrategy],

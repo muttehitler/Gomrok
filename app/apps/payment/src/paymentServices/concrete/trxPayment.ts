@@ -95,9 +95,9 @@ export default class TRXPayment implements PaymentBase {
 
                 const rialPrice = Math.round(trxAmount / 1000000 * trxRate)
 
-                const userBalance = (Number)(await this.userClient.send(USER_PATTERNS.GET_USER_BALANCE, authorId))
+                const userBalance = await this.userClient.send(USER_PATTERNS.GET_USER_BALANCE, authorId).toPromise() as DataResultDto<number>
 
-                const updateUserBalanceResult = await this.userClient.send(USER_PATTERNS.UPDATE_USER_BALANCE, { userId: authorId, balance: (userBalance + rialPrice) }).toPromise() as ResultDto
+                const updateUserBalanceResult = await this.userClient.send(USER_PATTERNS.UPDATE_USER_BALANCE, { userId: authorId, balance: (userBalance.data + rialPrice) }).toPromise() as ResultDto
 
                 if (!updateUserBalanceResult.success) {
                     result = {
