@@ -6,6 +6,9 @@ import { Messages } from '@app/contracts/messages/messages';
 import generateRandomId from '@app/contracts/utils/random/randomString';
 import { InjectModel } from '@nestjs/mongoose';
 import ResultDto from '@app/contracts/models/dtos/resultDto';
+import FilterDto from '@app/contracts/models/dtos/filterDto';
+import ListDto from '@app/contracts/models/dtos/listDto';
+import DataResultDto from '@app/contracts/models/dtos/dataResultDto';
 
 @Injectable()
 export class ProductService {
@@ -34,6 +37,35 @@ export class ProductService {
       success: true,
       message: Messages.PRODUCT.PRODUCT_ADDED_SUCCESSFULLY.message,
       statusCode: Messages.PRODUCT.PRODUCT_ADDED_SUCCESSFULLY.code
+    }
+  }
+
+  async getList({ startIndex, limit, order }: FilterDto): Promise<DataResultDto<ListDto<ProductDto[]>>> {
+    const query = this.productModel.find({ status: true })
+    const list = (await query.skip(startIndex).limit(limit).sort({ createdAt: order == 1 ? 1 : -1 })).map<ProductDto>(x => {
+      return {
+        id: String(x._id),
+        name: x.name,
+        panel: String(x.panel),
+        payAsYouGo: x.payAsYouGo,
+        usageDuration: x.usageDuration,
+        dataLimit: x.dataLimit,
+        userLimit: x.userLimit,
+        onHold: x.onHold,
+        price: x.price,
+        weight: x.weight,
+        code: x.code
+      }
+    })
+
+    return {
+      success: true,
+      message: Messages.PRODUCT.PRODUCT_LISTED_SUCCESSFULLY.message,
+      statusCode: Messages.PRODUCT.PRODUCT_LISTED_SUCCESSFULLY.code,
+      data: {
+        items: list,
+        length: (await this.productModel.find({ status: true })).length
+      }
     }
   }
 }

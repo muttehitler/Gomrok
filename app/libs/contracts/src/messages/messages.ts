@@ -81,6 +81,10 @@ export const Messages = {
         PRODUCT_IS_EXIST: {
             message: "Product is exist",
             code: 2
+        },
+        PRODUCT_LISTED_SUCCESSFULLY: {
+            message: "Product listed successfully.",
+            code: 1
         }
     }
 }
