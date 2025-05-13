@@ -89,6 +89,10 @@ export const Messages = {
         PRODUCT_DELETED_SUCCESSFULLY: {
             message: "Product deleted successfully.",
             code: 1
+        },
+        PRODUCT_UPDATED_SUCCESSFULLY: {
+            message: "Product updated successfully.",
+            code: 1
         }
     }
 }

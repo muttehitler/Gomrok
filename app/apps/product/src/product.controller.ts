@@ -23,4 +23,9 @@ export class ProductController {
   async delete(id: string) {
     return await this.productService.delete(id)
   }
+
+  @MessagePattern(PRODUCT_PATTERNS.UPDATE)
+  async update(data: { id: string, product: ProductDto }) {
+    return await this.productService.update(data.id, data.product)
+  }
 }

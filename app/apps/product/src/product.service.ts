@@ -77,4 +77,26 @@ export class ProductService {
       statusCode: Messages.PRODUCT.PRODUCT_DELETED_SUCCESSFULLY.code
     }
   }
+
+  async update(id: string, product: ProductDto): Promise<ResultDto> {
+    const p = await this.productModel.updateOne({ _id: id }, {
+      $set: {
+        name: product.name,
+        panel: product.panel,
+        payAsYouGo: product.payAsYouGo,
+        usageDuration: product.usageDuration,
+        dataLimit: product.dataLimit,
+        userLimit: product.userLimit,
+        onHold: product.onHold,
+        price: product.price,
+        code: product.code,
+        weight: product.weight
+      }
+    })
+    return {
+      success: true,
+      message: Messages.PRODUCT.PRODUCT_UPDATED_SUCCESSFULLY.message,
+      statusCode: Messages.PRODUCT.PRODUCT_UPDATED_SUCCESSFULLY.code
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import FilterDto from '@app/contracts/models/dtos/filterDto';
 import ProductDto from '@app/contracts/models/dtos/product/productDto';
+import ResultDto from '@app/contracts/models/dtos/resultDto';
 import { PRODUCT_PATTERNS } from '@app/contracts/patterns/productPattern';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -18,5 +19,9 @@ export class ProductService {
 
     async delete(id: string) {
         return await this.productClient.send(PRODUCT_PATTERNS.DELETE, id)
+    }
+
+    async update(id: string, product: ProductDto) {
+        return await this.productClient.send(PRODUCT_PATTERNS.UPDATE, { id: id, product: product })
     }
 }
