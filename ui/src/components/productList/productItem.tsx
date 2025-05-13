@@ -7,6 +7,7 @@ import { getCookie } from "@/lib/utils/cookie.helper";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getPanel } from "@/actions/panel.action";
 import { DeleteProduct } from "../deleteProduct/deleteProduct";
+import { EditProduct } from "../editProduct/editProduct";
 
 type Product = {
     id: string
@@ -29,7 +30,7 @@ export const ProductItem: FC<Product> = ({ id, name, panel }: Product) => {
         })()
     }, [])
 
-    return (
+    return (panelName != '') && (
         <div className='section'>
             <div>
                 <div className='flex' key={id}>
@@ -63,7 +64,7 @@ export const ProductItem: FC<Product> = ({ id, name, panel }: Product) => {
                     </Menu>
                     <br />
                 </div>
-                {/* {isEditVisable && (<EditProduct visableState={[isEditVisable, setEditVisablity]} id={id} />)} */}
+                {isEditVisable && (<EditProduct visableState={[isEditVisable, setEditVisablity]} id={id} />)}
                 <DeleteProduct id={id} name={name} visableState={[isDeleteVisable, setDeleteVisablity]} />
             </div>
         </div>

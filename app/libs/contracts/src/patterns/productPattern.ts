@@ -3,5 +3,6 @@ export const PRODUCT_PATTERNS = {
     ADD: 'product.add',
     GET_LIST: 'product.get_list',
     DELETE: 'product.delete',
-    UPDATE: 'product.update'
+    UPDATE: 'product.update',
+    GET: 'product.get'
 }

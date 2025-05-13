@@ -24,4 +24,8 @@ export class ProductService {
     async update(id: string, product: ProductDto) {
         return await this.productClient.send(PRODUCT_PATTERNS.UPDATE, { id: id, product: product })
     }
+
+    async get(id: string) {
+        return await this.productClient.send(PRODUCT_PATTERNS.GET, id)
+    }
 }

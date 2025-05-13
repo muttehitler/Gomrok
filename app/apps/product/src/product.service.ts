@@ -29,7 +29,7 @@ export class ProductService {
       onHold: product.onHold,
       price: product.price,
       weight: product.weight,
-      productCode: generateRandomId(4)
+      code: generateRandomId(4)
     })
     await model.save()
 
@@ -66,6 +66,23 @@ export class ProductService {
         items: list,
         length: (await this.productModel.find({ status: true })).length
       }
+    }
+  }
+
+  async get(id: string): Promise<ProductDto> {
+    const product = await this.productModel.findById(new Types.ObjectId(id))
+    return {
+      id: String(product?._id),
+      name: product?.name!,
+      panel: String(product?.panel!),
+      payAsYouGo: product?.payAsYouGo!,
+      usageDuration: product?.usageDuration!,
+      dataLimit: product?.dataLimit!,
+      userLimit: product?.userLimit!,
+      onHold: product?.onHold!,
+      price: product?.price!,
+      weight: product?.weight!,
+      code: product?.code!
     }
   }
 
