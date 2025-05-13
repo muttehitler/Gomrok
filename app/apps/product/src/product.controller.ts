@@ -28,4 +28,9 @@ export class ProductController {
   async update(data: { id: string, product: ProductDto }) {
     return await this.productService.update(data.id, data.product)
   }
+
+  @MessagePattern(PRODUCT_PATTERNS.GET)
+  async get(id: string) {
+    return await this.productService.get(id)
+  }
 }
