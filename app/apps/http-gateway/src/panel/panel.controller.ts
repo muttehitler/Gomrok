@@ -25,6 +25,12 @@ export class PanelController {
         return await this.panelService.add(panelDto, req.user['sub'])
     }
 
+    @Get('get_locations')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getLocations(@Query() filter: FilterDto) {
+        return await this.panelService.getLocations(filter)
+    }
+
     @Get()
     @UseGuards(new JwtAuthGuard(['admin']))
     async getList(@Query() filter: FilterDto): Promise<DataResultDto<ListDto<PanelDto[]>>> {

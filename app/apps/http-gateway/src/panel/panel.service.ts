@@ -35,4 +35,8 @@ export class PanelService {
     async delete(id: string): Promise<ResultDto> {
         return await this.panelClient.send(PANEL_PATTERNS.DELETE, id).toPromise()
     }
+
+    async getLocations(filter: FilterDto) {
+        return await this.panelClient.send(PANEL_PATTERNS.GET_LOCATION, filter)
+    }
 }

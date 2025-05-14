@@ -42,4 +42,9 @@ export class PanelController {
   async delete(id: string): Promise<ResultDto> {
     return await this.panelService.delete(id)
   }
+
+  @MessagePattern(PANEL_PATTERNS.GET_LOCATION)
+  async getLocations(filter: FilterDto){
+    return await this.panelService.getLocations(filter)
+  }
 }

@@ -106,4 +106,19 @@ export class PanelService {
       statusCode: Messages.PANEL.PANEL_DELETED_SUCCESSFULLY.code
     }
   }
+
+  async getLocations({ startIndex, limit, order }: FilterDto): Promise<DataResultDto<ListDto<PanelDto[]>>> {
+    const query = this.panelModel.find({ status: true })
+    const list = (await query.skip(startIndex).limit(limit).sort({ createdAt: order == 1 ? 1 : -1 })).map<PanelDto>(x => { return { id: String(x._id), name: x.name, type: x.type, url: x.url, weight: x.weight } })
+
+    return {
+      success: true,
+      message: Messages.PANEL.PANEL_LISTED_SUCCESSFULLY.message,
+      statusCode: Messages.PANEL.PANEL_LISTED_SUCCESSFULLY.code,
+      data: {
+        items: list,
+        length: (await this.panelModel.find({ status: true })).length
+      }
+    }
+  }
 }

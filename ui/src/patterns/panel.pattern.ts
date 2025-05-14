@@ -4,5 +4,6 @@ export const PANEL_PATTERNS = {
     GET_LIST: '/panel',
     GET: '/panel/',
     UPDATE: '/panel/',
-    DELETE: '/panel/'
+    DELETE: '/panel/',
+    GET_LOCATIONS: '/panel/get_locations'
 }
