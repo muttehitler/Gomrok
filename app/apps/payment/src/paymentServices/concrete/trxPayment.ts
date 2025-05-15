@@ -7,7 +7,7 @@ import { PaymentMethod } from "../../patterns/paymentMethod";
 import DataResultDto from "@app/contracts/models/dtos/dataResultDto";
 import PaymentResultDto from "@app/contracts/models/dtos/payment/paymentResultDto";
 import { Messages } from "@app/contracts/messages/messages";
-import { Inject, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Inject, NotFoundException } from "@nestjs/common";
 import PaymentDataDto from "@app/contracts/models/dtos/payment/paymentDataDto";
 import ResultDto from "@app/contracts/models/dtos/resultDto";
 import { HttpService } from "@nestjs/axios";
@@ -127,6 +127,8 @@ export default class TRXPayment implements PaymentBase {
         const payment = await this.paymentModel.findById(new Types.ObjectId(id))
         if (!payment)
             throw new NotFoundException()
+        if (String(payment.user) != authorId)
+            throw new ForbiddenException()
 
         return {
             success: true,
