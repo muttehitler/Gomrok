@@ -9,6 +9,7 @@ import TRXPayment from './paymentServices/concrete/trxPayment';
 import { HttpModule } from '@nestjs/axios';
 import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import WalletLog, { WalletLogSchema } from './models/concrete/walletLogs';
 
 @Global()
 @Module({
@@ -16,6 +17,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.AUTH_MONGO_STRING?.toString() ?? '', { dbName: 'paymentdb' }),
     MongooseModule.forFeature([{ name: Payment.name, schema: PaymentSchema }]),
+    MongooseModule.forFeature([{ name: WalletLog.name, schema: WalletLogSchema }]),
     HttpModule,
     ClientsModule.register([
       {
