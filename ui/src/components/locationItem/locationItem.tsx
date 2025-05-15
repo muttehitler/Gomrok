@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { FC } from "react";
 import './style.css'
+import { useRouter } from "next/navigation";
 
 type Panel = {
     id: string
@@ -13,8 +14,10 @@ type Panel = {
 export const LocationItem: FC<Panel> = ({ id, name, type, url, weight }: Panel) => {
     const t = useTranslations('i18n');
 
+    const router = useRouter();
+
     return (
-        <div onClick={() => { }} className='yarim-section'>
+        <div onClick={() => { router.push('/product?panel=' + id) }} className='yarim-section'>
             <div>
                 <div className='flex' key={id}>
                     <div>

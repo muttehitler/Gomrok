@@ -33,4 +33,9 @@ export class ProductController {
   async get(id: string) {
     return await this.productService.get(id)
   }
+
+  @MessagePattern(PRODUCT_PATTERNS.GET_BY_PANEL)
+  async getByPanel(data: { filter: FilterDto, panelId: string }) {
+    return await this.productService.getListByPanel(data.filter, data.panelId)
+  }
 }
