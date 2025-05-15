@@ -31,3 +31,16 @@ export async function getInvoice(data: any) {
     })
     return JSON.stringify(response.data)
 }
+
+export async function verifyInvoice(data: any) {
+    validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
+    const response = await axios.post(process.env.API_ADDRESS + PAYMENT_PATTERNS.VERIFY, data, {
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + (await cookies()).get('token')?.value
+        },
+        validateStatus: () => true
+    })
+    return JSON.stringify(response.data)
+}

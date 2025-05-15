@@ -7,22 +7,25 @@ import { PaymentMethod } from "../../patterns/paymentMethod";
 import DataResultDto from "@app/contracts/models/dtos/dataResultDto";
 import PaymentResultDto from "@app/contracts/models/dtos/payment/paymentResultDto";
 import { Messages } from "@app/contracts/messages/messages";
-import { ForbiddenException, Inject, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import PaymentDataDto from "@app/contracts/models/dtos/payment/paymentDataDto";
 import ResultDto from "@app/contracts/models/dtos/resultDto";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { USER_PATTERNS } from "@app/contracts/patterns/userPattern";
 import { ClientProxy } from "@nestjs/microservices";
+import WalletLog, { WalletLogDocument } from "../../models/concrete/walletLogs";
 
+@Injectable()
 export default class TRXPayment implements PaymentBase {
     constructor(@InjectModel(Payment.name) private paymentModel: Model<PaymentDocument>,
+        @InjectModel(WalletLog.name) private walletLogModel: Model<WalletLogDocument>,
         private httpService: HttpService,
         @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy) { }
 
     async verify(data: PaymentDataDto, authorId: string): Promise<ResultDto> {
         let result: ResultDto = { success: false, message: '', statusCode: 0 }
-        const session = await mongoose.startSession()
+        const session = await this.paymentModel.startSession()
         try {
             await session.withTransaction(async () => {
                 if (await this.paymentModel.findOne({ hash: data.hash })) {
@@ -35,7 +38,7 @@ export default class TRXPayment implements PaymentBase {
                 }
                 const userPayment = await this.paymentModel.findOne({ user: new Types.ObjectId(authorId) }).sort({ createdAt: -1 })
 
-                if (!userPayment) {
+                if (!userPayment || userPayment.completed || !userPayment.status) {
                     result = {
                         success: false,
                         message: Messages.PAYMENT.PAYMENT_DOESNT_EXIST.message,
@@ -79,7 +82,7 @@ export default class TRXPayment implements PaymentBase {
                     return
                 }
 
-                if ((userPayment.amount - 0.5) < trxAmount && (userPayment.amount + 0.5) > trxAmount) {
+                if ((userPayment.amount - 0.5) > trxAmount || (userPayment.amount + 0.5) < trxAmount) {
                     result = {
                         success: false,
                         message: Messages.PAYMENT.HASH_ISNT_YOURS.message,
@@ -88,12 +91,12 @@ export default class TRXPayment implements PaymentBase {
                     return
                 }
 
-                const tronRateResponse = await firstValueFrom(this.httpService.get("https://api.muslum.ir/api/Info/rates", { headers, validateStatus: () => true }))
+                const tronRateResponse = await firstValueFrom(this.httpService.get(process.env.RATE_ADDRESS!, { headers, validateStatus: () => true }))
 
                 const usdtRate = tronRateResponse.data.fiats[0].price
                 const trxRate = tronRateResponse.data.coins[0].price * usdtRate
 
-                const rialPrice = Math.round(trxAmount / 1000000 * trxRate)
+                const rialPrice = Math.round(trxAmount * trxRate)
 
                 const userBalance = await this.userClient.send(USER_PATTERNS.GET_USER_BALANCE, authorId).toPromise() as DataResultDto<number>
 
@@ -105,19 +108,32 @@ export default class TRXPayment implements PaymentBase {
                         message: Messages.PAYMENT.CANNOT_INCREASE_BALANCE.message,
                         statusCode: Messages.PAYMENT.CANNOT_INCREASE_BALANCE.code
                     }
-                    return
+                    throw new InternalServerErrorException()
                 }
+
+                const walletLog = new this.walletLogModel({
+                    type: 'increase',
+                    amount: rialPrice,
+                    payment: userPayment._id
+                })
+                await walletLog.save()
+
+                userPayment.completed = true
+                userPayment.hash = data.hash
+
+                await userPayment.save()
+
+                result = {
+                    success: true,
+                    message: Messages.PAYMENT.INVOICE_VERIFIED.message,
+                    statusCode: Messages.PAYMENT.INVOICE_VERIFIED.code
+                }
+                return
             })
         } catch (error) {
-
+            throw error
         } finally {
             session.endSession()
-
-            result = {
-                success: true,
-                message: Messages.PAYMENT.INVOICE_VERIFIED.message,
-                statusCode: Messages.PAYMENT.INVOICE_VERIFIED.code
-            }
         }
 
         return result

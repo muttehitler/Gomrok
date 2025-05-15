@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import { generateCsrfToken } from '@/lib/utils/csrf.helper';
 import { useEffect, useState } from 'react';
 import { getCookie } from '@/lib/utils/cookie.helper';
-import { createInvoice, getInvoice } from '@/actions/payment.action';
+import { createInvoice, getInvoice, verifyInvoice } from '@/actions/payment.action';
 import toast, { Toaster } from 'react-hot-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { themeParams, useSignal } from '@telegram-apps/sdk-react';
@@ -56,7 +56,24 @@ export default function Verify() {
     });
 
     const verifyInvoiceHandler = async (data: any) => {
+        const result = JSON.parse(await verifyInvoice({ csrf: csrfToken, paymentMethod: 'trx-wallet', paymentData: data }))
+
+        if (!result.success) {
+            toast.error(t('add-unsuccessfully') + ": " + result.message.toString(), {
+                duration: 4000,
+                className: 'toast'
+            })
+            return
+        }
+
+        toast.success(t('added-successfully'), {
+            duration: 2000,
+            className: 'toast'
+        })
         
+        setTimeout(()=>{
+            router.push('/wallet')
+        },2000)
     }
 
     return (
