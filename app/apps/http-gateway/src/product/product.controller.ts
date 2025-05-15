@@ -13,6 +13,12 @@ export class ProductController {
         return await this.productService.add(product, req.user['sub'])
     }
 
+    @Get('panel/:id')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getByPanel(@Query() filter: FilterDto, @Param('id') id: string) {
+        return await this.productService.getByPanel(filter, id)
+    }
+
     @Get()
     @UseGuards(new JwtAuthGuard(['admin']))
     async getList(@Query() filter: FilterDto) {

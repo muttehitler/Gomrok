@@ -4,38 +4,30 @@ import { useTranslations } from 'next-intl';
 import { Page } from '@/components/Page';
 import './style.css'
 import toast, { Toaster } from 'react-hot-toast';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { getLocations } from '@/actions/panel.action';
 import { generateCsrfToken } from '@/lib/utils/csrf.helper';
 import { getCookie } from '@/lib/utils/cookie.helper';
-import { getProductsByPanel } from '@/actions/product.action';
-import { ProductBoxItem } from '@/components/productItem/productBoxItem';
-import { useSearchParams } from 'next/navigation';
+import { LocationItem } from '@/components/locationItem/locationItem';
 
-type Product = {
+type Panel = {
     id: string
     name: string
-    panel: string
-    payAsYouGo: boolean
-    usageDuration: number
-    dataLimit: number
-    userLimit: number
-    onHold: boolean
-    price: number
+    type: string
+    url: string
     weight: number
-    code: string
 }
 
 export default function Panel() {
     const t = useTranslations('i18n');
 
-    const [products, setProducts] = useState<Product[]>([])
-    const searchParams = useSearchParams()
+    const [panels, setPanels] = useState<Panel[]>([])
 
     useEffect(() => {
         (async () => {
-            setProducts([])
+            setPanels([])
 
-            const result = JSON.parse(await getProductsByPanel({ id: searchParams.get('panel'), csrf: generateCsrfToken(getCookie('csrf')!), startIndex: 0, limit: 1000, order: -1 }))
+            const result = JSON.parse(await getLocations({ csrf: generateCsrfToken(getCookie('csrf')!), startIndex: 0, limit: 1000, order: -1 }))
 
             if (!result.success) {
                 toast.error(t('list-unsuccessfully') + ": " + result.message.toString(), {
@@ -45,7 +37,7 @@ export default function Panel() {
                 return
             }
 
-            setProducts(result.data.items)
+            setPanels(result.data.items)
         })()
     }, [])
 
@@ -55,10 +47,8 @@ export default function Panel() {
             <div className='container grid grid-cols-2 gap-4'>
                 <h4>{t('select-location')}:</h4>
                 <br />
-                {products.length > 0 ? products.sort((a, b) => a.weight - b.weight).map(x =>
-                (<ProductBoxItem id={x.id} name={x.name} panel={x.panel} payAsYouGo={x.payAsYouGo}
-                    usageDuration={x.usageDuration} dataLimit={x.dataLimit} userLimit={x.userLimit}
-                    onHold={x.onHold} price={x.price} code={x.code} weight={x.weight} key={x.name} />)
+                {panels.length > 0 ? panels.sort((a, b) => a.weight - b.weight).map(x =>
+                    (<LocationItem id={x.id} name={x.name} type={x.type} url={x.url} weight={x.weight} key={x.name} />)
                 ) :
                     (<div role="status">
                         <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

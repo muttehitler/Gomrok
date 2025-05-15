@@ -99,7 +99,7 @@ export class ProductService {
     const p = await this.productModel.updateOne({ _id: id }, {
       $set: {
         name: product.name,
-        panel: product.panel,
+        panel: new Types.ObjectId(product.panel),
         payAsYouGo: product.payAsYouGo,
         usageDuration: product.usageDuration,
         dataLimit: product.dataLimit,
@@ -114,6 +114,35 @@ export class ProductService {
       success: true,
       message: Messages.PRODUCT.PRODUCT_UPDATED_SUCCESSFULLY.message,
       statusCode: Messages.PRODUCT.PRODUCT_UPDATED_SUCCESSFULLY.code
+    }
+  }
+
+  async getListByPanel({ startIndex, limit, order }: FilterDto, panelId: string): Promise<DataResultDto<ListDto<ProductDto[]>>> {
+    const query = this.productModel.find({ panel: new Types.ObjectId(panelId), status: true })
+    const list = (await query.skip(startIndex).limit(limit).sort({ createdAt: order == 1 ? 1 : -1 })).map<ProductDto>(x => {
+      return {
+        id: String(x._id),
+        name: x.name,
+        panel: String(x.panel),
+        payAsYouGo: x.payAsYouGo,
+        usageDuration: x.usageDuration,
+        dataLimit: x.dataLimit,
+        userLimit: x.userLimit,
+        onHold: x.onHold,
+        price: x.price,
+        weight: x.weight,
+        code: x.code
+      }
+    })
+
+    return {
+      success: true,
+      message: Messages.PRODUCT.PRODUCT_LISTED_SUCCESSFULLY.message,
+      statusCode: Messages.PRODUCT.PRODUCT_LISTED_SUCCESSFULLY.code,
+      data: {
+        items: list,
+        length: (await this.productModel.find({ panel: new Types.ObjectId(panelId), status: true })).length
+      }
     }
   }
 }

@@ -28,4 +28,8 @@ export class ProductService {
     async get(id: string) {
         return await this.productClient.send(PRODUCT_PATTERNS.GET, id)
     }
+
+    async getByPanel(filter: FilterDto, panelId: string) {
+        return await this.productClient.send(PRODUCT_PATTERNS.GET_BY_PANEL, { filter: filter, panelId: panelId })
+    }
 }
