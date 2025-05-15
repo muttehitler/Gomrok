@@ -6,13 +6,27 @@ import { ConfigModule } from '@nestjs/config';
 import Payment, { PaymentSchema } from './models/concrete/payment';
 import { PaymentMethod } from './patterns/paymentMethod';
 import TRXPayment from './paymentServices/concrete/trxPayment';
+import { HttpModule } from '@nestjs/axios';
+import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Global()
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.AUTH_MONGO_STRING?.toString() ?? '', { dbName: 'paymentdb' }),
-    MongooseModule.forFeature([{ name: Payment.name, schema: PaymentSchema }])
+    MongooseModule.forFeature([{ name: Payment.name, schema: PaymentSchema }]),
+    HttpModule,
+    ClientsModule.register([
+      {
+        name: USER_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      }
+    ])
   ],
   controllers: [PaymentController],
   providers: [
