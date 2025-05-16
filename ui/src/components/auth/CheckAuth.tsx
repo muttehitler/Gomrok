@@ -26,11 +26,11 @@ export default function CheckAuth({ children }: CheckAuthProps) {
 
             const data = await login(raw ?? '')
 
-            setCookie('token', data.token, new Date(data.expiration).getDate(), { path: '/', httpOnly: false })
+            setCookie('token', data.token, 1 / 24, { path: '/', httpOnly: false })
 
             const csrfSecret = crypto.randomBytes(64).toString('hex')
-            
-            setCookie('csrf', csrfSecret ?? 'sdkf', new Date(data.expiration).getDate(), { path: '/', httpOnly: false })
+
+            setCookie('csrf', csrfSecret ?? 'sdkf', 1 / 24, { path: '/', httpOnly: false })
 
             setAuth(true)
         })()
