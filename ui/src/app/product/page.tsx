@@ -10,6 +10,7 @@ import { getCookie } from '@/lib/utils/cookie.helper';
 import { getProductsByPanel } from '@/actions/product.action';
 import { ProductBoxItem } from '@/components/productItem/productBoxItem';
 import { useSearchParams } from 'next/navigation';
+import { getCookieCSRF } from '@/actions/auth.action';
 
 type Product = {
     id: string
@@ -25,7 +26,7 @@ type Product = {
     code: string
 }
 
-export default function Panel() {
+export default function Product() {
     const t = useTranslations('i18n');
 
     const [products, setProducts] = useState<Product[]>([])
@@ -35,7 +36,7 @@ export default function Panel() {
         (async () => {
             setProducts([])
 
-            const result = JSON.parse(await getProductsByPanel({ id: searchParams.get('panel'), csrf: generateCsrfToken(getCookie('csrf')!), startIndex: 0, limit: 1000, order: -1 }))
+            const result = JSON.parse(await getProductsByPanel({ id: searchParams.get('panel'), csrf: generateCsrfToken((await getCookieCSRF())!), startIndex: 0, limit: 1000, order: -1 }))
 
             if (!result.success) {
                 toast.error(t('list-unsuccessfully') + ": " + result.message.toString(), {

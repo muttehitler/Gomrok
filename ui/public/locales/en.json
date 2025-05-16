@@ -4,7 +4,7 @@
     "header": "Application supports i18n",
     "footer": "You can select a different language from the dropdown menu.",
     "toman": "Toman",
-    "wallet-logs-header": "Wallet History",
+    "wallet-logs-header": "Balance History",
     "buy": "Buy",
     "top-up": "Top-Up",
     "add-panel": "Add Panel",
@@ -67,6 +67,7 @@
     "days": "Days",
     "gb": "GB",
     "user": "User",
-    "free-triff": "Free Triff"
+    "free-triff": "Free Triff",
+    "order": "Order"
   }
 }

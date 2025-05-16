@@ -24,7 +24,7 @@ export const ProductBoxItem: FC<Product> = ({ id, name, usageDuration, dataLimit
     const router = useRouter();
 
     return (
-        <div onClick={() => { }} className='yarim-section'>
+        <div onClick={() => { router.push('/product/detail?product=' + id) }} className='yarim-section'>
             <div>
                 <div className='' key={id}>
                     <div>
