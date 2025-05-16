@@ -6,6 +6,7 @@ import { getCookie } from "@/lib/utils/cookie.helper";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getUserBalance } from "@/actions/user.action";
 import toast from "react-hot-toast";
+import { getCookieCSRF } from "@/actions/auth.action";
 
 export const BalanceDisplay: FC = () => {
     const t = useTranslations('i18n');
@@ -14,7 +15,7 @@ export const BalanceDisplay: FC = () => {
 
     useEffect(() => {
         (async () => {
-            const result = JSON.parse(await getUserBalance({ csrf: generateCsrfToken(getCookie('csrf') ?? '') }))
+            const result = JSON.parse(await getUserBalance({ csrf: generateCsrfToken(await getCookieCSRF() ?? '') }))
 
             if (!result.success) {
                 toast.error(t('get-balance-unsuccessfully') + ": " + result.message.toString(), {

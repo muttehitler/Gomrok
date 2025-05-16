@@ -11,7 +11,6 @@ export class AuthController {
 
   @MessagePattern(AUTH_PATTERNS.LOGIN)
   async login(@Body() loginDto: TelegramLoginDto): Promise<any> {
-        console.log('start')
     return await this.authService.login(loginDto);
   }
 }
