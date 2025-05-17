@@ -17,6 +17,7 @@ import { ProductModule } from './product/product.module';
 import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
+import { OrderModule } from './order/order.module';
 
 @Global()
 @Module({
@@ -63,7 +64,8 @@ import { UserModule } from './user/user.module';
     PaymentModule,
     PanelModule,
     ProductModule,
-    UserModule
+    UserModule,
+    OrderModule
   ],
   controllers: [HttpGatewayController],
   providers: [HttpGatewayService, JwtStrategy],
