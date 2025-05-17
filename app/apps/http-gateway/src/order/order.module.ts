@@ -1,18 +1,11 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
-import Order, { OrderSchema } from './models/concrete/order';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ORDER_PATTERNS } from '@app/contracts/patterns/orderPattern';
 
-@Global()
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot(process.env.AUTH_MONGO_STRING?.toString() ?? '', { dbName: 'orderdb' }),
-    MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
     ClientsModule.register([
       {
         name: ORDER_PATTERNS.CLIENT,
@@ -25,6 +18,6 @@ import { ORDER_PATTERNS } from '@app/contracts/patterns/orderPattern';
     ])
   ],
   controllers: [OrderController],
-  providers: [OrderService],
+  providers: [OrderService]
 })
 export class OrderModule { }

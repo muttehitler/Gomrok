@@ -94,5 +94,11 @@ export const Messages = {
             message: "Product updated successfully.",
             code: 1
         }
+    },
+    ORDER: {
+        ORDER_ADDED_SUCCESSFULLY: {
+            message: "Order added successfully",
+            code: 1
+        }
     }
 }
