@@ -12,4 +12,9 @@ export class OrderController {
   async add(data: { order: AddOrderDto, authorId: string }) {
     return await this.orderService.add(data.order, data.authorId)
   }
+
+  @MessagePattern(ORDER_PATTERNS.GET)
+  async get(data: { id: string, userId: string }) {
+    return await this.orderService.get(data.id, data.userId)
+  }
 }

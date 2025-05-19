@@ -99,6 +99,10 @@ export const Messages = {
         ORDER_ADDED_SUCCESSFULLY: {
             message: "Order added successfully",
             code: 1
+        },
+        ORDER_FOUND_SUCCESSFULLY: {
+            message: "Order found successfully",
+            code: 1
         }
     }
 }

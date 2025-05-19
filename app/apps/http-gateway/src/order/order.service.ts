@@ -10,4 +10,8 @@ export class OrderService {
     async add(order: AddOrderDto, authorId: string) {
         return await this.orderClient.send(ORDER_PATTERNS.ADD, { order: order, authorId: authorId })
     }
+
+    async get(id: string, userId: string) {
+        return await this.orderClient.send(ORDER_PATTERNS.GET, { id: id, userId: userId })
+    }
 }
