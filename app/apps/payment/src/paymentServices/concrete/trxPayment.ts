@@ -14,12 +14,12 @@ import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { USER_PATTERNS } from "@app/contracts/patterns/userPattern";
 import { ClientProxy } from "@nestjs/microservices";
-import WalletLog, { WalletLogDocument } from "../../models/concrete/walletLogs";
+import BalanceLog, { BalanceLogDocument } from "../../models/concrete/balanceLogs";
 
 @Injectable()
 export default class TRXPayment implements PaymentBase {
     constructor(@InjectModel(Payment.name) private paymentModel: Model<PaymentDocument>,
-        @InjectModel(WalletLog.name) private walletLogModel: Model<WalletLogDocument>,
+        @InjectModel(BalanceLog.name) private balanceLogModel: Model<BalanceLogDocument>,
         private httpService: HttpService,
         @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy) { }
 
@@ -111,12 +111,12 @@ export default class TRXPayment implements PaymentBase {
                     throw new InternalServerErrorException()
                 }
 
-                const walletLog = new this.walletLogModel({
+                const balanceLog = new this.balanceLogModel({
                     type: 'increase',
                     amount: rialPrice,
                     payment: userPayment._id
                 })
-                await walletLog.save()
+                await balanceLog.save()
 
                 userPayment.completed = true
                 userPayment.hash = data.hash
