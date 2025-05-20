@@ -4,7 +4,7 @@ import Payment from "./payment";
 import IEntity from "@app/contracts/models/abstract/iEntity";
 
 @Schema({ timestamps: true })
-export default class WalletLog extends Document implements IEntity {
+export default class BalanceLog extends Document implements IEntity {
     @Prop({ type: String })
     type: string
 
@@ -18,5 +18,5 @@ export default class WalletLog extends Document implements IEntity {
     payment: Payment
 }
 
-export type WalletLogDocument = WalletLog & Document;
-export const WalletLogSchema = SchemaFactory.createForClass(WalletLog);
+export type BalanceLogDocument = BalanceLog & Document;
+export const BalanceLogSchema = SchemaFactory.createForClass(BalanceLog);
