@@ -61,6 +61,12 @@ export const Messages = {
         CANNOT_INCREASE_BALANCE: {
             message: "Cannot increase balance",
             code: 7
+        },
+        BALANCE_LOG: {
+            BALANCE_LOGGED_SUCCESSFULLY: {
+                message: "Balance logged successfully",
+                code: 1
+            }
         }
     },
     USER: {
