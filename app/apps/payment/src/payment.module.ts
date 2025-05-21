@@ -10,6 +10,7 @@ import { HttpModule } from '@nestjs/axios';
 import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import BalanceLog, { BalanceLogSchema } from './models/concrete/balanceLogs';
+import { BalanceLogModule } from './balance-log/balance-log.module';
 
 @Global()
 @Module({
@@ -28,7 +29,8 @@ import BalanceLog, { BalanceLogSchema } from './models/concrete/balanceLogs';
           port: parseInt(process.env.REDIS_PORT ?? '6379')
         }
       }
-    ])
+    ]),
+    BalanceLogModule
   ],
   controllers: [PaymentController],
   providers: [

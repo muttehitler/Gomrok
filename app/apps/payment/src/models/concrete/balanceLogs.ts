@@ -11,11 +11,14 @@ export default class BalanceLog extends Document implements IEntity {
     @Prop({ type: Number })
     amount: number
 
-    @Prop({ type: String, required: false })
-    orderId: string
+    @Prop({ type: Types.ObjectId, ref: 'Order', required: false })
+    order: Types.ObjectId
 
     @Prop({ type: Types.ObjectId, ref: 'Payment', required: false })
     payment: Payment
+
+    @Prop({ type: Types.ObjectId, ref: 'User', required: false })
+    user: Types.ObjectId
 }
 
 export type BalanceLogDocument = BalanceLog & Document;
