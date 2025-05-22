@@ -121,4 +121,8 @@ export class PanelService {
       }
     }
   }
+
+  async getPanelType(id: string) {
+    return (await this.panelModel.findById(new Types.ObjectId(id)))?.type
+  }
 }
