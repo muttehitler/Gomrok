@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Global, Module, Scope } from '@nestjs/common';
 import { PanelController } from './panel.controller';
 import { PanelService } from './panel.service';
 import { ConfigModule } from '@nestjs/config';
@@ -7,6 +7,8 @@ import Panel, { PanelSchema } from './models/concrete/panel';
 import { PanelType } from './patterns/panelType';
 import MarzneshinPanel from './panelServices/concrete/marzneshinPanel';
 import { HttpModule } from '@nestjs/axios';
+import PanelAuthBase from './panelAuthService/abstract/panelAuthBase';
+import PanelAuthService from './panelAuthService/concrete/panelAuthService';
 
 @Global()
 @Module({
@@ -22,6 +24,10 @@ import { HttpModule } from '@nestjs/axios';
     {
       provide: PanelType.marzneshin,
       useClass: MarzneshinPanel
+    },
+    {
+      provide: PanelAuthBase,
+      useClass: PanelAuthService
     }
   ],
 })
