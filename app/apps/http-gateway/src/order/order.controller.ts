@@ -7,6 +7,12 @@ import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
 export class OrderController {
     constructor(private orderService: OrderService) { }
 
+    @Post('buy/:id')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async buy(@Param('id') id: string, @Req() req) {
+        return await this.orderService.buy(id, req.user['sub'])
+    }
+
     @Post()
     @UseGuards(new JwtAuthGuard(['user']))
     async add(@Body() order: AddOrderDto, @Req() req) {

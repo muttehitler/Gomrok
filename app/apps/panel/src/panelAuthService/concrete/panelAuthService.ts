@@ -18,14 +18,14 @@ export default class PanelAuthService extends PanelAuthBase {
         this.panels = []
     }
 
-    async getAuthToken(panelId: string, getTokenFunc: (panel: Panel) => Promise<PanelTokenFuncDto>) {
+    async getAuthToken(panelId: string, getTokenFunc: (httpService: HttpService, panel: Panel) => Promise<PanelTokenFuncDto>) {
         const result = this.panels.find(x => x.panelId == panelId && x.expiration > new Date())
         if (!result) {
             const panel = await this.panelModel.findById(new Types.ObjectId(panelId))
             if (!panel)
                 throw new NotFoundException("panel not found")
 
-            const funcResult = await getTokenFunc(panel)
+            const funcResult = await getTokenFunc(this.httpService, panel)
 
             this.panels.push({ authKey: funcResult.accessToken, expiration: funcResult.expiration, panelId: panelId })
 

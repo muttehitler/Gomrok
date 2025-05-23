@@ -14,4 +14,8 @@ export class OrderService {
     async get(id: string, userId: string) {
         return await this.orderClient.send(ORDER_PATTERNS.GET, { id: id, userId: userId })
     }
+
+    async buy(id: string, userId: string) {
+        return await this.orderClient.send(ORDER_PATTERNS.BUY, { id: id, userId: userId })
+    }
 }

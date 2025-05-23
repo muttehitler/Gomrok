@@ -46,6 +46,8 @@
         "update-unsuccessfully": "بروزرسانی ناموفق شد",
         "added-successfully": "با موفقیت افزوده شد",
         "add-unsuccessfully": "افزودن ناموفق شد",
+        "purchased-successfully": "با موفقیت خریداری شد",
+        "purchase-unsuccessfully": "خرید ناموفق شد!",
         "deleted-successfully": "با موفقیت حذف شد",
         "delete-unsuccessfully": "حذف ناموفق شد",
         "list-unsuccessfully": "لیست ناموفق",

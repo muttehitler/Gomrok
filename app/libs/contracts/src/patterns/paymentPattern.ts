@@ -4,6 +4,6 @@ export const PAYMENT_PATTERNS = {
     GET: 'payment.get',
     VERIFY: 'payment.verify',
     BALANCE_LOG: {
-        LOG: 'balance-log.log'
+        LOG: 'balance_log.log'
     }
 }

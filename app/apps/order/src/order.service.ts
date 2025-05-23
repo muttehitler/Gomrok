@@ -1,19 +1,27 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import Order, { OrderDocument } from './models/concrete/order';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import AddOrderDto from '@app/contracts/models/dtos/order/addOrderDto';
-import { ORDER_PATTERNS } from '@app/contracts/patterns/orderPattern';
 import { ClientProxy } from '@nestjs/microservices';
 import ProductDto from '@app/contracts/models/dtos/product/productDto';
 import DataResultDto from '@app/contracts/models/dtos/dataResultDto';
 import { Messages } from '@app/contracts/messages/messages';
 import { PRODUCT_PATTERNS } from '@app/contracts/patterns/productPattern';
 import OrderDto from '@app/contracts/models/dtos/order/orderDto';
+import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
+import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
+import ResultDto from '@app/contracts/models/dtos/resultDto';
+import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
+import PanelAddUserDto from '@app/contracts/models/dtos/panel/panelService/panelAddUserDto';
 
 @Injectable()
 export class OrderService {
-  constructor(@InjectModel(Order.name) private orderModel: Model<OrderDocument>, @Inject(ORDER_PATTERNS.CLIENT) private orderClient: ClientProxy) { }
+  constructor(@InjectModel(Order.name) private orderModel: Model<OrderDocument>,
+    @Inject(PRODUCT_PATTERNS.CLIENT) private productClient: ClientProxy,
+    @Inject(PAYMENT_PATTERNS.CLIENT) private paymentClient: ClientProxy,
+    @Inject(PANEL_PATTERNS.CLIENT) private panelClient: ClientProxy,
+    @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy) { }
 
   async add({ name, product }: AddOrderDto, authorId: string): Promise<DataResultDto<string>> {
     const order = new this.orderModel({
@@ -22,7 +30,7 @@ export class OrderService {
       user: new Types.ObjectId(authorId)
     })
 
-    const productResult = await this.orderClient.send(PRODUCT_PATTERNS.GET, product).toPromise() as ProductDto
+    const productResult = await this.productClient.send(PRODUCT_PATTERNS.GET, product).toPromise() as ProductDto
 
     order.price = productResult.price
     order.finalPrice = productResult.price
@@ -52,6 +60,57 @@ export class OrderService {
         finalPrice: order.finalPrice,
         product: String(order.product)
       }
+    }
+  }
+
+  async buy(id: string, userId: string): Promise<ResultDto> {
+    const order = await this.orderModel.findOne({ _id: new Types.ObjectId(id), user: new Types.ObjectId(userId), status: true, payed: false })
+    if (!order)
+      throw new NotFoundException()
+
+    const userBalance = await this.userClient.send(USER_PATTERNS.GET_USER_BALANCE, userId).toPromise() as DataResultDto<number>
+
+    const updateUserBalanceResult = await this.userClient.send(USER_PATTERNS.UPDATE_USER_BALANCE, { userId: userId, balance: (userBalance.data - order.finalPrice) }).toPromise() as ResultDto
+
+    if (!updateUserBalanceResult.success) {
+      throw new InternalServerErrorException("cannot update user balance")
+    }
+
+    const balanceLogResult = await this.paymentClient.send(PAYMENT_PATTERNS.BALANCE_LOG.LOG, {
+      type: 'reduce',
+      amount: order.finalPrice,
+      order: String(order._id),
+      user: userId
+    }).toPromise() as ResultDto
+    if (!balanceLogResult.success)
+      return balanceLogResult
+
+    order.payed = true
+
+    await order.save()
+
+    const product = await this.productClient.send(PRODUCT_PATTERNS.GET, order.product).toPromise() as ProductDto
+
+    const addUserResult = await this.panelClient.send(PANEL_PATTERNS.PANEL_SERVICE.ADD_USER, {
+      user: {
+        // activationDeadline: undefined,
+        dataLimit: product.dataLimit,
+        dataLimitResetStrategy: "no_reset",
+        expireStrategy: "start_on_first_use",
+        note: "",
+        usageDuration: product.usageDuration,
+        username: order.name
+      } as PanelAddUserDto,
+      panel: product.panel
+    }).toPromise() as ResultDto
+
+    if (!addUserResult.success)
+      return addUserResult
+
+    return {
+      success: true,
+      message: Messages.ORDER.ORDER_PURCHASED_SUCCESSFULLY.message,
+      statusCode: Messages.ORDER.ORDER_PURCHASED_SUCCESSFULLY.code,
     }
   }
 }

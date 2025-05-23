@@ -6,10 +6,14 @@ import { Document, Types } from "mongoose";
 export default class Order extends Document implements IEntity {
     @Prop()
     name: string
+    @Prop()
+    identifier: string
     @Prop({ type: Boolean, default: false })
     payed: boolean
     @Prop({ type: Boolean, default: true })
     status: boolean
+    @Prop({ type: Boolean, default: false })
+    orderCreated: boolean
     @Prop({ type: Number })
     price: number
     @Prop({ type: Number })
