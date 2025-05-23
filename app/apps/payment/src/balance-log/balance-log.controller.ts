@@ -4,7 +4,7 @@ import { MessagePattern } from '@nestjs/microservices';
 import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
 import BalanceLogDto from '@app/contracts/models/dtos/payment/balance-log/balanceLogDto';
 
-@Controller('balance-log')
+@Controller()
 export class BalanceLogController {
     constructor(private balanceLogService: BalanceLogService) { }
 
