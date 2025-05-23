@@ -5,7 +5,10 @@ import Order, { OrderSchema } from './models/concrete/order';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ORDER_PATTERNS } from '@app/contracts/patterns/orderPattern';
+import { PRODUCT_PATTERNS } from '@app/contracts/patterns/productPattern';
+import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
+import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
+import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
 
 @Global()
 @Module({
@@ -15,7 +18,37 @@ import { ORDER_PATTERNS } from '@app/contracts/patterns/orderPattern';
     MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
     ClientsModule.register([
       {
-        name: ORDER_PATTERNS.CLIENT,
+        name: PRODUCT_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      }
+    ]),
+    ClientsModule.register([
+      {
+        name: USER_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      }
+    ]),
+    ClientsModule.register([
+      {
+        name: PAYMENT_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      }
+    ]),
+    ClientsModule.register([
+      {
+        name: PANEL_PATTERNS.CLIENT,
         transport: Transport.REDIS,
         options: {
           host: process.env.REDIS_HOST ?? 'localhost',

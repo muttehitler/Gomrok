@@ -17,4 +17,9 @@ export class OrderController {
   async get(data: { id: string, userId: string }) {
     return await this.orderService.get(data.id, data.userId)
   }
+
+  @MessagePattern(ORDER_PATTERNS.BUY)
+  async buy(data: { id: string, userId: string }) {
+    return await this.orderService.buy(data.id, data.userId)
+  }
 }
