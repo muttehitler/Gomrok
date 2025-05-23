@@ -23,6 +23,16 @@ export const Messages = {
         PANEL_LISTED_SUCCESSFULLY: {
             message: "Panels listed successfully.",
             code: 1
+        },
+        PANEL_SERVICE: {
+            USER_CREATED_SUCCESSFULLY: {
+                message: "User created successfully",
+                code: 1
+            },
+            CANNOT_CREATE_USER: {
+                message: "Cannot create user",
+                code: 2
+            }
         }
     },
     PAYMENT: {
@@ -108,6 +118,10 @@ export const Messages = {
         },
         ORDER_FOUND_SUCCESSFULLY: {
             message: "Order found successfully",
+            code: 1
+        },
+        ORDER_PURCHASED_SUCCESSFULLY: {
+            message: "Order purchased successfully",
             code: 1
         }
     }
