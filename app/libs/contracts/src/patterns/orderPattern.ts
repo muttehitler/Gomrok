@@ -2,5 +2,6 @@ export const ORDER_PATTERNS = {
     CLIENT: 'order_client',
     ADD: 'order.add',
     GET: 'order.get',
-    BUY: 'order.buy'
+    BUY: 'order.buy',
+    MY_ORDERS:'order.my_orders'
 }

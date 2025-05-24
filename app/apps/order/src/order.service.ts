@@ -14,6 +14,8 @@ import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
 import ResultDto from '@app/contracts/models/dtos/resultDto';
 import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
 import PanelAddUserDto from '@app/contracts/models/dtos/panel/panelService/panelAddUserDto';
+import FilterDto from '@app/contracts/models/dtos/filterDto';
+import ListDto from '@app/contracts/models/dtos/listDto';
 
 @Injectable()
 export class OrderService {
@@ -107,10 +109,31 @@ export class OrderService {
     if (!addUserResult.success)
       return addUserResult
 
+    order.orderCreated = true
+
+    await order.save()
+
     return {
       success: true,
       message: Messages.ORDER.ORDER_PURCHASED_SUCCESSFULLY.message,
       statusCode: Messages.ORDER.ORDER_PURCHASED_SUCCESSFULLY.code,
+    }
+  }
+
+  async myOrders({ startIndex, limit, order }: FilterDto, userId: string): Promise<DataResultDto<ListDto<OrderDto[]>>> {
+    const expression = { status: true, user: new Types.ObjectId(userId) }
+
+    const query = this.orderModel.find(expression)
+    const list = (await query.skip(startIndex).limit(limit).sort({ createdAt: order == 1 ? 1 : -1 })).map<OrderDto>(x => { return { id: String(x._id), name: x.name, payed: x.payed, product: String(x.product), price: x.price, finalPrice: x.finalPrice } })
+
+    return {
+      success: true,
+      message: Messages.ORDER.ORDER_LISTED_SUCCESSFULLY.message,
+      statusCode: Messages.ORDER.ORDER_LISTED_SUCCESSFULLY.code,
+      data: {
+        items: list,
+        length: (await this.orderModel.find(expression)).length
+      }
     }
   }
 }

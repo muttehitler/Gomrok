@@ -123,6 +123,10 @@ export const Messages = {
         ORDER_PURCHASED_SUCCESSFULLY: {
             message: "Order purchased successfully",
             code: 1
+        },
+        ORDER_LISTED_SUCCESSFULLY: {
+            message: "Order listed successfully.",
+            code: 1
         }
     }
 }
