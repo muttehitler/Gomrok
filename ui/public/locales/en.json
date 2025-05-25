@@ -71,6 +71,8 @@
     "user": "User",
     "free-triff": "Free Triff",
     "order": "Order",
-    "pay-and-buy": "Pay And Buy"
+    "pay-and-buy": "Pay And Buy",
+    "details": "Details",
+    "my-orders": "My Orders"
   }
 }
