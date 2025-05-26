@@ -26,6 +26,12 @@ export class OrderController {
         return await this.orderService.myOrders(filter, req.user['sub'])
     }
 
+    @Get('get_with_panel_user/:id')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getWithPanelUser(@Param('id') id: string, @Req() req) {
+        return await this.orderService.getWithPanelUser(id, req.user['sub'])
+    }
+
     @Get(':id')
     @UseGuards(new JwtAuthGuard(['user']))
     async get(@Param('id') id: string, @Req() req) {

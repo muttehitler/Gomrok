@@ -32,6 +32,10 @@ export const Messages = {
             CANNOT_CREATE_USER: {
                 message: "Cannot create user",
                 code: 2
+            },
+            USER_GOT_SUCCESSFULLY: {
+                message: "User got successfully",
+                code: 1
             }
         }
     },
@@ -126,6 +130,10 @@ export const Messages = {
         },
         ORDER_LISTED_SUCCESSFULLY: {
             message: "Order listed successfully.",
+            code: 1
+        },
+        ORDER_GOT_SUCCESSFULLY: {
+            message: "Order got successfully.",
             code: 1
         }
     }

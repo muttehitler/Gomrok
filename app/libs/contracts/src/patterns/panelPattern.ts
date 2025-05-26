@@ -7,7 +7,8 @@ export const PANEL_PATTERNS = {
     UPDATE: 'panel.update',
     DELETE: 'panel.delete',
     GET_LOCATION: 'panel.get_location',
-    PANEL_SERVICE:{
-        ADD_USER:'panel.service.add_user'
+    PANEL_SERVICE: {
+        ADD_USER: 'panel.service.add_user',
+        GET_USER: 'panel.service.get_user'
     }
 }
