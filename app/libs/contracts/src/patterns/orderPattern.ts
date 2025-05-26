@@ -3,5 +3,6 @@ export const ORDER_PATTERNS = {
     ADD: 'order.add',
     GET: 'order.get',
     BUY: 'order.buy',
-    MY_ORDERS:'order.my_orders'
+    MY_ORDERS: 'order.my_orders',
+    GET_WITH_PANEL_USER: 'order.get_with_panel_user'
 }

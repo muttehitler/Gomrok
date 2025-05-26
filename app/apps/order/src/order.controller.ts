@@ -28,4 +28,9 @@ export class OrderController {
   async myOrders(data: { filter: FilterDto, userId: string }) {
     return await this.orderService.myOrders(data.filter, data.userId)
   }
+
+  @MessagePattern(ORDER_PATTERNS.GET_WITH_PANEL_USER)
+  async getWithPanelUser(data: { id: string, userId: string }) {
+    return await this.orderService.getWithPanelUser(data.id, data.userId)
+  }
 }

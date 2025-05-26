@@ -55,4 +55,9 @@ export class PanelController {
   async addUser(data: { user: PanelAddUserDto, panel: string }) {
     return await (await this.moduleRef.resolve<PanelBase>(await this.panelService.getPanelType(data.panel) ?? '')).addUser(data.user, data.panel)
   }
+
+  @MessagePattern(PANEL_PATTERNS.PANEL_SERVICE.GET_USER)
+  async getUser(data: { user: string, panel: string }) {
+    return await (await this.moduleRef.resolve<PanelBase>(await this.panelService.getPanelType(data.panel) ?? '')).getUser(data.user, data.panel)
+  }
 }
