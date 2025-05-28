@@ -73,6 +73,7 @@
     "order": "Order",
     "pay-and-buy": "Pay And Buy",
     "details": "Details",
-    "my-orders": "My Orders"
+    "my-orders": "My Orders",
+    "proxies": "Proxies"
   }
 }

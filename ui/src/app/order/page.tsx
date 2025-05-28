@@ -10,6 +10,7 @@ import { getCookie } from '@/lib/utils/cookie.helper';
 import { getMyOrders } from '@/actions/order.action';
 import { Pagination } from '@/components/pagination/pagination';
 import { OrderItem } from '@/components/orderList/orderItem';
+import { getCookieCSRF } from '@/actions/auth.action';
 
 type Order = {
     id: string
@@ -23,16 +24,16 @@ type Order = {
 export default function Order() {
     const t = useTranslations('i18n');
 
-    const [products, setProducts] = useState<Order[]>([])
-    const [productsLength, setProductsLength] = useState(0)
+    const [orders, setOrders] = useState<Order[]>([])
+    const [ordersLength, setOrdersLength] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState(10)
 
     useEffect(() => {
         (async () => {
-            setProducts([])
+            setOrders([])
 
-            const result = JSON.parse(await getMyOrders({ csrf: generateCsrfToken(getCookie('csrf')!), startIndex: (currentPage - 1) * pageSize, limit: pageSize, order: -1 }))
+            const result = JSON.parse(await getMyOrders({ csrf: generateCsrfToken(await getCookieCSRF() ?? ''), startIndex: (currentPage - 1) * pageSize, limit: pageSize, order: -1 }))
 
             if (!result.success) {
                 toast.error(t('list-unsuccessfully') + ": " + result.message.toString(), {
@@ -42,9 +43,9 @@ export default function Order() {
                 return
             }
 
-            setProductsLength(result.data.length)
+            setOrdersLength(result.data.length)
 
-            setProducts(result.data.items)
+            setOrders(result.data.items)
         })()
     }, [currentPage])
 
@@ -54,7 +55,7 @@ export default function Order() {
             <div className='container'>
                 <h4>{t('my-orders')}:</h4>
                 <br />
-                {products.length > 0 ? products.map(x =>
+                {orders.length > 0 ? orders.map(x =>
                     (<OrderItem id={x.id} name={x.name} product={x.product} payed={x.payed} price={x.price} finalPrice={x.finalPrice} key={x.name} />)
                 ) :
                     (<div role="status">
@@ -65,7 +66,7 @@ export default function Order() {
                         <span className="sr-only">Loading...</span>
                     </div>)
                 }
-                <Pagination currentPageState={[currentPage, setCurrentPage]} pageCount={Math.ceil(productsLength / pageSize)} key={"pagination"} />
+                <Pagination currentPageState={[currentPage, setCurrentPage]} pageCount={Math.ceil(ordersLength / pageSize)} key={"pagination"} />
             </div>
         </Page>
     )

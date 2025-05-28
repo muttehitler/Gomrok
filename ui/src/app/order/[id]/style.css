@@ -1,0 +1,9 @@
+@import url('@/app/globals.css');
+
+.proxy-field{
+    padding: 10px;
+}
+
+.qr-code{
+    width: 100%;
+}
