@@ -74,6 +74,8 @@
     "pay-and-buy": "Pay And Buy",
     "details": "Details",
     "my-orders": "My Orders",
-    "proxies": "Proxies"
+    "proxies": "Proxies",
+    "subscription": "Subscription",
+    "subscription-link":"Subscription Link"
   }
 }
