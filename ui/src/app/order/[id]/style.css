@@ -7,3 +7,9 @@
 .qr-code{
     width: 100%;
 }
+
+.subscription-url-copy{
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 10px;
+}

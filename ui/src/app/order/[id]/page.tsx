@@ -64,6 +64,7 @@ export default function OrderDetail({ params }: Props) {
     const [panelUser, setPanelUser] = useState<PanelUser>()
     const [proxies, setProxies] = useState<string[]>([])
     const [accor, setAccor] = useState(false)
+    const [subAccor, setSubAccor] = useState(false)
     const [qrModal, setQRModal] = useState(false)
     const [qrUrl, setQRUrl] = useState('')
     const [qrName, setQRName] = useState('')
@@ -107,6 +108,33 @@ export default function OrderDetail({ params }: Props) {
                     <h4>{order.name}:</h4>
                     <br />
                     {order.name}
+
+                    <div id="accordion-flush" data-accordion="collapse" data-active-classes="bg-white dark:bg-gray-900 text-gray-900 dark:text-white" data-inactive-classes="text-gray-500 dark:text-gray-400">
+                        <h2 id="accordion-flush-heading-1">
+                            <button onClick={() => { setSubAccor(!subAccor) }} type="button" className="flex items-center justify-between w-full py-5 font-medium rtl:text-right text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 gap-3" data-accordion-target="#accordion-flush-body-1" aria-expanded="true" aria-controls="accordion-flush-body-1">
+                                <span className="flex items-center">
+                                    <Earth size={24} />&ensp;
+                                    {t('subscription-link')}
+                                </span>
+                                <svg data-accordion-icon className="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5 5 1 1 5" />
+                                </svg>
+                            </button>
+                        </h2>
+                        <div id="accordion-flush-body-1" className={subAccor ? '' : 'hidden'} aria-labelledby="accordion-flush-heading-1">
+                            <div className="proxy-field py-5 border-b border-gray-200 dark:border-gray-700">
+                                <div>
+                                    <QRCodeSVG value={panelUser?.subscriptionUrl ?? ''} size={256} className='qr-code' bgColor={Object.entries(tp).filter(([title, value]) => title == 'bgColor')[0][1]} fgColor={Object.entries(tp).filter(([title, value]) => title == 'buttonTextColor')[0][1]} /*imageSettings={{ src: "https://cdn-icons-png.flaticon.com/512/12114/12114250.png", height: 64, width: 64, opacity: 1, excavate: true, }}*/ />
+                                    <br />
+                                    <label htmlFor="subscription-url-textarea" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('subscription-link')}</label>
+                                    <textarea id="subscription-url-textarea" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your thoughts here...">{panelUser?.subscriptionUrl}</textarea>
+                                    <button onClick={() => { handleCopy(panelUser?.subscriptionUrl ?? '') }} type="button" className='subscription-url-copy bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
+                                        {t('copy-link')}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div id="accordion-flush" data-accordion="collapse" data-active-classes="bg-white dark:bg-gray-900 text-gray-900 dark:text-white" data-inactive-classes="text-gray-500 dark:text-gray-400">
                         <h2 id="accordion-flush-heading-1">
