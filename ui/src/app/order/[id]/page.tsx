@@ -22,6 +22,7 @@ import {
     ChartData
 } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
+import { RevokeSubscription } from '@/components/revokeSubscription/revokeSubscription';
 
 type Props = {
     params: Promise<{ id: string }>
@@ -83,6 +84,8 @@ export default function OrderDetail({ params }: Props) {
     const [qrModal, setQRModal] = useState(false)
     const [qrUrl, setQRUrl] = useState('')
     const [qrName, setQRName] = useState('')
+    const [isRevokeSubVisable, setRevokeSubVisablity] = useState(false)
+    const [subUrl, setSubUrl] = useState('')
     const [pieData, setPieData] = useState<ChartData<"doughnut", number[], unknown>>({
         labels: [t('loading')],
         datasets: [
@@ -121,9 +124,7 @@ export default function OrderDetail({ params }: Props) {
             setOrder(result.data.order)
             setPanelUser(result.data.panelUser)
 
-            const proxiesDecode = atob(await (await fetch(result.data.panelUser.subscriptionUrl)).text()).split('\n')
-
-            setProxies(proxiesDecode)
+            setSubUrl(result.data.panelUser.subscriptionUrl)
 
             setPieData({
                 labels: [t('used'), t('remaining')],
@@ -146,10 +147,23 @@ export default function OrderDetail({ params }: Props) {
         })()
     }, [])
 
+    useEffect(() => {
+        (async () => {
+            if (!panelUser?.subscriptionUrl)
+                return
+
+            panelUser.subscriptionUrl = subUrl
+            
+            const proxiesDecode = atob(await (await fetch(panelUser?.subscriptionUrl)).text()).split('\n')
+
+            setProxies(proxiesDecode)
+        })()
+    }, [panelUser, subUrl])
+
     return (
         <Page back={true}>
             <Toaster position="top-right" reverseOrder={false} />
-            {order ? (<div>
+            {(order && panelUser) ? (<div>
                 <div className='container'>
                     <div className='flex'>
                         <h4 className='username'>{panelUser?.username}</h4>&ensp;
@@ -199,12 +213,17 @@ export default function OrderDetail({ params }: Props) {
                         <div id="accordion-flush-body-1" className={subAccor ? '' : 'hidden'} aria-labelledby="accordion-flush-heading-1">
                             <div className="proxy-field py-5 border-b border-gray-200 dark:border-gray-700">
                                 <div>
-                                    <QRCodeSVG value={panelUser?.subscriptionUrl ?? ''} size={256} className='qr-code' bgColor={Object.entries(tp).filter(([title, value]) => title == 'bgColor')[0][1]} fgColor={Object.entries(tp).filter(([title, value]) => title == 'buttonTextColor')[0][1]} /*imageSettings={{ src: "https://cdn-icons-png.flaticon.com/512/12114/12114250.png", height: 64, width: 64, opacity: 1, excavate: true, }}*/ />
+                                    <QRCodeSVG value={subUrl ?? ''} size={256} className='qr-code' bgColor={Object.entries(tp).filter(([title, value]) => title == 'bgColor')[0][1]} fgColor={Object.entries(tp).filter(([title, value]) => title == 'buttonTextColor')[0][1]} /*imageSettings={{ src: "https://cdn-icons-png.flaticon.com/512/12114/12114250.png", height: 64, width: 64, opacity: 1, excavate: true, }}*/ />
                                     <br />
                                     <label htmlFor="subscription-url-textarea" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('subscription-link')}</label>
-                                    <textarea readOnly value={panelUser?.subscriptionUrl} id="subscription-url-textarea" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your thoughts here..." />
-                                    <button onClick={() => { handleCopy(panelUser?.subscriptionUrl ?? '') }} type="button" className='subscription-url-copy bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
+                                    <textarea readOnly value={subUrl} id="subscription-url-textarea" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your thoughts here..." />
+                                    <button onClick={() => { handleCopy(subUrl ?? '') }} type="button" className='subscription-url-copy bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
                                         {t('copy-link')}
+                                    </button>
+                                    <br />
+                                    <br />
+                                    <button onClick={() => { setRevokeSubVisablity(true) }} type="button" className='subscription-url-copy bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full'>
+                                        {t('revoke-sub')}
                                     </button>
                                 </div>
                             </div>
@@ -272,7 +291,7 @@ export default function OrderDetail({ params }: Props) {
                         </div>
                     </div>
 
-
+                    <RevokeSubscription id={id} visableState={[isRevokeSubVisable, setRevokeSubVisablity]} subscriptionUrl={[subUrl, setSubUrl]} key={order.name} />
                 </div>
             </div>) :
                 (<div role="status">

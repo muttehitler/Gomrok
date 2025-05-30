@@ -83,6 +83,8 @@
     "remaining": "Remaining",
     "active": "Active",
     "inactive": "Inactive",
-    "loading": "Loading"
+    "loading": "Loading",
+    "revoke-sub": "Revoke Subscription",
+    "are-sure-to-revoke-sub": "Are you sure to revoke subscription?"
   }
 }

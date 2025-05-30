@@ -155,6 +155,7 @@ export class OrderService {
       statusCode: Messages.ORDER.ORDER_GOT_SUCCESSFULLY.code,
       data: {
         order: {
+          id: String(order._id),
           name: order.name,
           payed: order.payed,
           price: order.price,
