@@ -13,3 +13,11 @@
     margin-top: 10px;
     border-radius: 10px;
 }
+
+.username{
+    font-size: x-large;
+}
+
+.online-bg{
+    height: min-content;
+}

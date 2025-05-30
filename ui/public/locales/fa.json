@@ -76,6 +76,13 @@
         "my-orders": "سرویس های من",
         "proxies": "پروکسی ها",
         "subscription": "اشتراک",
-        "subscription-link": "لینک اشتراک"
+        "subscription-link": "لینک اشتراک",
+        "time-left": "زمان باقی مانده",
+        "expires-in": "تاریخ انقضا",
+        "used": "مصرف شده",
+        "remaining": "باقی مانده",
+        "active": "فعال",
+        "inactive": "غیر فعال",
+        "loading": "در حال بارگیری"
     }
 }
