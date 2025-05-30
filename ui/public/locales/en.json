@@ -76,6 +76,13 @@
     "my-orders": "My Orders",
     "proxies": "Proxies",
     "subscription": "Subscription",
-    "subscription-link": "Subscription Link"
+    "subscription-link": "Subscription Link",
+    "time-left": "Time Left",
+    "expires-in": "Expires In",
+    "used": "Used",
+    "remaining": "Remaining",
+    "active": "Active",
+    "inactive": "Inactive",
+    "loading": "Loading"
   }
 }
