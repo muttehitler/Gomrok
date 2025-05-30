@@ -7,6 +7,7 @@ import Panel, { PanelSchema } from './models/concrete/panel';
 import { PanelType } from './patterns/panelType';
 import MarzneshinPanel from './panelServices/concrete/marzneshinPanel';
 import { HttpModule } from '@nestjs/axios';
+import { PanelServiceModule } from './panel-service/panel-service.module';
 import PanelAuthBase from './panelAuthService/abstract/panelAuthBase';
 import PanelAuthService from './panelAuthService/concrete/panelAuthService';
 
@@ -16,7 +17,8 @@ import PanelAuthService from './panelAuthService/concrete/panelAuthService';
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.AUTH_MONGO_STRING?.toString() ?? '', { dbName: 'paneldb' }),
     MongooseModule.forFeature([{ name: Panel.name, schema: PanelSchema }]),
-    HttpModule
+    HttpModule,
+    PanelServiceModule
   ],
   controllers: [PanelController],
   providers: [
@@ -30,5 +32,8 @@ import PanelAuthService from './panelAuthService/concrete/panelAuthService';
       useClass: PanelAuthService
     }
   ],
+  exports: [
+    PanelService, PanelType.marzneshin, PanelAuthBase
+  ]
 })
 export class PanelModule { }

@@ -165,4 +165,18 @@ export class OrderService {
       }
     }
   }
+
+  async revokeSubscription(id: string, userId: string): Promise<DataResultDto<PanelUserDto>> {
+    const order = await this.orderModel.findOne({ _id: new Types.ObjectId(id), user: new Types.ObjectId(userId), status: true, payed: true })
+    if (!order)
+      throw new NotFoundException()
+
+    const product = await this.productClient.send(PRODUCT_PATTERNS.GET, order.product).toPromise() as ProductDto
+
+    const revokeSubResult = await this.panelClient.send(PANEL_PATTERNS.PANEL_SERVICE.REVOKE_SUB, { user: order.name, panel: product.panel }).toPromise() as DataResultDto<PanelUserDto>
+    if (!revokeSubResult.success)
+      throw new NotFoundException(revokeSubResult.message)
+
+    return revokeSubResult
+  }
 }

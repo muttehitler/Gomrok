@@ -36,6 +36,14 @@ export const Messages = {
             USER_GOT_SUCCESSFULLY: {
                 message: "User got successfully",
                 code: 1
+            },
+            USER_REVOKED_SUCCESSFULLY: {
+                message: "User revoked successfully",
+                code: 1
+            },
+            USER_REVOKE_UNSUCCESSFULLY: {
+                message: "User revoke unsuccessfully",
+                code: 2
             }
         }
     },

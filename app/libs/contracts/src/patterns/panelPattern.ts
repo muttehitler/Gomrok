@@ -9,6 +9,7 @@ export const PANEL_PATTERNS = {
     GET_LOCATION: 'panel.get_location',
     PANEL_SERVICE: {
         ADD_USER: 'panel.service.add_user',
-        GET_USER: 'panel.service.get_user'
+        GET_USER: 'panel.service.get_user',
+        REVOKE_SUB: 'panel.service.revoke_sub'
     }
 }

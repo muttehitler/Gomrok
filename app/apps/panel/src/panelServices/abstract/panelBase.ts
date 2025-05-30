@@ -5,4 +5,5 @@ export default abstract class PanelBase {
     abstract testConnection(panelDto: AddPanelDto): any
     abstract addUser(user: PanelAddUserDto, panel: string)
     abstract getUser(user: string, panelId: string)
+    abstract revokeSubscription(user: string, panelId: string)
 }
