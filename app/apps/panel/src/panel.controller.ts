@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { PanelService } from './panel.service';
 import { MessagePattern } from '@nestjs/microservices';
 import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
@@ -8,13 +8,10 @@ import ResultDto from '@app/contracts/models/dtos/resultDto';
 import FilterDto from '@app/contracts/models/dtos/filterDto';
 import ListDto from '@app/contracts/models/dtos/listDto';
 import DataResultDto from '@app/contracts/models/dtos/dataResultDto';
-import { ModuleRef } from '@nestjs/core';
-import PanelAddUserDto from '@app/contracts/models/dtos/panel/panelService/panelAddUserDto';
-import PanelBase from './panelServices/abstract/panelBase';
 
 @Controller()
 export class PanelController {
-  constructor(private readonly panelService: PanelService, private moduleRef: ModuleRef) { }
+  constructor(private readonly panelService: PanelService) { }
 
   @MessagePattern(PANEL_PATTERNS.TEST_CONNECTION)
   async testConnection(panelDto: AddPanelDto) {
@@ -49,15 +46,5 @@ export class PanelController {
   @MessagePattern(PANEL_PATTERNS.GET_LOCATION)
   async getLocations(filter: FilterDto) {
     return await this.panelService.getLocations(filter)
-  }
-
-  @MessagePattern(PANEL_PATTERNS.PANEL_SERVICE.ADD_USER)
-  async addUser(data: { user: PanelAddUserDto, panel: string }) {
-    return await (await this.moduleRef.resolve<PanelBase>(await this.panelService.getPanelType(data.panel) ?? '')).addUser(data.user, data.panel)
-  }
-
-  @MessagePattern(PANEL_PATTERNS.PANEL_SERVICE.GET_USER)
-  async getUser(data: { user: string, panel: string }) {
-    return await (await this.moduleRef.resolve<PanelBase>(await this.panelService.getPanelType(data.panel) ?? '')).getUser(data.user, data.panel)
   }
 }

@@ -131,6 +131,61 @@ export default class MarzneshinPanel extends PanelBase {
         }
     }
 
+    async revokeSubscription(user: string, panelId: string): Promise<DataResultDto<PanelUserDto>> {
+        const panel = await this.panelModel.findById(new Types.ObjectId(panelId))
+        if (!panel)
+            throw new NotFoundException("Panel not fount")
+
+        const auth = await this.panelAuth.getAuthToken(panelId, this.getToken)
+
+        const response = await firstValueFrom(this.httpService.post(panel.url + MARZNESHIN_PANEL_PATTERNS.USERS.REVOKE_SUB.replace('{username}', user), {
+        }, {
+            headers: {
+                'Authorization': 'Bearer ' + auth,
+                'Content-Type': 'application/json',
+                'accept': 'application/json'
+            },
+            validateStatus: () => true
+        }))
+
+        if (response.status != 200)
+            throw new NotFoundException(Messages.PANEL.PANEL_SERVICE.USER_REVOKE_UNSUCCESSFULLY.message + ": " + response.data.detail)
+
+        return {
+            success: true,
+            message: Messages.PANEL.PANEL_SERVICE.USER_REVOKED_SUCCESSFULLY.message,
+            statusCode: Messages.PANEL.PANEL_SERVICE.USER_REVOKED_SUCCESSFULLY.code,
+            data: {
+                id: response.data.id,
+                username: response.data.username,
+                expireStrategy: response.data.expire_strategy,
+                expireDate: response.data.expire_date,
+                usageDuration: response.data.usage_duration,
+                activationDeadline: response.data.activation_deadline,
+                key: response.data.key,
+                dataLimit: response.data.data_limit,
+                dataLimitResetStrategy: response.data.data_limit_reset_strategy,
+                note: response.data.note,
+                subUpdatedAt: response.data.sub_updated_at,
+                subLastUserAgent: response.data.sub_last_user_agent,
+                onlineAt: response.data.online_at,
+                activated: response.data.activated,
+                isActive: response.data.is_active,
+                expired: response.data.expired,
+                dataLimitReached: response.data.data_limit_reached,
+                enabled: response.data.enabled,
+                usedTraffic: response.data.used_traffic,
+                lifetimeUsedTraffic: response.data.lifetime_used_traffic,
+                subRevokedAt: response.data.sub_revoked_at,
+                createdAt: response.data.created_at,
+                serviceIds: response.data.service_ids,
+                subscriptionUrl: response.data.subscription_url,
+                ownerUsername: response.data.owner_username,
+                trafficResetAt: response.data.traffic_reset_at
+            }
+        }
+    }
+
     async getToken(httpService: HttpService, panel: Panel): Promise<PanelTokenFuncDto> {
         const headers = {
             'accept': 'application/json',

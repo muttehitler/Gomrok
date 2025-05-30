@@ -33,4 +33,9 @@ export class OrderController {
   async getWithPanelUser(data: { id: string, userId: string }) {
     return await this.orderService.getWithPanelUser(data.id, data.userId)
   }
+
+  @MessagePattern(ORDER_PATTERNS.REVOKE_SUB)
+  async revokeSub(data: { id: string, userId: string }) {
+    return await this.orderService.revokeSubscription(data.id, data.userId)
+  }
 }
