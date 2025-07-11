@@ -23,6 +23,7 @@ import {
 } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
 import { RevokeSubscription } from '@/components/revokeSubscription/revokeSubscription';
+import { RenewOrder } from '@/components/renewOrder/renewOrder';
 
 type Props = {
     params: Promise<{ id: string }>
@@ -98,6 +99,7 @@ export default function OrderDetail({ params }: Props) {
         ]
     })
     const [pieOptions, setPieOptions] = useState({})
+    const [isRenewOrderVisable, setRenewOrderVisablity] = useState(false)
 
     const tp = useSignal(themeParams.state);
 
@@ -153,7 +155,7 @@ export default function OrderDetail({ params }: Props) {
                 return
 
             panelUser.subscriptionUrl = subUrl
-            
+
             const proxiesDecode = atob(await (await fetch(panelUser?.subscriptionUrl)).text()).split('\n')
 
             setProxies(proxiesDecode)
@@ -292,6 +294,12 @@ export default function OrderDetail({ params }: Props) {
                     </div>
 
                     <RevokeSubscription id={id} visableState={[isRevokeSubVisable, setRevokeSubVisablity]} subscriptionUrl={[subUrl, setSubUrl]} key={order.name} />
+                </div>
+                <div className='container'>
+                    <button onClick={() => { setRenewOrderVisablity(true) }} type="button" className='renew bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
+                        {t('renew-order')}
+                    </button>
+                    <RenewOrder id={id} product={order.product} visableState={[isRenewOrderVisable, setRenewOrderVisablity]} subscriptionUrl={[subUrl, setSubUrl]} key={order.name} />
                 </div>
             </div>) :
                 (<div role="status">

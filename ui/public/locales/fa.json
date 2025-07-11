@@ -50,6 +50,8 @@
         "purchase-unsuccessfully": "خرید ناموفق شد!",
         "deleted-successfully": "با موفقیت حذف شد",
         "delete-unsuccessfully": "حذف ناموفق شد",
+        "renewed-successfully": "با موفقیت تمدید شد",
+        "renew-unsuccessfully": "تمدید ناموفق شد",
         "list-unsuccessfully": "لیست ناموفق",
         "amount": "مقدار",
         "create-unsuccessfully": "ساخته نشد!",
@@ -85,6 +87,9 @@
         "inactive": "غیر فعال",
         "loading": "در حال بارگیری",
         "revoke-sub": "تجدید اشتراک",
-        "are-sure-to-revoke-sub": "آیا میخواهید لینک اشتراک را تجدید کنید؟"
+        "are-sure-to-revoke-sub": "آیا میخواهید لینک اشتراک را تجدید کنید؟",
+        "renew-order": "تمدید اشتراک",
+        "witch-plan-you-want-to-renew": "برای تمدید اشتراک کدوم پلن رو میخواهید؟",
+        "renew": "تمدید"
     }
 }
