@@ -1,5 +1,6 @@
 import FilterDto from '@app/contracts/models/dtos/filterDto';
 import AddOrderDto from '@app/contracts/models/dtos/order/addOrderDto';
+import RenewOrderDto from '@app/contracts/models/dtos/order/renewOrderDto';
 import { ORDER_PATTERNS } from '@app/contracts/patterns/orderPattern';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -18,6 +19,10 @@ export class OrderService {
 
     async buy(id: string, userId: string) {
         return await this.orderClient.send(ORDER_PATTERNS.BUY, { id: id, userId: userId })
+    }
+
+    async renew(id: string, renewOptions: RenewOrderDto, userId: string) {
+        return await this.orderClient.send(ORDER_PATTERNS.RENEW, { id: id, renewOptions: renewOptions, userId: userId })
     }
 
     async myOrders(filter: FilterDto, userId: string) {
