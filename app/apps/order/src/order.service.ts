@@ -17,6 +17,8 @@ import PanelAddUserDto from '@app/contracts/models/dtos/panel/panelService/panel
 import FilterDto from '@app/contracts/models/dtos/filterDto';
 import ListDto from '@app/contracts/models/dtos/listDto';
 import PanelUserDto from '@app/contracts/models/dtos/panel/panelService/panelUserDto';
+import PanelModifyUserDto from '@app/contracts/models/dtos/panel/panelService/panelModifyUserDto';
+import RenewOrderDto from '@app/contracts/models/dtos/order/renewOrderDto';
 
 @Injectable()
 export class OrderService {
@@ -118,6 +120,65 @@ export class OrderService {
       success: true,
       message: Messages.ORDER.ORDER_PURCHASED_SUCCESSFULLY.message,
       statusCode: Messages.ORDER.ORDER_PURCHASED_SUCCESSFULLY.code,
+    }
+  }
+
+  async renew(id: string, renewOptions: RenewOrderDto, userId: string): Promise<ResultDto> {
+    const order = await this.orderModel.findOne({ _id: new Types.ObjectId(id), user: new Types.ObjectId(userId), status: true, payed: true })
+    if (!order)
+      throw new NotFoundException()
+
+    const userBalance = await this.userClient.send(USER_PATTERNS.GET_USER_BALANCE, userId).toPromise() as DataResultDto<number>
+
+    const updateUserBalanceResult = await this.userClient.send(USER_PATTERNS.UPDATE_USER_BALANCE, { userId: userId, balance: (userBalance.data - order.finalPrice) }).toPromise() as ResultDto
+
+    if (!updateUserBalanceResult.success) {
+      throw new InternalServerErrorException("cannot update user balance")
+    }
+
+    const balanceLogResult = await this.paymentClient.send(PAYMENT_PATTERNS.BALANCE_LOG.LOG, {
+      type: 'reduce',
+      amount: order.finalPrice,
+      order: String(order._id),
+      user: userId
+    }).toPromise() as ResultDto
+    if (!balanceLogResult.success)
+      return balanceLogResult
+
+    order.lastRenewal = new Date()
+    order.product = new Types.ObjectId(renewOptions?.product ?? order.product)
+
+    await order.save()
+
+    const product = await this.productClient.send(PRODUCT_PATTERNS.GET, order.product).toPromise() as ProductDto
+
+    const modifyUserResult = await this.panelClient.send(PANEL_PATTERNS.PANEL_SERVICE.MODIFY_USER, {
+      user: {
+        // activationDeadline: undefined,
+        dataLimit: product.dataLimit,
+        dataLimitResetStrategy: "no_reset",
+        expireStrategy: "start_on_first_use",
+        note: "",
+        usageDuration: product.usageDuration,
+        username: order.name
+      } as PanelModifyUserDto,
+      panel: product.panel
+    }).toPromise() as ResultDto
+
+    if (!modifyUserResult.success)
+      return modifyUserResult
+
+    if (product.dataLimit != 0) {
+      const resetUserResult = await this.panelClient.send(PANEL_PATTERNS.PANEL_SERVICE.reset, { user: order.name, panel: product.panel }).toPromise() as ResultDto
+
+      if (!modifyUserResult.success)
+        return modifyUserResult
+    }
+
+    return {
+      success: true,
+      message: Messages.ORDER.ORDER_RENEWED_SUCCESSFULLY.message,
+      statusCode: Messages.ORDER.ORDER_RENEWED_SUCCESSFULLY.code,
     }
   }
 

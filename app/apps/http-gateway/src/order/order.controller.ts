@@ -3,10 +3,17 @@ import { OrderService } from './order.service';
 import AddOrderDto from '@app/contracts/models/dtos/order/addOrderDto';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
 import FilterDto from '@app/contracts/models/dtos/filterDto';
+import RenewOrderDto from '@app/contracts/models/dtos/order/renewOrderDto';
 
 @Controller('order')
 export class OrderController {
     constructor(private orderService: OrderService) { }
+
+    @Post('renew/:id')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async renew(@Param('id') id: string, @Body() renewOptions: RenewOrderDto, @Req() req) {
+        return await this.orderService.renew(id, renewOptions, req.user['sub'])
+    }
 
     @Post('buy/:id')
     @UseGuards(new JwtAuthGuard(['user']))

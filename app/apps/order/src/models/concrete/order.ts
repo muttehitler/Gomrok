@@ -18,6 +18,8 @@ export default class Order extends Document implements IEntity {
     price: number
     @Prop({ type: Number })
     finalPrice: number
+    @Prop({ type: Date })
+    lastRenewal: Date
 
     @Prop({ type: Types.ObjectId, ref: 'User' })
     user: Types.ObjectId
