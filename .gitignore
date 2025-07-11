@@ -7,6 +7,8 @@
 /ui/build
 /ui/.next
 
+/ui/certificates
+
 # Logs
 logs
 *.log
