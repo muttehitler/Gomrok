@@ -14,6 +14,7 @@ import ResultDto from "@app/contracts/models/dtos/resultDto";
 import { Messages } from "@app/contracts/messages/messages";
 import DataResultDto from "@app/contracts/models/dtos/dataResultDto";
 import PanelUserDto from "@app/contracts/models/dtos/panel/panelService/panelUserDto";
+import PanelModifyUserDto from "@app/contracts/models/dtos/panel/panelService/panelModifyUserDto";
 
 @Injectable()
 export default class MarzneshinPanel extends PanelBase {
@@ -21,6 +22,75 @@ export default class MarzneshinPanel extends PanelBase {
         @InjectModel(Panel.name) private panelModel: Model<PanelDocument>
     ) {
         super()
+    }
+
+    async resetUsage(user: string, panelId: string) {
+        const panel = await this.panelModel.findById(new Types.ObjectId(panelId))
+        if (!panel)
+            throw new NotFoundException("Panel not fount")
+
+        const auth = await this.panelAuth.getAuthToken(panelId, this.getToken)
+
+        const response = await firstValueFrom(this.httpService.post(panel.url + MARZNESHIN_PANEL_PATTERNS.USERS.RESET.replace('{username}', user), {}, {
+            headers: {
+                'Authorization': 'Bearer ' + auth,
+                'Content-Type': 'application/json',
+                'accept': 'application/json'
+            },
+            validateStatus: () => true
+        }))
+
+        if (response.status != 200)
+            return {
+                success: false,
+                message: Messages.PANEL.PANEL_SERVICE.CANNOT_RESET_USER.message + ": " + response.data.detail,
+                statusCode: Messages.PANEL.PANEL_SERVICE.CANNOT_RESET_USER.code
+            }
+
+        return {
+            success: true,
+            message: Messages.PANEL.PANEL_SERVICE.USER_RESETED_SUCCESSFULLY.message,
+            statusCode: Messages.PANEL.PANEL_SERVICE.USER_RESETED_SUCCESSFULLY.code
+        }
+    }
+
+    async modifyUser(user: PanelModifyUserDto, panelId: string) {
+        const panel = await this.panelModel.findById(new Types.ObjectId(panelId))
+        if (!panel)
+            throw new NotFoundException("Panel not fount")
+
+        const auth = await this.panelAuth.getAuthToken(panelId, this.getToken)
+
+        const response = await firstValueFrom(this.httpService.put(panel.url + MARZNESHIN_PANEL_PATTERNS.USERS.MODIFY + user.username, {
+            activation_deadline: user.activationDeadline,
+            data_limit: user.dataLimit,
+            data_limit_reset_strategy: user.dataLimitResetStrategy,
+            expire_strategy: user.expireStrategy,
+            note: user.note,
+            service_ids: user.serviceIds,
+            usage_duration: user.usageDuration,
+            username: user.username
+        }, {
+            headers: {
+                'Authorization': 'Bearer ' + auth,
+                'Content-Type': 'application/json',
+                'accept': 'application/json'
+            },
+            validateStatus: () => true
+        }))
+
+        if (response.status != 200)
+            return {
+                success: false,
+                message: Messages.PANEL.PANEL_SERVICE.CANNOT_MODIFY_USER.message + ": " + response.data.detail,
+                statusCode: Messages.PANEL.PANEL_SERVICE.CANNOT_MODIFY_USER.code
+            }
+
+        return {
+            success: true,
+            message: Messages.PANEL.PANEL_SERVICE.USER_UPDATED.message,
+            statusCode: Messages.PANEL.PANEL_SERVICE.USER_UPDATED.code
+        }
     }
 
     async testConnection(panelDto: AddPanelDto) {
@@ -67,7 +137,7 @@ export default class MarzneshinPanel extends PanelBase {
             return {
                 success: false,
                 message: Messages.PANEL.PANEL_SERVICE.CANNOT_CREATE_USER.message + ": " + response.data.detail,
-                statusCode: Messages.PANEL.PANEL_SERVICE.USER_CREATED_SUCCESSFULLY.code
+                statusCode: Messages.PANEL.PANEL_SERVICE.CANNOT_CREATE_USER.code
             }
 
         return {

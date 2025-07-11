@@ -10,6 +10,8 @@ export const PANEL_PATTERNS = {
     PANEL_SERVICE: {
         ADD_USER: 'panel.service.add_user',
         GET_USER: 'panel.service.get_user',
-        REVOKE_SUB: 'panel.service.revoke_sub'
+        MODIFY_USER: 'panel.service.modify_user',
+        REVOKE_SUB: 'panel.service.revoke_sub',
+        reset: 'panel.service.reset'
     }
 }

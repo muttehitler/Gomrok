@@ -44,7 +44,23 @@ export const Messages = {
             USER_REVOKE_UNSUCCESSFULLY: {
                 message: "User revoke unsuccessfully",
                 code: 2
-            }
+            },
+            USER_UPDATED: {
+                message: "User updated successfully",
+                code: 1
+            },
+            CANNOT_MODIFY_USER: {
+                message: "Cannot modify user",
+                code: 2
+            },
+            CANNOT_RESET_USER: {
+                message: "Cannot reset user",
+                code: 2
+            }, 
+            USER_RESETED_SUCCESSFULLY: {
+                message: "User reseted successfully",
+                code: 1
+            },
         }
     },
     PAYMENT: {
@@ -142,6 +158,10 @@ export const Messages = {
         },
         ORDER_GOT_SUCCESSFULLY: {
             message: "Order got successfully.",
+            code: 1
+        },
+        ORDER_RENEWED_SUCCESSFULLY: {
+            message: "Order renewed successfully.",
             code: 1
         }
     }
