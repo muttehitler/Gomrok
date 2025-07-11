@@ -50,6 +50,8 @@
     "purchase-unsuccessfully": "Purchase unsuccessfully",
     "deleted-successfully": "Deleted successfully",
     "delete-unsuccessfully": "Delete unsuccessfully",
+    "renewed-successfully": "Renewed successfully",
+    "renew-unsuccessfully": "Renew unsuccessfully",
     "list-unsuccessfully": "List unsuccessfully",
     "amount": "Amount",
     "create-unsuccessfully": "Create unsuccessfully",
@@ -85,6 +87,9 @@
     "inactive": "Inactive",
     "loading": "Loading",
     "revoke-sub": "Revoke Subscription",
-    "are-sure-to-revoke-sub": "Are you sure to revoke subscription?"
+    "are-sure-to-revoke-sub": "Are you sure to revoke subscription?",
+    "renew-order": "Renew order",
+    "witch-plan-you-want-to-renew": "Witch plan you want to renew?",
+    "renew": "Renew"
   }
 }
