@@ -90,6 +90,8 @@
     "are-sure-to-revoke-sub": "Are you sure to revoke subscription?",
     "renew-order": "Renew order",
     "witch-plan-you-want-to-renew": "Witch plan you want to renew?",
-    "renew": "Renew"
+    "renew": "Renew",
+    "not-started-yet": "Not started yet",
+    "not-connected-yet": "Not connected yet"
   }
 }

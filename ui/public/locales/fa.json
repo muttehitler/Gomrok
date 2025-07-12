@@ -90,6 +90,8 @@
         "are-sure-to-revoke-sub": "آیا میخواهید لینک اشتراک را تجدید کنید؟",
         "renew-order": "تمدید اشتراک",
         "witch-plan-you-want-to-renew": "برای تمدید اشتراک کدوم پلن رو میخواهید؟",
-        "renew": "تمدید"
+        "renew": "تمدید",
+        "not-started-yet": "هنوز شروع نشده",
+        "not-connected-yet": "هنوز وصل نشده"
     }
 }

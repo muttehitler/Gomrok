@@ -132,7 +132,7 @@ export default function OrderDetail({ params }: Props) {
                 labels: [t('used'), t('remaining')],
                 datasets: [
                     {
-                        data: [(result.data.panelUser.lifetimeUsedTraffic / 1024 / 1024 / 1024), (result.data.panelUser.dataLimit / 1024 / 1024 / 1024) - (result.data.panelUser.lifetimeUsedTraffic / 1024 / 1024 / 1024)],
+                        data: [(result.data.panelUser.lifetimeUsedTraffic / 1024 / 1024 / 1024.0), ((result.data.panelUser.dataLimit - result.data.panelUser.lifetimeUsedTraffic) / 1024 / 1024 / 1024.0)],
                         backgroundColor: ['#ef4444', '#3b82f6'],
                         borderWidth: 1,
                     },
@@ -170,10 +170,10 @@ export default function OrderDetail({ params }: Props) {
                     <div className='flex'>
                         <h4 className='username'>{panelUser?.username}</h4>&ensp;
                         {
-                            (new Date().getTime() - new Date(panelUser?.onlineAt ?? '').getTime()) < 60000 ?
+                            (panelUser?.onlineAt == null ? (<span className="online-bg bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">{t('not-connected-yet')}</span>) : (new Date().getTime() - new Date(panelUser?.onlineAt + 'Z').getTime()) < 60000 ?
                                 (<span className="online-bg bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Online</span>)
                                 :
-                                (<span>{panelUser?.onlineAt && moment(panelUser?.onlineAt).fromNow()}</span>)
+                                (<span>{panelUser?.onlineAt && moment(new Date(panelUser?.onlineAt + 'Z').toString()).fromNow()}</span>))
                         }
                     </div>
                     <div>
@@ -192,10 +192,10 @@ export default function OrderDetail({ params }: Props) {
 
                 <div className='container'>
                     <div>
-                        {t('time-left')}: {moment(panelUser?.expireDate).fromNow()}
+                        {t('time-left')}: {panelUser?.expireStrategy == "start_on_first_use" ? t('not-started-yet') : moment(panelUser?.expireDate).fromNow()}
                     </div>
                     <div>
-                        {t('expires-in')}: {jmoment(panelUser?.expireDate).format('dddd jD jMMMM jYYYY | hh:mm')}
+                        {t('expires-in')}: {panelUser?.expireStrategy == "start_on_first_use" ? ((panelUser?.usageDuration ?? 0) / 60 / 60 / 24) + (t('days')) : jmoment(panelUser?.expireDate).format('dddd jD jMMMM jYYYY | hh:mm')}
                     </div>
                 </div>
                 <div className='container'>
@@ -249,7 +249,7 @@ export default function OrderDetail({ params }: Props) {
                                 proxies.map(x => {
                                     const name = decodeURIComponent(x.split('#')[1])
                                     return (
-                                        <div className="proxy-field py-5 border-b border-gray-200 dark:border-gray-700" key={name}>
+                                        <div className="proxy-field py-5 border-b border-gray-200 dark:border-gray-700" key={name + Math.random()}>
                                             <div className='flex'>
                                                 <p>{name}</p>
                                                 <div className='ml-auto flex'>
