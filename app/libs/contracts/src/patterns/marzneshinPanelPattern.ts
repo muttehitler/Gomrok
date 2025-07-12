@@ -8,5 +8,8 @@ export const MARZNESHIN_PANEL_PATTERNS = {
     },
     ADMINS: {
         TOKEN: "/api/admins/token"
+    },
+    SERVICES:{
+        GET:'/api/services'
     }
 }

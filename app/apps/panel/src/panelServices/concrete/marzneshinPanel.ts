@@ -115,6 +115,15 @@ export default class MarzneshinPanel extends PanelBase {
 
         const auth = await this.panelAuth.getAuthToken(panelId, this.getToken)
 
+        user.services=(await firstValueFrom(this.httpService.get(panel.url + MARZNESHIN_PANEL_PATTERNS.SERVICES.GET, {
+            headers: {
+                'Authorization': 'Bearer ' + auth,
+                'Content-Type': 'application/json',
+                'accept': 'application/json'
+            },
+            validateStatus: () => true
+        }))).data.items.map(x=>x.id)
+        
         const response = await firstValueFrom(this.httpService.post(panel.url + MARZNESHIN_PANEL_PATTERNS.USERS.ADD, {
             activation_deadline: user.activationDeadline,
             data_limit: user.dataLimit,
