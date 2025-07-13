@@ -92,6 +92,7 @@
         "witch-plan-you-want-to-renew": "برای تمدید اشتراک کدوم پلن رو میخواهید؟",
         "renew": "تمدید",
         "not-started-yet": "هنوز شروع نشده",
-        "not-connected-yet": "هنوز وصل نشده"
+        "not-connected-yet": "هنوز وصل نشده",
+        "id": "شناسه"
     }
 }

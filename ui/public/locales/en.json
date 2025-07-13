@@ -92,6 +92,7 @@
     "witch-plan-you-want-to-renew": "Witch plan you want to renew?",
     "renew": "Renew",
     "not-started-yet": "Not started yet",
-    "not-connected-yet": "Not connected yet"
+    "not-connected-yet": "Not connected yet",
+    "id": "ID"
   }
 }
