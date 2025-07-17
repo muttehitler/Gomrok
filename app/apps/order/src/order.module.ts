@@ -14,7 +14,7 @@ import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot(process.env.AUTH_MONGO_STRING?.toString() ?? '', { dbName: 'orderdb' }),
+    MongooseModule.forRoot(process.env.MONGO_STRING?.toString() ?? '', { dbName: 'orderdb' }),
     MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
     ClientsModule.register([
       {
