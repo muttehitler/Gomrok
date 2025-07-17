@@ -16,7 +16,7 @@ import { BalanceLogModule } from './balance-log/balance-log.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot(process.env.AUTH_MONGO_STRING?.toString() ?? '', { dbName: 'paymentdb' }),
+    MongooseModule.forRoot(process.env.MONGO_STRING?.toString() ?? '', { dbName: 'paymentdb' }),
     MongooseModule.forFeature([{ name: Payment.name, schema: PaymentSchema }]),
     MongooseModule.forFeature([{ name: BalanceLog.name, schema: BalanceLogSchema }]),
     HttpModule,

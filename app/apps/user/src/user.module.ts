@@ -23,7 +23,7 @@ import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
       },
       global: true
     }),
-    MongooseModule.forRoot(process.env.AUTH_MONGO_STRING?.toString() ?? '', { dbName: 'userdb' }),
+    MongooseModule.forRoot(process.env.MONGO_STRING?.toString() ?? '', { dbName: 'userdb' }),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     ClientsModule.register([
       {

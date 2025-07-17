@@ -15,7 +15,7 @@ import PanelAuthService from './panelAuthService/concrete/panelAuthService';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot(process.env.AUTH_MONGO_STRING?.toString() ?? '', { dbName: 'paneldb' }),
+    MongooseModule.forRoot(process.env.MONGO_STRING?.toString() ?? '', { dbName: 'paneldb' }),
     MongooseModule.forFeature([{ name: Panel.name, schema: PanelSchema }]),
     HttpModule,
     PanelServiceModule
