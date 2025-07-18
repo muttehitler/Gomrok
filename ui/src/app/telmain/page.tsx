@@ -7,7 +7,7 @@ import { Link } from '@/components/Link/Link';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher/LocaleSwitcher';
 import { Page } from '@/components/Page';
 
-import tonSvg from './_assets/ton.svg';
+import tonSvg from '@/app/_assets/ton.svg';
 
 export default function Home() {
   const t = useTranslations('i18n');
