@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
   },
-  allowedDevOrigins: ['https://insulation-environmental-bearing-physically.trycloudflare.com'],
+  allowedDevOrigins: ['https://localhost:3000','https://192.168.1.136:3000'],
 };
 
 export default nextConfig;
