@@ -30,6 +30,11 @@ export class OrderController {
     return await this.orderService.renew(data.id, data.renewOptions, data.userId)
   }
 
+  @MessagePattern(ORDER_PATTERNS.GET_LIST)
+  async getList(data: { filter: FilterDto }) {
+    return await this.orderService.getList(data.filter)
+  }
+
   @MessagePattern(ORDER_PATTERNS.MY_ORDERS)
   async myOrders(data: { filter: FilterDto, userId: string }) {
     return await this.orderService.myOrders(data.filter, data.userId)

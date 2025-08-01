@@ -27,6 +27,12 @@ export class OrderController {
         return await this.orderService.add(order, req.user['sub'])
     }
 
+    @Get('get_list')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getList(@Query() filter: FilterDto){
+        return await this.orderService.getList(filter)
+    }
+
     @Get('my_orders')
     @UseGuards(new JwtAuthGuard(['user']))
     async myOrders(@Query() filter: FilterDto, @Req() req) {
