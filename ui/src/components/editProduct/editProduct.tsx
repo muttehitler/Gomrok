@@ -100,8 +100,8 @@ export const EditProduct: FC<EditProductProp> = ({ id, visableState }: EditProdu
             setProductPanel(product.panel)
             setProductPayAsYouGo(product.payAsYouGo)
             setProductUsageDuration(product.usageDuration)
-            setProductDataLimit(product.dataLimit)
-            setProductUserLimit(product.userLimit)
+            setProductDataLimit(product.dataLimit / Math.pow(1024, 3))
+            setProductUserLimit(product.userLimit * 24 * 60 * 60)
             setProductOnHold(product.onHold)
             setProductPrice(product.price)
             setProductWeight(product.weight)
@@ -117,7 +117,8 @@ export const EditProduct: FC<EditProductProp> = ({ id, visableState }: EditProdu
     });
 
     const updateProductHandler = async (data: any) => {
-        console.log(data)
+        data.dataLimit *= Math.pow(1024, 3)
+        data.usageDuration *= 24 * 60 * 60;
 
         data.id = id
 

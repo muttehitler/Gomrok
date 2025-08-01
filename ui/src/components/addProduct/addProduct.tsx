@@ -76,6 +76,9 @@ export const AddProduct: FC = () => {
     });
 
     const addProductHandler = async (data: any) => {
+        data.dataLimit *= Math.pow(1024, 3)
+        data.usageDuration *= 24 * 60 * 60;
+
         const result = JSON.parse(await addProduct(data))
 
         if (!result.success) {
