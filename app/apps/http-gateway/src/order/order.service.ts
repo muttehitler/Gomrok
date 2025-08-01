@@ -25,6 +25,10 @@ export class OrderService {
         return await this.orderClient.send(ORDER_PATTERNS.RENEW, { id: id, renewOptions: renewOptions, userId: userId })
     }
 
+    async getList(filter: FilterDto) {
+        return await this.orderClient.send(ORDER_PATTERNS.GET_LIST, { filter: filter })
+    }
+
     async myOrders(filter: FilterDto, userId: string) {
         return await this.orderClient.send(ORDER_PATTERNS.MY_ORDERS, { filter: filter, userId: userId })
     }

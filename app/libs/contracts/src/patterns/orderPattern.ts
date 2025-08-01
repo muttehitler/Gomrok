@@ -4,6 +4,7 @@ export const ORDER_PATTERNS = {
     GET: 'order.get',
     BUY: 'order.buy',
     RENEW: 'order.renew',
+    GET_LIST: 'order.get_list',
     MY_ORDERS: 'order.my_orders',
     GET_WITH_PANEL_USER: 'order.get_with_panel_user',
     REVOKE_SUB: 'order.revoke_sub'
