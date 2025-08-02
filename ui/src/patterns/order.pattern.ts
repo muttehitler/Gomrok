@@ -6,5 +6,6 @@ export const ORDER_PATTERNS = {
     GET_LIST: '/order/get_list',
     MY_ORDERS: '/order/my_orders',
     GET_WITH_PANEL_USER: '/order/get_with_panel_user/',
-    REVOKE_SUB:'/order/{id}/revoke_sub'
+    GET_WITH_PANEL_USER_FOR_ADMIN: '/order/get_with_panel_user/admin/',
+    REVOKE_SUB: '/order/{id}/revoke_sub'
 }
