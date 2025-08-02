@@ -31,7 +31,7 @@ export class BalanceLogService {
     }
 
     async getList({ startIndex, limit, order }: FilterDto, userId: string): Promise<DataResultDto<ListDto<BalanceLogDto[]>>> {
-        const expression = { user: new Types.ObjectId(userId), status: true }
+        const expression = { user: new Types.ObjectId(userId) }
 
         const query = this.balanceLogModel.find(expression)
         const list = (await query.skip(startIndex).limit(limit).sort({ createdAt: order == 1 ? 1 : -1 })).map<BalanceLogDto>(x => {
