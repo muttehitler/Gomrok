@@ -44,3 +44,17 @@ export async function verifyInvoice(data: any) {
     })
     return JSON.stringify(response.data)
 }
+
+export async function getBalanceLogsList(data: any) {
+    validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
+    const response = await axios.get(process.env.API_ADDRESS + PAYMENT_PATTERNS.BALANCE_LOG.GET_LIST +
+        `?startIndex=${data.startIndex}&&limit=${data.limit}`, {
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + (await cookies()).get('token')?.value
+        },
+        validateStatus: () => true
+    })
+    return JSON.stringify(response.data)
+}
