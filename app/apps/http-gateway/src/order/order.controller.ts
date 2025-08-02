@@ -28,7 +28,7 @@ export class OrderController {
     }
 
     @Get('get_list')
-    @UseGuards(new JwtAuthGuard(['user']))
+    @UseGuards(new JwtAuthGuard(['admin']))
     async getList(@Query() filter: FilterDto){
         return await this.orderService.getList(filter)
     }
