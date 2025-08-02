@@ -45,6 +45,12 @@ export class OrderController {
         return await this.orderService.getWithPanelUser(id, req.user['sub'])
     }
 
+    @Get('get_with_panel_user/admin/:id')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getWithPanelUserForAdmin(@Param('id') id: string) {
+        return await this.orderService.getWithPanelUserForAdmin(id)
+    }
+
     @Post(':id/revoke_sub')
     @UseGuards(new JwtAuthGuard(['user']))
     async revokeSub(@Param('id') id: string, @Req() req) {

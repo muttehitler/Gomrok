@@ -216,8 +216,52 @@ export class OrderService {
     }
   }
 
-  async getWithPanelUser(id: string, userId: string): Promise<DataResultDto<{ order: OrderDto, panelUser: PanelUserDto }>> {
-    const order = await this.orderModel.findOne({ _id: new Types.ObjectId(id), user: new Types.ObjectId(userId), status: true, payed: true })
+  async getWithPanelUser(id: string, userId: string, admin: boolean = false): Promise<DataResultDto<{ order: OrderDto, panelUser: PanelUserDto }>> {
+    let query: any = {
+      _id: new Types.ObjectId(id),
+      status: true,
+      payed: true
+    }
+
+    if (!admin)
+      query.user = new Types.ObjectId(userId)
+
+    const order = await this.orderModel.findOne(query)
+    if (!order)
+      throw new NotFoundException()
+
+    const product = await this.productClient.send(PRODUCT_PATTERNS.GET, order.product).toPromise() as ProductDto
+
+    const panelUser = await this.panelClient.send(PANEL_PATTERNS.PANEL_SERVICE.GET_USER, { user: order.name, panel: product.panel }).toPromise() as DataResultDto<PanelUserDto>
+    if (!panelUser.success)
+      throw new NotFoundException(panelUser.message)
+
+    return {
+      success: true,
+      message: Messages.ORDER.ORDER_GOT_SUCCESSFULLY.message,
+      statusCode: Messages.ORDER.ORDER_GOT_SUCCESSFULLY.code,
+      data: {
+        order: {
+          id: String(order._id),
+          name: order.name,
+          payed: order.payed,
+          price: order.price,
+          finalPrice: order.finalPrice,
+          product: String(order.product)
+        },
+        panelUser: panelUser.data
+      }
+    }
+  }
+
+  async getWithPanelUserForAdmin(id: string): Promise<DataResultDto<{ order: OrderDto, panelUser: PanelUserDto }>> {
+    let query: any = {
+      _id: new Types.ObjectId(id),
+      status: true,
+      payed: true
+    }
+
+    const order = await this.orderModel.findOne(query)
     if (!order)
       throw new NotFoundException()
 
