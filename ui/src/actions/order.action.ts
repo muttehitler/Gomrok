@@ -100,6 +100,19 @@ export async function getOrderWithPanelUser(data: any) {
     return JSON.stringify(response.data)
 }
 
+export async function getOrderWithPanelUserForAdmin(data: any) {
+    validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
+    const response = await axios.get(process.env.API_ADDRESS + ORDER_PATTERNS.GET_WITH_PANEL_USER_FOR_ADMIN + data.id, {
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + (await cookies()).get('token')?.value
+        },
+        validateStatus: () => true
+    })
+    return JSON.stringify(response.data)
+}
+
 export async function revokeSub(data: any) {
     console.log(data)
     validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
