@@ -7,5 +7,6 @@ export const ORDER_PATTERNS = {
     GET_LIST: 'order.get_list',
     MY_ORDERS: 'order.my_orders',
     GET_WITH_PANEL_USER: 'order.get_with_panel_user',
+    GET_WITH_PANEL_USER_FOR_ADMIN: 'order.get_with_panel_user_for_admin',
     REVOKE_SUB: 'order.revoke_sub'
 }

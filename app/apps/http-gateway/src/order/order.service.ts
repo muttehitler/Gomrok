@@ -37,6 +37,10 @@ export class OrderService {
         return await this.orderClient.send(ORDER_PATTERNS.GET_WITH_PANEL_USER, { id: id, userId: userId })
     }
 
+    async getWithPanelUserForAdmin(id: string) {
+        return await this.orderClient.send(ORDER_PATTERNS.GET_WITH_PANEL_USER_FOR_ADMIN, { id: id })
+    }
+
     async revokeSub(id: string, userId: string) {
         return await this.orderClient.send(ORDER_PATTERNS.REVOKE_SUB, { id: id, userId: userId })
     }
