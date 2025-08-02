@@ -23,7 +23,7 @@ export default function OrderDetail() {
         <Page back={true}>
             <div className='profile-container'>
                 <div className='p-data'>
-                    <img src={`https://pbs.twimg.com/media/Fgnsy3CXkAEz_TH.png`}
+                    <img src={data?.user?.photoUrl}
                         alt="Profile Photo"
                         width={50}
                         className='p-img' />
