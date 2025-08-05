@@ -4,7 +4,9 @@ export const MARZNESHIN_PANEL_PATTERNS = {
         GET: '/api/users/',
         MODIFY: '/api/users/',
         REVOKE_SUB: '/api/users/{username}/revoke_sub',
-        RESET: '/api/users/{username}/reset'
+        RESET: '/api/users/{username}/reset',
+        ENABLE:'/api/users/{username}/enable',
+        DISABLE:'/api/users/{username}/disable'
     },
     ADMINS: {
         TOKEN: "/api/admins/token"

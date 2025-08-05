@@ -115,15 +115,15 @@ export default class MarzneshinPanel extends PanelBase {
 
         const auth = await this.panelAuth.getAuthToken(panelId, this.getToken)
 
-        user.services=(await firstValueFrom(this.httpService.get(panel.url + MARZNESHIN_PANEL_PATTERNS.SERVICES.GET, {
+        user.services = (await firstValueFrom(this.httpService.get(panel.url + MARZNESHIN_PANEL_PATTERNS.SERVICES.GET, {
             headers: {
                 'Authorization': 'Bearer ' + auth,
                 'Content-Type': 'application/json',
                 'accept': 'application/json'
             },
             validateStatus: () => true
-        }))).data.items.map(x=>x.id)
-        
+        }))).data.items.map(x => x.id)
+
         const response = await firstValueFrom(this.httpService.post(panel.url + MARZNESHIN_PANEL_PATTERNS.USERS.ADD, {
             activation_deadline: user.activationDeadline,
             data_limit: user.dataLimit,
@@ -262,6 +262,60 @@ export default class MarzneshinPanel extends PanelBase {
                 ownerUsername: response.data.owner_username,
                 trafficResetAt: response.data.traffic_reset_at
             }
+        }
+    }
+
+    async enableUser(user: string, panelId: string): Promise<ResultDto> {
+        const panel = await this.panelModel.findById(new Types.ObjectId(panelId))
+        if (!panel)
+            throw new NotFoundException("Panel not fount")
+
+        const auth = await this.panelAuth.getAuthToken(panelId, this.getToken)
+
+        const response = await firstValueFrom(this.httpService.post(panel.url + MARZNESHIN_PANEL_PATTERNS.USERS.ENABLE.replace('{username}', user), {
+        }, {
+            headers: {
+                'Authorization': 'Bearer ' + auth,
+                'Content-Type': 'application/json',
+                'accept': 'application/json'
+            },
+            validateStatus: () => true
+        }))
+
+        if (response.status != 200)
+            throw new NotFoundException(Messages.PANEL.PANEL_SERVICE.USER_ENABLE_UNSUCCESSFULLY.message + ": " + response.data.detail)
+
+        return {
+            success: true,
+            message: Messages.PANEL.PANEL_SERVICE.USER_ENABLED_SUCCESSFULLY.message,
+            statusCode: Messages.PANEL.PANEL_SERVICE.USER_ENABLED_SUCCESSFULLY.code
+        }
+    }
+
+    async disableUser(user: string, panelId: string): Promise<ResultDto> {
+        const panel = await this.panelModel.findById(new Types.ObjectId(panelId))
+        if (!panel)
+            throw new NotFoundException("Panel not fount")
+
+        const auth = await this.panelAuth.getAuthToken(panelId, this.getToken)
+
+        const response = await firstValueFrom(this.httpService.post(panel.url + MARZNESHIN_PANEL_PATTERNS.USERS.DISABLE.replace('{username}', user), {
+        }, {
+            headers: {
+                'Authorization': 'Bearer ' + auth,
+                'Content-Type': 'application/json',
+                'accept': 'application/json'
+            },
+            validateStatus: () => true
+        }))
+
+        if (response.status != 200)
+            throw new NotFoundException(Messages.PANEL.PANEL_SERVICE.USER_DISABLE_UNSUCCESSFULLY.message + ": " + response.data.detail)
+
+        return {
+            success: true,
+            message: Messages.PANEL.PANEL_SERVICE.USER_DISABLED_SUCCESSFULLY.message,
+            statusCode: Messages.PANEL.PANEL_SERVICE.USER_DISABLED_SUCCESSFULLY.code
         }
     }
 

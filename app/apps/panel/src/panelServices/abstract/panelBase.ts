@@ -9,4 +9,6 @@ export default abstract class PanelBase {
     abstract modifyUser(user: PanelModifyUserDto, panelId: string)
     abstract revokeSubscription(user: string, panelId: string)
     abstract resetUsage(user: string, panelId: string)
+    abstract enableUser(user: string, panelId: string)
+    abstract disableUser(user: string, panelId: string)
 }

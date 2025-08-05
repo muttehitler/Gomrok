@@ -31,8 +31,18 @@ export class PanelServiceController {
         return await (await this.moduleRef.get<PanelBase>(await this.panelService.getPanelType(data.panel) ?? '', { strict: false })).modifyUser(data.user, data.panel)
     }
 
-    @MessagePattern(PANEL_PATTERNS.PANEL_SERVICE.reset)
+    @MessagePattern(PANEL_PATTERNS.PANEL_SERVICE.RESET)
     async resetUser(data: { user: string, panel: string }) {
         return await (await this.moduleRef.get<PanelBase>(await this.panelService.getPanelType(data.panel) ?? '', { strict: false })).resetUsage(data.user, data.panel)
+    }
+
+    @MessagePattern(PANEL_PATTERNS.PANEL_SERVICE.ENABLE)
+    async enableUser(data: { user: string, panel: string }) {
+        return await (await this.moduleRef.get<PanelBase>(await this.panelService.getPanelType(data.panel) ?? '', { strict: false })).enableUser(data.user, data.panel)
+    }
+
+    @MessagePattern(PANEL_PATTERNS.PANEL_SERVICE.DISABLE)
+    async disableUser(data: { user: string, panel: string }) {
+        return await (await this.moduleRef.get<PanelBase>(await this.panelService.getPanelType(data.panel) ?? '', { strict: false })).disableUser(data.user, data.panel)
     }
 }

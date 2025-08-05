@@ -61,6 +61,22 @@ export const Messages = {
                 message: "User reseted successfully",
                 code: 1
             },
+            USER_ENABLED_SUCCESSFULLY: {
+                message: "User enabled successfully",
+                code: 1
+            },
+            USER_ENABLE_UNSUCCESSFULLY: {
+                message: "User enable unsuccessfully",
+                code: 2
+            },
+            USER_DISABLED_SUCCESSFULLY: {
+                message: "User disabled successfully",
+                code: 1
+            },
+            USER_DISABLE_UNSUCCESSFULLY: {
+                message: "User disable unsuccessfully",
+                code: 2
+            }
         }
     },
     PAYMENT: {
