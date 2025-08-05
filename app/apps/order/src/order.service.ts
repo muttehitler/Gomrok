@@ -169,7 +169,7 @@ export class OrderService {
       return modifyUserResult
 
     if (product.dataLimit != 0) {
-      const resetUserResult = await this.panelClient.send(PANEL_PATTERNS.PANEL_SERVICE.reset, { user: order.name, panel: product.panel }).toPromise() as ResultDto
+      const resetUserResult = await this.panelClient.send(PANEL_PATTERNS.PANEL_SERVICE.RESET, { user: order.name, panel: product.panel }).toPromise() as ResultDto
 
       if (!modifyUserResult.success)
         return modifyUserResult
