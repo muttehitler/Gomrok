@@ -25,4 +25,6 @@ export default interface PanelUserDto {
     subscriptionUrl: string
     ownerUsername: string
     trafficResetAt: string
+
+    links?: string[]
 }

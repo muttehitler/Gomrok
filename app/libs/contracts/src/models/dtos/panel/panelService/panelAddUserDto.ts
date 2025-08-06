@@ -1,7 +1,7 @@
 import IDto from "@app/contracts/models/abstract/iDto";
 
 export default interface PanelAddUserDto extends IDto {
-    username:string
+    username: string
     activationDeadline?: string
     dataLimit: number
     dataLimitResetStrategy: string
@@ -9,5 +9,11 @@ export default interface PanelAddUserDto extends IDto {
     expireDate?: string
     note: string
     services?: number[]
-    usageDuration:number
+    usageDuration: number
+    on_hold: boolean
+
+    //marzban
+    proxies?: any
+    inbounds?: any
+    status?: string
 }
