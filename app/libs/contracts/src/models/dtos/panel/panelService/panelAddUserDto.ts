@@ -6,6 +6,7 @@ export default interface PanelAddUserDto extends IDto {
     dataLimit: number
     dataLimitResetStrategy: string
     expireStrategy: string
+    expireDate?: string
     note: string
     services?: number[]
     usageDuration:number
