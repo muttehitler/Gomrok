@@ -33,8 +33,8 @@ export const ProductBoxItem: FC<Product> = ({ id, name, usageDuration, dataLimit
                         {payAsYouGo ? (<div>
                             <span className="description flex"><Bird size={20} />&ensp;{t('free-triff')}</span>
                         </div>) : (<div>
-                            <span className="description flex"><Clock size={20} />&ensp;{usageDuration} {t('days')}</span>
-                            <span className="description flex"><BatteryCharging size={20} />&ensp;{dataLimit} {t('gb')}</span>
+                            <span className="description flex"><Clock size={20} />&ensp;{usageDuration / 60 / 60 / 24} {t('days')}</span>
+                            <span className="description flex"><BatteryCharging size={20} />&ensp;{dataLimit / 1024 / 1024 / 1024} {t('gb')}</span>
                             <span className="description flex">{userLimit == 1 ? <User size={20} /> : <Users size={20} />}&ensp;{dataLimit} {t('user')}</span>
                         </div>)}
                         <br />
