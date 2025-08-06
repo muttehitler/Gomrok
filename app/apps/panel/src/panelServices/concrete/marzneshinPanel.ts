@@ -66,6 +66,7 @@ export default class MarzneshinPanel extends PanelBase {
             data_limit: user.dataLimit,
             data_limit_reset_strategy: user.dataLimitResetStrategy,
             expire_strategy: user.expireStrategy,
+            expire_date: user.expireDate,
             note: user.note,
             service_ids: user.serviceIds,
             usage_duration: user.usageDuration,
@@ -129,6 +130,7 @@ export default class MarzneshinPanel extends PanelBase {
             data_limit: user.dataLimit,
             data_limit_reset_strategy: user.dataLimitResetStrategy,
             expire_strategy: user.expireStrategy,
+            expire_date: user.expireDate,
             note: user.note,
             service_ids: user.services,
             usage_duration: user.usageDuration,
@@ -145,7 +147,7 @@ export default class MarzneshinPanel extends PanelBase {
         if (response.status != 200)
             return {
                 success: false,
-                message: Messages.PANEL.PANEL_SERVICE.CANNOT_CREATE_USER.message + ": " + response.data.detail,
+                message: Messages.PANEL.PANEL_SERVICE.CANNOT_CREATE_USER.message + ": " + JSON.stringify(response.data.detail),
                 statusCode: Messages.PANEL.PANEL_SERVICE.CANNOT_CREATE_USER.code
             }
 
