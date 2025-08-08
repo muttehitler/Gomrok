@@ -10,6 +10,7 @@ import { HttpModule } from '@nestjs/axios';
 import { PanelServiceModule } from './panel-service/panel-service.module';
 import PanelAuthBase from './panelAuthService/abstract/panelAuthBase';
 import PanelAuthService from './panelAuthService/concrete/panelAuthService';
+import MarzbanPanel from './panelServices/concrete/marzbanPanel';
 
 @Global()
 @Module({
@@ -28,12 +29,16 @@ import PanelAuthService from './panelAuthService/concrete/panelAuthService';
       useClass: MarzneshinPanel
     },
     {
+      provide: PanelType.marzban,
+      useClass: MarzbanPanel
+    },
+    {
       provide: PanelAuthBase,
       useClass: PanelAuthService
     }
   ],
   exports: [
-    PanelService, PanelType.marzneshin, PanelAuthBase
+    PanelService, PanelType.marzneshin, PanelType.marzban, PanelAuthBase
   ]
 })
 export class PanelModule { }
