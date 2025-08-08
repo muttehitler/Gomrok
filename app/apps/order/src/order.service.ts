@@ -101,7 +101,8 @@ export class OrderService {
         // activationDeadline: undefined,
         dataLimit: product.dataLimit,
         dataLimitResetStrategy: "no_reset",
-        expireStrategy: "start_on_first_use",
+        expireStrategy: product.usageDuration == 0 ? "never" : (product.onHold ? "start_on_first_use" : "fixed_date"),
+        expireDate: new Date(new Date().getTime() + product.usageDuration * 1000).toISOString(),
         note: "",
         usageDuration: product.usageDuration,
         username: order.name
