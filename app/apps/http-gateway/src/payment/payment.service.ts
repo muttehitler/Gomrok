@@ -1,3 +1,4 @@
+import FilterDto from '@app/contracts/models/dtos/filterDto';
 import PaymentDto from '@app/contracts/models/dtos/payment/paymentDto';
 import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
 import { Inject, Injectable } from '@nestjs/common';
@@ -17,5 +18,9 @@ export class PaymentService {
 
     async verify(payment: PaymentDto, authorId: string) {
         return await this.paymentClient.send(PAYMENT_PATTERNS.VERIFY, { payment: payment, authorId: authorId })
+    }
+
+    async getList(filter: FilterDto) {
+        return await this.paymentClient.send(PAYMENT_PATTERNS.GET_LIST, { filter: filter })
     }
 }
