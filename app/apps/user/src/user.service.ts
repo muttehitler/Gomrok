@@ -1,18 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import User, { UserDocument } from './models/concrete/user';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import ResultDto from '@app/contracts/models/dtos/resultDto';
 import { Messages } from '@app/contracts/messages/messages';
 import DataResultDto from '@app/contracts/models/dtos/dataResultDto';
+import UserDto from '@app/contracts/models/dtos/user/userDto';
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
-
-  getHello(): string {
-    return 'Hello World!';
-  }
 
   async getUserBalance(userId: string): Promise<DataResultDto<number>> {
     return {
@@ -30,6 +27,27 @@ export class UserService {
       success: true,
       message: Messages.USER.BALANCE_UPDATED_SUCCESSFULLY.message,
       statusCode: Messages.USER.BALANCE_UPDATED_SUCCESSFULLY.code
+    }
+  }
+
+  async get(userId: string): Promise<DataResultDto<UserDto>> {
+    let user = (await this.userModel.findOne({ _id: new Types.ObjectId(userId) }))
+
+    if (!user)
+      throw new NotFoundException()
+
+    return {
+      success: true,
+      message: Messages.USER.BALANCE_GOT_SUCCESSFULLY.message,
+      statusCode: Messages.USER.BALANCE_GOT_SUCCESSFULLY.code,
+      data: {
+        id: String(user.id),
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+        chatId: user.chatId,
+        photoUrl: user.photoUrl
+      }
     }
   }
 }

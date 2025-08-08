@@ -3,6 +3,7 @@ import { PaymentService } from './payment.service';
 import { MessagePattern } from '@nestjs/microservices';
 import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
 import PaymentDto from '@app/contracts/models/dtos/payment/paymentDto';
+import FilterDto from '@app/contracts/models/dtos/filterDto';
 
 @Controller()
 export class PaymentController {
@@ -21,5 +22,10 @@ export class PaymentController {
   @MessagePattern(PAYMENT_PATTERNS.VERIFY)
   async verify(data: { payment: PaymentDto, authorId: string }) {
     return await this.paymentService.verify(data.payment, data.authorId)
+  }
+
+  @MessagePattern(PAYMENT_PATTERNS.GET_LIST)
+  async getList(data: { filter: FilterDto }) {
+    return await this.paymentService.getList(data.filter)
   }
 }

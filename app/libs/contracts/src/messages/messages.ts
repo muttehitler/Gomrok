@@ -56,7 +56,7 @@ export const Messages = {
             CANNOT_RESET_USER: {
                 message: "Cannot reset user",
                 code: 2
-            }, 
+            },
             USER_RESETED_SUCCESSFULLY: {
                 message: "User reseted successfully",
                 code: 1
@@ -121,6 +121,10 @@ export const Messages = {
                 message: "Balance logged successfully",
                 code: 1
             }
+        },
+        PAYMENT_LISTED_SUCCESSFULLY: {
+            message: "Payment listed successfully.",
+            code: 1
         }
     },
     USER: {

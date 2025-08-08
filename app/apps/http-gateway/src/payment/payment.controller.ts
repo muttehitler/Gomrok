@@ -15,6 +15,12 @@ export class PaymentController {
         return await this.paymentService.add(payment, req.user['sub'])
     }
 
+    @Get('get_list')
+    @UseGuards(new JwtAuthGuard(['admin']))
+    async getList(@Query() filter: FilterDto, @Req() req) {
+        return await this.paymentService.getList(filter)
+    }
+
     @Get(':id')
     @UseGuards(new JwtAuthGuard(['user']))
     async get(@Param('id') id: string, @Req() req) {
@@ -29,7 +35,7 @@ export class PaymentController {
 
     @Get('balance_log/get_list')
     @UseGuards(new JwtAuthGuard(['user']))
-    async getList(@Query() filter: FilterDto, @Req() req) {
+    async getBalanceLogList(@Query() filter: FilterDto, @Req() req) {
         return await this.balanceLogService.getList(filter, req.user['sub'])
     }
 }
