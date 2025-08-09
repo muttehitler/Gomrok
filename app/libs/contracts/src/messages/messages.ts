@@ -135,6 +135,10 @@ export const Messages = {
         BALANCE_GOT_SUCCESSFULLY: {
             message: "Balance got successfully",
             code: 1
+        },
+        USER_LISTED_SUCCESSFULLY: {
+            message: "User listed successfully.",
+            code: 1
         }
     },
     PRODUCT: {
