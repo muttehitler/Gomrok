@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { MessagePattern } from '@nestjs/microservices';
 import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
 import DataResultDto from '@app/contracts/models/dtos/dataResultDto';
+import FilterDto from '@app/contracts/models/dtos/filterDto';
 
 @Controller()
 export class UserController {
@@ -21,5 +22,10 @@ export class UserController {
   @MessagePattern(USER_PATTERNS.GET)
   async get(data: { userId: string }) {
     return await this.userService.get(data.userId)
+  }
+
+  @MessagePattern(USER_PATTERNS.GET_LIST)
+  async getList(data: { filter: FilterDto }) {
+    return await this.userService.getList(data.filter)
   }
 }

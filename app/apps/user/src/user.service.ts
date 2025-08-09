@@ -6,6 +6,8 @@ import ResultDto from '@app/contracts/models/dtos/resultDto';
 import { Messages } from '@app/contracts/messages/messages';
 import DataResultDto from '@app/contracts/models/dtos/dataResultDto';
 import UserDto from '@app/contracts/models/dtos/user/userDto';
+import FilterDto from '@app/contracts/models/dtos/filterDto';
+import ListDto from '@app/contracts/models/dtos/listDto';
 
 @Injectable()
 export class UserService {
@@ -47,6 +49,30 @@ export class UserService {
         username: user.username,
         chatId: user.chatId,
         photoUrl: user.photoUrl
+      }
+    }
+  }
+
+  async getList({ startIndex, limit, order }: FilterDto): Promise<DataResultDto<ListDto<UserDto[]>>> {
+    const query = this.userModel.find()
+    const list = (await query.skip(startIndex).limit(limit).sort({ createdAt: order == 1 ? 1 : -1 })).map<UserDto>(x => {
+      return {
+        id: String(x._id),
+        firstName: x.firstName,
+        lastName: x.lastName,
+        username: x.username,
+        chatId: x.chatId,
+        photoUrl: x.photoUrl
+      }
+    })
+
+    return {
+      success: true,
+      message: Messages.USER.USER_LISTED_SUCCESSFULLY.message,
+      statusCode: Messages.USER.USER_LISTED_SUCCESSFULLY.code,
+      data: {
+        items: list,
+        length: (await this.userModel.find()).length
       }
     }
   }
