@@ -1,5 +1,5 @@
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
-import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import FilterDto from '@app/contracts/models/dtos/filterDto';
 
@@ -17,5 +17,11 @@ export class UserController {
     @UseGuards(new JwtAuthGuard(['admin']))
     async getList(@Query() filter: FilterDto) {
         return await this.userService.getList(filter)
+    }
+
+    @Get(':id')
+    @UseGuards(new JwtAuthGuard(['admin']))
+    async get(@Param('id') id: string) {
+        return await this.userService.get(id)
     }
 }
