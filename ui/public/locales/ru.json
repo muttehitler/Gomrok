@@ -96,6 +96,8 @@
     "id": "ID",
     "orders": "Orders",
     "marzban": "Marzban",
-    "users": "Users"
+    "users": "Users",
+    "username": "Username",
+    "chat-id": "Chat ID"
   }
 }
