@@ -37,6 +37,16 @@ export default function Home() {
           header="Application Launch Data"
           footer="These pages help developer to learn more about current launch information"
         >
+          <Link href="/admin">
+            <Cell subtitle="admin">
+              Admin
+            </Cell>
+          </Link>
+          <Link href="/admin/user">
+            <Cell subtitle="admin users">
+              Admin Users
+            </Cell>
+          </Link>
           <Link href="/admin/panel">
             <Cell subtitle="admin panel">
               Admin Panel
@@ -45,6 +55,16 @@ export default function Home() {
           <Link href="/admin/product">
             <Cell subtitle="admin product">
               Admin Product
+            </Cell>
+          </Link>
+          <Link href="/admin/order">
+            <Cell subtitle="admin product">
+              Admin Order
+            </Cell>
+          </Link>
+          <Link href="/order">
+            <Cell subtitle="my orders">
+              My Orders
             </Cell>
           </Link>
           <Link href="/balance">
