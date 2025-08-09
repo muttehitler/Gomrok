@@ -14,4 +14,8 @@ export class UserService {
     async getList(filter: FilterDto) {
         return await this.userClient.send(USER_PATTERNS.GET_LIST, { filter: filter })
     }
+
+    async get(userId: string) {
+        return await this.userClient.send(USER_PATTERNS.GET, { userId: userId })
+    }
 }
