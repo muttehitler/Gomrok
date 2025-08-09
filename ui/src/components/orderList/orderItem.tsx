@@ -1,16 +1,9 @@
 import { useTranslations } from "next-intl";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import './style.css'
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { Pencil, Trash2 } from "lucide-react";
-import { getCookie } from "@/lib/utils/cookie.helper";
-import { generateCsrfToken } from "@/lib/utils/csrf.helper";
-import { getPanel } from "@/actions/panel.action";
-import { DeleteProduct } from "../deleteProduct/deleteProduct";
-import { EditProduct } from "../editProduct/editProduct";
 import { useRouter } from "next/navigation";
 
-type Product = {
+type Order = {
     id: string
     name: string
     product: string
@@ -20,7 +13,7 @@ type Product = {
     orderDetailUrl?: string
 }
 
-export const OrderItem: FC<Product> = ({ id, name, product, payed, price, finalPrice, orderDetailUrl }: Product) => {
+export const OrderItem: FC<Order> = ({ id, name, product, payed, price, finalPrice, orderDetailUrl }: Order) => {
     const t = useTranslations('i18n');
 
     const router = useRouter();

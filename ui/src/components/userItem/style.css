@@ -1,0 +1,24 @@
+@import url('@/app/globals.css');
+
+.url {
+    font-size: small;
+}
+
+.user-item {
+    margin-bottom: 10px !important;
+}
+
+.detail-button {
+    align-self: self-end;
+}
+
+.p-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 10px;
+}
+
+.username{
+    font-size: small;
+}
