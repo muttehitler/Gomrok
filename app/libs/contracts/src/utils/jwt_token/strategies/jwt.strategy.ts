@@ -15,9 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(req: any, payload: PassportUser) {
-        if (!req.claims)
-            return payload
-        if (req.claims?.filter(x => payload.claims.includes(x)).length <= 0)
+        if (!req.claims || req.claims?.filter(x => payload.claims.includes(x)).length <= 0)
             throw UnauthorizedException
         return payload;
     }
