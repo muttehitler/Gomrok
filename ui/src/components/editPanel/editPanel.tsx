@@ -10,7 +10,6 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import emitter from "@/lib/utils/eventEmitter";
-import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -51,11 +50,9 @@ const formSchema = z.object({
     url: z.string().url("Invalid URL format"),
     username: z.string().min(1, "Username is required"),
     password: z.string().min(1, "Password is required"),
-    weight: z
-        .string()
-        .refine((val) => !isNaN(parseInt(val, 10)), {
-            message: "Weight must be a number",
-        }),
+    weight: z.string().refine((val) => !isNaN(parseInt(val, 10)), {
+        message: "Weight must be a number",
+    }),
 });
 
 export const EditPanel: FC<EditPanelProp> = ({ id, open, onOpenChange }) => {
@@ -100,7 +97,14 @@ export const EditPanel: FC<EditPanelProp> = ({ id, open, onOpenChange }) => {
         const data = form.getValues();
         const csrf = generateCsrfToken(getCookie("csrf") ?? "");
         const result = await testConnection({ ...data, csrf });
-        setTestConnectionText(result === 200 ? t("successed") : t("fail"));
+
+        if (result === 200) {
+            toast.success(t("successed"));
+            setTestConnectionText(t("successed"));
+        } else {
+            toast.error(t("fail"));
+            setTestConnectionText(t("fail"));
+        }
     };
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -119,7 +123,7 @@ export const EditPanel: FC<EditPanelProp> = ({ id, open, onOpenChange }) => {
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-lg w-[90%] rounded-lg">
                 <DialogHeader>
                     <DialogTitle>
                         {t("edit")} {form.getValues("name")}
@@ -140,118 +144,142 @@ export const EditPanel: FC<EditPanelProp> = ({ id, open, onOpenChange }) => {
                             onSubmit={form.handleSubmit(onSubmit)}
                             className="space-y-4"
                         >
-                            <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{t("panel-name")}</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="type"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{t("panel-type")}</FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                        >
+                            <div className="grid gap-4 py-4">
+                                <FormField
+                                    control={form.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                {t("panel-name")}
+                                            </FormLabel>
                                             <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue
-                                                        placeholder={t(
-                                                            "choose-a-panel-type"
-                                                        )}
-                                                    />
-                                                </SelectTrigger>
+                                                <Input {...field} />
                                             </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="marzneshin">
-                                                    {t("marzneshin")}
-                                                </SelectItem>
-                                                <SelectItem value="marzban">
-                                                    {t("marzban")}
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="url"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{t("panel-url")}</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="username"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            {t("panel-username")}
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            {t("panel-password")}
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input type="password" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="weight"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            {t("panel-weight")}
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input type="number" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <DialogFooter className="pt-4">
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="type"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                {t("panel-type")}
+                                            </FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue
+                                                            placeholder={t(
+                                                                "choose-a-panel-type"
+                                                            )}
+                                                        />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="marzneshin">
+                                                        {t("marzneshin")}
+                                                    </SelectItem>
+                                                    <SelectItem value="marzban">
+                                                        {t("marzban")}
+                                                    </SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="url"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                {t("panel-url")}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="username"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                {t("panel-username")}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                {t("panel-password")}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="password"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="weight"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                {t("panel-weight")}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                            <DialogFooter className="flex-col-reverse sm:flex-row sm:justify-between sm:space-x-2">
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    onClick={testConnectionHandler}
+                                    onClick={() => onOpenChange(false)}
+                                    className="w-full sm:w-auto"
                                 >
-                                    {testConnectionText}
+                                    {t("cancel")}
                                 </Button>
-                                <Button type="submit">{t("update")}</Button>
+                                <div className="flex justify-end gap-2">
+                                    <Button
+                                        type="button"
+                                        variant="secondary"
+                                        onClick={testConnectionHandler}
+                                    >
+                                        {testConnectionText}
+                                    </Button>
+                                    <Button type="submit">{t("update")}</Button>
+                                </div>
                             </DialogFooter>
                         </form>
                     </Form>
