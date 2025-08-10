@@ -5,6 +5,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Root } from "@/components/Root/Root";
 import { I18nProvider } from "@/core/i18n/provider";
 import StyledComponentsRegistry from "@/lib/registry";
+import { Toaster } from "@/components/ui/toaster"; 
 
 import "./globals.css";
 import CheckAuth from "@/components/auth/CheckAuth";
@@ -29,6 +30,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                                 {children}
                                 <Navbar />
                                 <div className="min-h-[90px]"></div>
+                                <Toaster />{" "}
                             </CheckAuth>
                         </Root>
                     </I18nProvider>

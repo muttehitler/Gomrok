@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { Page } from "@/components/Page";
 import { AddPanel } from "@/components/addPanel/addPanel";
 import { PanelList } from "@/components/panelList/panelList";
-import { Toaster } from "@/components/ui/toaster";
 
 export default function PanelPage() {
     const t = useTranslations("i18n");
@@ -20,7 +19,6 @@ export default function PanelPage() {
                 </div>
                 <PanelList />
             </div>
-            <Toaster />
         </Page>
     );
 }
