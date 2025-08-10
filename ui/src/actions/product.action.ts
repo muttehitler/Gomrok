@@ -84,3 +84,16 @@ export async function getProductsByPanel(data: any) {
     })
     return JSON.stringify(response.data)
 }
+
+export async function getTestProductByPanel(data: any) {
+    validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
+    const response = await axios.get(process.env.API_ADDRESS + PRODUCT_PATTERNS.GET_TEST_BY_PANEL.replace(':panel', data.id), {
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + (await cookies()).get('token')?.value
+        },
+        validateStatus: () => true
+    })
+    return JSON.stringify(response.data)
+}

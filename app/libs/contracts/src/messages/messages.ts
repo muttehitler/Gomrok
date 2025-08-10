@@ -162,6 +162,11 @@ export const Messages = {
             message: "Product updated successfully.",
             code: 1
         }
+        ,
+        PRODUCT_GOT_SUCCESSFULLY: {
+            message: "Product got successfully.",
+            code: 1
+        }
     },
     ORDER: {
         ORDER_ADDED_SUCCESSFULLY: {

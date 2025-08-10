@@ -99,6 +99,8 @@
     "users": "Users",
     "username": "Username",
     "chat-id": "Chat ID",
-    "test-account": "Test Account"
+    "test-account": "Test Account",
+    "get-test": "Get Test",
+    "test-created-successfully": "Test created successfully."
   }
 }
