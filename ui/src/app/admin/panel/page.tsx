@@ -1,20 +1,18 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { Page } from '@/components/Page';
-import './style.css'
 import { AddPanel } from '@/components/addPanel/addPanel';
 import { PanelList } from '@/components/panelList/panelList';
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "@/components/ui/toaster";
 
-export default function Panel() {
-    const t = useTranslations('i18n');
-
+export default function PanelPage() {
     return (
         <Page back={true}>
-            <Toaster position="top-right" reverseOrder={false} />
-            <AddPanel />
-            <PanelList />
+            <div className="p-4 md:p-6 space-y-4">
+                <AddPanel />
+                <PanelList />
+            </div>
+            <Toaster />
         </Page>
     );
 }
