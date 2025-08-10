@@ -22,6 +22,8 @@ export default class Product extends Document implements IEntity {
     code: string
     @Prop({ type: Number })
     weight: number
+    @Prop({ type: Boolean, default: false })
+    test: boolean
     @Prop({ type: Boolean, default: true })
     status: boolean
 

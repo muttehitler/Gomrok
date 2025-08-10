@@ -10,4 +10,5 @@ export default interface ProductDto {
     price: number
     weight: number
     code: string
+    test: boolean
 }
