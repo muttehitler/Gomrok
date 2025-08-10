@@ -60,6 +60,7 @@ export class OrderService {
       message: Messages.ORDER.ORDER_FOUND_SUCCESSFULLY.message,
       statusCode: Messages.ORDER.ORDER_FOUND_SUCCESSFULLY.code,
       data: {
+        id: String(order.id),
         name: order.name,
         payed: order.payed,
         price: order.price,
