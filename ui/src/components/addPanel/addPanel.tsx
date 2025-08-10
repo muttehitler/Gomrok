@@ -10,6 +10,8 @@ import emitter from "@/lib/utils/eventEmitter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { cn } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -51,12 +53,12 @@ const formSchema = z.object({
         }),
 });
 
+type TestStatus = "idle" | "testing" | "success" | "fail";
+
 export const AddPanel: FC = () => {
     const t = useTranslations("i18n");
     const [isOpen, setIsOpen] = useState(false);
-    const [testConnectionText, setTestConnectionText] = useState(
-        t("test-panel-connection")
-    );
+    const [testStatus, setTestStatus] = useState<TestStatus>("idle");
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -81,18 +83,19 @@ export const AddPanel: FC = () => {
             return;
         }
 
-        setTestConnectionText(t("testing"));
+        setTestStatus("testing");
         const data = form.getValues();
         const csrf = generateCsrfToken(getCookie("csrf") ?? "");
         const result = await testConnection({ ...data, csrf });
 
         if (result === 200) {
             toast.success(t("successed"));
-            setTestConnectionText(t("successed"));
+            setTestStatus("success");
         } else {
             toast.error(t("fail"));
-            setTestConnectionText(t("fail"));
+            setTestStatus("fail");
         }
+        setTimeout(() => setTestStatus("idle"), 2000); // Reset after 2 seconds
     };
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -108,6 +111,19 @@ export const AddPanel: FC = () => {
         emitter.emit("listPanels");
         setIsOpen(false);
         form.reset();
+    };
+
+    const getTestButtonText = () => {
+        switch (testStatus) {
+            case "testing":
+                return t("testing");
+            case "success":
+                return t("successed");
+            case "fail":
+                return t("fail");
+            default:
+                return t("test-panel-connection");
+        }
     };
 
     return (
@@ -129,19 +145,23 @@ export const AddPanel: FC = () => {
                         className="space-y-4"
                     >
                         <div className="grid gap-4 py-4">
+                            {/* Form Fields remain the same */}
                             <FormField
                                 control={form.control}
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t("panel-name")}</FormLabel>
+                                        {" "}
+                                        <FormLabel>
+                                            {t("panel-name")}
+                                        </FormLabel>{" "}
                                         <FormControl>
                                             <Input
                                                 placeholder={t("panel-name")}
                                                 {...field}
                                             />
-                                        </FormControl>
-                                        <FormMessage />
+                                        </FormControl>{" "}
+                                        <FormMessage />{" "}
                                     </FormItem>
                                 )}
                             />
@@ -150,11 +170,15 @@ export const AddPanel: FC = () => {
                                 name="type"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t("panel-type")}</FormLabel>
+                                        {" "}
+                                        <FormLabel>
+                                            {t("panel-type")}
+                                        </FormLabel>{" "}
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
+                                            {" "}
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue
@@ -163,17 +187,18 @@ export const AddPanel: FC = () => {
                                                         )}
                                                     />
                                                 </SelectTrigger>
-                                            </FormControl>
+                                            </FormControl>{" "}
                                             <SelectContent>
+                                                {" "}
                                                 <SelectItem value="marzneshin">
                                                     {t("marzneshin")}
-                                                </SelectItem>
+                                                </SelectItem>{" "}
                                                 <SelectItem value="marzban">
                                                     {t("marzban")}
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
+                                                </SelectItem>{" "}
+                                            </SelectContent>{" "}
+                                        </Select>{" "}
+                                        <FormMessage />{" "}
                                     </FormItem>
                                 )}
                             />
@@ -182,14 +207,17 @@ export const AddPanel: FC = () => {
                                 name="url"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t("panel-url")}</FormLabel>
+                                        {" "}
+                                        <FormLabel>
+                                            {t("panel-url")}
+                                        </FormLabel>{" "}
                                         <FormControl>
                                             <Input
                                                 placeholder="https://example.com"
                                                 {...field}
                                             />
-                                        </FormControl>
-                                        <FormMessage />
+                                        </FormControl>{" "}
+                                        <FormMessage />{" "}
                                     </FormItem>
                                 )}
                             />
@@ -198,13 +226,14 @@ export const AddPanel: FC = () => {
                                 name="username"
                                 render={({ field }) => (
                                     <FormItem>
+                                        {" "}
                                         <FormLabel>
                                             {t("panel-username")}
-                                        </FormLabel>
+                                        </FormLabel>{" "}
                                         <FormControl>
                                             <Input {...field} />
-                                        </FormControl>
-                                        <FormMessage />
+                                        </FormControl>{" "}
+                                        <FormMessage />{" "}
                                     </FormItem>
                                 )}
                             />
@@ -213,13 +242,14 @@ export const AddPanel: FC = () => {
                                 name="password"
                                 render={({ field }) => (
                                     <FormItem>
+                                        {" "}
                                         <FormLabel>
                                             {t("panel-password")}
-                                        </FormLabel>
+                                        </FormLabel>{" "}
                                         <FormControl>
                                             <Input type="password" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
+                                        </FormControl>{" "}
+                                        <FormMessage />{" "}
                                     </FormItem>
                                 )}
                             />
@@ -228,18 +258,19 @@ export const AddPanel: FC = () => {
                                 name="weight"
                                 render={({ field }) => (
                                     <FormItem>
+                                        {" "}
                                         <FormLabel>
                                             {t("panel-weight")}
-                                        </FormLabel>
+                                        </FormLabel>{" "}
                                         <FormControl>
                                             <Input type="number" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
+                                        </FormControl>{" "}
+                                        <FormMessage />{" "}
                                     </FormItem>
                                 )}
                             />
                         </div>
-                        <DialogFooter className="flex-col-reverse sm:flex-row sm:justify-between sm:space-x-2">
+                        <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-between">
                             <Button
                                 type="button"
                                 variant="outline"
@@ -248,15 +279,27 @@ export const AddPanel: FC = () => {
                             >
                                 {t("cancel")}
                             </Button>
-                            <div className="flex justify-end gap-2">
+                            <div className="flex w-full gap-2 sm:w-auto">
                                 <Button
                                     type="button"
                                     variant="secondary"
                                     onClick={testConnectionHandler}
+                                    disabled={testStatus === "testing"}
+                                    className={cn("w-full sm:w-auto", {
+                                        "bg-green-500 hover:bg-green-600 text-white":
+                                            testStatus === "success",
+                                        "bg-red-500 hover:bg-red-600 text-white":
+                                            testStatus === "fail",
+                                    })}
                                 >
-                                    {testConnectionText}
+                                    {getTestButtonText()}
                                 </Button>
-                                <Button type="submit">{t("add")}</Button>
+                                <Button
+                                    type="submit"
+                                    className="w-full sm:w-auto"
+                                >
+                                    {t("add")}
+                                </Button>
                             </div>
                         </DialogFooter>
                     </form>
