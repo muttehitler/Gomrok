@@ -99,6 +99,8 @@
         "users": "کاربر ها",
         "username": "نام کاربری",
         "chat-id": "چت آیدی",
-        "test-account": "اکانت تست"
+        "test-account": "اکانت تست",
+        "get-test": "دریافت تست",
+        "test-created-successfully": "اکانت تست با موفقیت ساخته شد."
     }
 }
