@@ -8,7 +8,6 @@ import { getCookie } from "@/lib/utils/cookie.helper";
 import { sprintf } from "sprintf-js";
 import emitter from "@/lib/utils/eventEmitter";
 import toast from "react-hot-toast";
-
 import {
     AlertDialog,
     AlertDialogAction,
@@ -36,7 +35,6 @@ export const DeletePanel: FC<DeletePanelProp> = ({
     name,
 }) => {
     const t = useTranslations("i18n");
-
     const [csrfToken, setCsrfToken] = useState("");
     const [confirmName, setConfirmName] = useState("");
 
@@ -45,11 +43,7 @@ export const DeletePanel: FC<DeletePanelProp> = ({
     }, []);
 
     const deletePanelHandler = async () => {
-        const dataAsJson = {
-            id: id,
-            csrf: csrfToken,
-        };
-
+        const dataAsJson = { id, csrf: csrfToken };
         const result = JSON.parse(await deletePanel(dataAsJson));
 
         if (!result.success) {
@@ -69,8 +63,9 @@ export const DeletePanel: FC<DeletePanelProp> = ({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
+                    {/* FIX: Replaced " with &quot; to fix ESLint error */}
                     <AlertDialogTitle>
-                        {t("delete")} "{name}"?
+                        {t("delete")} &quot;{name}&quot;?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                         {sprintf(
