@@ -149,4 +149,27 @@ export class ProductService {
       }
     }
   }
+
+  async getTestByPanel(panelId: string): Promise<DataResultDto<ProductDto>> {
+    const product = await this.productModel.findOne({ panel: new Types.ObjectId(panelId), test: true })
+    return {
+      success: true,
+      message: Messages.PRODUCT.PRODUCT_GOT_SUCCESSFULLY.message,
+      statusCode: Messages.PRODUCT.PRODUCT_GOT_SUCCESSFULLY.code,
+      data: {
+        id: String(product?._id),
+        name: product?.name!,
+        panel: String(product?.panel!),
+        payAsYouGo: product?.payAsYouGo!,
+        usageDuration: product?.usageDuration!,
+        dataLimit: product?.dataLimit!,
+        userLimit: product?.userLimit!,
+        onHold: product?.onHold!,
+        price: product?.price!,
+        weight: product?.weight!,
+        code: product?.code!,
+        test: product?.test!
+      }
+    }
+  }
 }

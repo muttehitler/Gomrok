@@ -6,4 +6,5 @@ export const PRODUCT_PATTERNS = {
     UPDATE: 'product.update',
     GET: 'product.get',
     GET_BY_PANEL: 'product.get_by_panel',
+    GET_TEST_BY_PANEL: 'product.get_test_by_panel',
 }

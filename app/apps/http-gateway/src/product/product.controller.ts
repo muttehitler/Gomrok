@@ -19,6 +19,12 @@ export class ProductController {
         return await this.productService.getByPanel(filter, id)
     }
 
+    @Get('panel/:panel/test')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getTestByPanel(@Param('panel') panel: string) {
+        return await this.productService.getTestByPanel(panel)
+    }
+
     @Get()
     @UseGuards(new JwtAuthGuard(['admin']))
     async getList(@Query() filter: FilterDto) {
