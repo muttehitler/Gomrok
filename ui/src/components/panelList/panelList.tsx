@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { getPanelList } from "@/actions/panel.action";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getCookie } from "@/lib/utils/cookie.helper";
@@ -72,7 +72,7 @@ export const PanelList: FC = () => {
         };
 
         emitter.on("listPanels", fetchPanels);
-        fetchPanels(); // Initial fetch
+        fetchPanels();
 
         return () => {
             emitter.off("listPanels", fetchPanels);
@@ -80,9 +80,7 @@ export const PanelList: FC = () => {
     }, [currentPage, pageSize, t]);
 
     return (
-        <div className="mt-6">
-            <h3 className="text-xl font-semibold mb-4">{t("panels")}:</h3>
-
+        <div className="space-y-6">
             {isLoading ? (
                 <PanelListSkeleton />
             ) : (

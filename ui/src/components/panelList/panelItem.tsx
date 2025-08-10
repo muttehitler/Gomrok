@@ -5,7 +5,6 @@ import { FC, useState } from "react";
 import { EditPanel } from "../editPanel/editPanel";
 import { DeletePanel } from "../deletePanel/deletePanel";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     DropdownMenu,
@@ -51,14 +50,14 @@ export const PanelItem: FC<Panel> = ({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => setEditOpen(true)}>
-                                <Pencil className="mr-2 h-4 w-4" />
+                                <Pencil className="me-2 h-4 w-4" />
                                 <span>{t("edit")}</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => setDeleteOpen(true)}
-                                className="text-red-600"
+                                className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/40"
                             >
-                                <Trash2 className="mr-2 h-4 w-4" />
+                                <Trash2 className="me-2 h-4 w-4" />
                                 <span>{t("delete")}</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -70,7 +69,9 @@ export const PanelItem: FC<Panel> = ({
                     </p>
                 </CardContent>
             </Card>
+
             <EditPanel id={id} open={isEditOpen} onOpenChange={setEditOpen} />
+
             <DeletePanel
                 id={id}
                 name={name}
