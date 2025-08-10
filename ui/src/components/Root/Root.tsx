@@ -45,6 +45,14 @@ function RootInner({ children }: PropsWithChildren) {
     initDataUser && setLocale(initDataUser.languageCode);
   }, [initDataUser]);
 
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
+
   return (
     <TonConnectUIProvider manifestUrl="/tonconnect-manifest.json">
       <AppRoot
