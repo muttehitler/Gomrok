@@ -39,6 +39,7 @@ export class OrderService {
 
     order.price = productResult.price
     order.finalPrice = productResult.price
+    order.test = productResult.test
 
     await order.save()
 
@@ -75,20 +76,22 @@ export class OrderService {
 
     const userBalance = await this.userClient.send(USER_PATTERNS.GET_USER_BALANCE, userId).toPromise() as DataResultDto<number>
 
-    const updateUserBalanceResult = await this.userClient.send(USER_PATTERNS.UPDATE_USER_BALANCE, { userId: userId, balance: (userBalance.data - order.finalPrice) }).toPromise() as ResultDto
+    if (!order.test) {
+      const updateUserBalanceResult = await this.userClient.send(USER_PATTERNS.UPDATE_USER_BALANCE, { userId: userId, balance: (userBalance.data - order.finalPrice) }).toPromise() as ResultDto
 
-    if (!updateUserBalanceResult.success) {
-      throw new InternalServerErrorException("cannot update user balance")
+      if (!updateUserBalanceResult.success) {
+        throw new InternalServerErrorException("cannot update user balance")
+      }
+
+      const balanceLogResult = await this.paymentClient.send(PAYMENT_PATTERNS.BALANCE_LOG.LOG, {
+        type: 'reduce',
+        amount: order.finalPrice,
+        order: String(order._id),
+        user: userId
+      }).toPromise() as ResultDto
+      if (!balanceLogResult.success)
+        return balanceLogResult
     }
-
-    const balanceLogResult = await this.paymentClient.send(PAYMENT_PATTERNS.BALANCE_LOG.LOG, {
-      type: 'reduce',
-      amount: order.finalPrice,
-      order: String(order._id),
-      user: userId
-    }).toPromise() as ResultDto
-    if (!balanceLogResult.success)
-      return balanceLogResult
 
     order.payed = true
 

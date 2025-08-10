@@ -20,6 +20,8 @@ export default class Order extends Document implements IEntity {
     finalPrice: number
     @Prop({ type: Date })
     lastRenewal: Date
+    @Prop({ type: Boolean, default: false })
+    test: boolean
 
     @Prop({ type: Types.ObjectId, ref: 'User' })
     user: Types.ObjectId
