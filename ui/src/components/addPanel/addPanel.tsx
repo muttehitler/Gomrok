@@ -121,7 +121,7 @@ export const AddPanel: FC = () => {
             <DialogContent className="sm:max-w-lg w-[90%] rounded-lg">
                 <DialogHeader>
                     <DialogTitle>{t("add-panel")}</DialogTitle>
-                    <DialogDescription>{t("panel-name")}</DialogDescription>
+                    <DialogDescription>{t("add-panel-desc")}</DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
                     <form

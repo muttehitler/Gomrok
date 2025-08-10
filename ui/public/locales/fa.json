@@ -101,6 +101,8 @@
         "chat-id": "چت آیدی",
         "test-account": "اکانت تست",
         "get-test": "دریافت تست",
-        "test-created-successfully": "اکانت تست با موفقیت ساخته شد."
+        "test-created-successfully": "اکانت تست با موفقیت ساخته شد.",
+        "add_panel_description": "برای افزودن پنل جدید، فرم زیر را پر کنید.",
+        "edit_panel_description": "تغییرات مربوط به پنل خود را اینجا اعمال کنید."
     }
 }

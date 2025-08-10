@@ -128,7 +128,7 @@ export const EditPanel: FC<EditPanelProp> = ({ id, open, onOpenChange }) => {
                     <DialogTitle>
                         {t("edit")} {form.getValues("name")}
                     </DialogTitle>
-                    <DialogDescription>{t("panel-name")}</DialogDescription>
+                    <DialogDescription>{t("edit-panel-desc")}</DialogDescription>
                 </DialogHeader>
 
                 {isLoading ? (
