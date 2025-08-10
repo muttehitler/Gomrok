@@ -29,7 +29,8 @@ export class ProductService {
       onHold: product.onHold,
       price: product.price,
       weight: product.weight,
-      code: generateRandomId(4)
+      code: generateRandomId(4),
+      test: product.test
     })
     await model.save()
 
@@ -54,7 +55,8 @@ export class ProductService {
         onHold: x.onHold,
         price: x.price,
         weight: x.weight,
-        code: x.code
+        code: x.code,
+        test: x.test
       }
     })
 
@@ -82,7 +84,8 @@ export class ProductService {
       onHold: product?.onHold!,
       price: product?.price!,
       weight: product?.weight!,
-      code: product?.code!
+      code: product?.code!,
+      test: product?.test!
     }
   }
 
@@ -118,7 +121,7 @@ export class ProductService {
   }
 
   async getListByPanel({ startIndex, limit, order }: FilterDto, panelId: string): Promise<DataResultDto<ListDto<ProductDto[]>>> {
-    const query = this.productModel.find({ panel: new Types.ObjectId(panelId), status: true })
+    const query = this.productModel.find({ panel: new Types.ObjectId(panelId), status: true, test: false })
     const list = (await query.skip(startIndex).limit(limit).sort({ createdAt: order == 1 ? 1 : -1 })).map<ProductDto>(x => {
       return {
         id: String(x._id),
@@ -131,7 +134,8 @@ export class ProductService {
         onHold: x.onHold,
         price: x.price,
         weight: x.weight,
-        code: x.code
+        code: x.code,
+        test: x.test
       }
     })
 
@@ -141,7 +145,7 @@ export class ProductService {
       statusCode: Messages.PRODUCT.PRODUCT_LISTED_SUCCESSFULLY.code,
       data: {
         items: list,
-        length: (await this.productModel.find({ panel: new Types.ObjectId(panelId), status: true })).length
+        length: (await this.productModel.find({ panel: new Types.ObjectId(panelId), status: true, test: false })).length
       }
     }
   }
