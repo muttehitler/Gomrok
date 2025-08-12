@@ -1,7 +1,7 @@
 "use client";
 
 import { Page } from "@/components/Page";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react"; // 'use' را اضافه کن
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getCookie } from "@/lib/utils/cookie.helper";
 import { getUser } from "@/actions/user.action";
@@ -21,11 +21,12 @@ type User = {
 };
 
 type Props = {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 };
 
 export default function UserDetailPage({ params }: Props) {
-    const { id } = params;
+    const { id } = use(params);
+
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { Page } from "@/components/Page";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react"; // 'use' را اضافه کن
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getCookie } from "@/lib/utils/cookie.helper";
 import { getOrderWithPanelUserForAdmin } from "@/actions/order.action";
@@ -25,11 +25,12 @@ type PanelUser = {
 };
 
 type Props = {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 };
 
 export default function OrderDetailPage({ params }: Props) {
-    const { id } = params;
+    const { id } = use(params);
+
     const [order, setOrder] = useState<Order | null>(null);
     const [panelUser, setPanelUser] = useState<PanelUser | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -37,7 +38,6 @@ export default function OrderDetailPage({ params }: Props) {
     useEffect(() => {
         const fetchOrderDetails = async () => {
             setIsLoading(true);
-
             try {
                 const csrf = generateCsrfToken(getCookie("csrf") ?? "");
                 const result = JSON.parse(
