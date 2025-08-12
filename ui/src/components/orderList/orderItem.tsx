@@ -1,36 +1,59 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import { FC } from "react";
-import './style.css'
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ChevronRight } from "lucide-react";
 
 type Order = {
-    id: string
-    name: string
-    product: string
-    payed: boolean
-    price: number
-    finalPrice: number
-    orderDetailUrl?: string
-}
+    id: string;
+    name: string; // Assuming this is the user's name or order title
+    product: string; // This could be the product name or ID
+    payed: boolean;
+    finalPrice: number;
+};
 
-export const OrderItem: FC<Order> = ({ id, name, product, payed, price, finalPrice, orderDetailUrl }: Order) => {
-    const t = useTranslations('i18n');
-
-    const router = useRouter();
+export const OrderItem: FC<Order> = ({
+    id,
+    name,
+    product,
+    payed,
+    finalPrice,
+}) => {
+    const t = useTranslations("i18n");
 
     return (
-        <div className='section'>
-            <div>
-                <div className='flex' key={id}>
-                    <div>
-                        <p>{name}</p>
+        <Card>
+            <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                    <div className="grid gap-1">
+                        <CardTitle className="text-base">{name}</CardTitle>
+                        <CardDescription>
+                            {t("price")}: {finalPrice.toLocaleString()}
+                        </CardDescription>
                     </div>
-                    <button onClick={() => { router.push(orderDetailUrl ?? ('/order/' + id)) }} className='detail-button ml-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
-                        {t('details')}
-                    </button>
-                    <br />
+                    <div className="flex items-center gap-4">
+                        <Badge variant={payed ? "default" : "destructive"}>
+                            {payed ? t("payed") : t("not-payed")}
+                        </Badge>
+                        <Button asChild variant="ghost" size="icon">
+                            <Link href={`/admin/order/${id}`}>
+                                <ChevronRight className="h-5 w-5" />
+                                <span className="sr-only">{t("details")}</span>
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
-            </div>
-        </div>
-    )
-}
+            </CardContent>
+        </Card>
+    );
+};
