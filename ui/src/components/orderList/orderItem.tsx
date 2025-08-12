@@ -16,8 +16,9 @@ import { ChevronRight } from "lucide-react";
 
 type Order = {
     id: string;
-    name: string; // Assuming this is the user's name or order title
-    product: string; // This could be the product name or ID
+    name: string; 
+    product: string; 
+    price: number;
     payed: boolean;
     finalPrice: number;
 };
@@ -26,6 +27,7 @@ export const OrderItem: FC<Order> = ({
     id,
     name,
     product,
+    price,
     payed,
     finalPrice,
 }) => {
