@@ -24,8 +24,8 @@ type Props = {
     params: { id: string };
 };
 
-export default async function UserDetailPage({ params }: Props) {
-    const { id } = await params;
+export default function UserDetailPage({ params }: Props) {
+    const { id } = params;
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 

@@ -28,8 +28,8 @@ type Props = {
     params: { id: string };
 };
 
-export default async function OrderDetailPage({ params }: Props) {
-    const { id } = await params;
+export default function OrderDetailPage({ params }: Props) {
+    const { id } = params;
     const [order, setOrder] = useState<Order | null>(null);
     const [panelUser, setPanelUser] = useState<PanelUser | null>(null);
     const [isLoading, setIsLoading] = useState(true);
