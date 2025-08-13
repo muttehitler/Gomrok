@@ -46,19 +46,20 @@ export const ProductList: FC = () => {
             setIsLoading(true);
             try {
                 const csrf = generateCsrfToken(getCookie("csrf") ?? "");
-                const result = JSON.parse(
-                    await getProductList({
-                        csrf,
-                        startIndex: (currentPage - 1) * pageSize,
-                        limit: pageSize,
-                        order: -1,
-                    })
-                );
+                const resultStr = await getProductList({
+                    csrf,
+                    startIndex: (currentPage - 1) * pageSize,
+                    limit: pageSize,
+                    order: -1,
+                });
+                const result = JSON.parse(resultStr);
 
                 if (!result.success) {
                     toast.error(
                         `${t("list-unsuccessfully")}: ${result.message}`
                     );
+                    setProducts([]); // Clear products on error
+                    setProductsLength(0);
                     return;
                 }
 
@@ -68,6 +69,9 @@ export const ProductList: FC = () => {
                 toast.error(
                     "An unexpected error occurred while fetching products."
                 );
+                console.error(error);
+                setProducts([]); // Also clear products on critical parse error
+                setProductsLength(0);
             } finally {
                 setIsLoading(false);
             }

@@ -67,6 +67,7 @@ export const AddProduct: FC = () => {
     const t = useTranslations("i18n");
     const [isOpen, setIsOpen] = useState(false);
     const [panels, setPanels] = useState<Panel[]>([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(formSchema),
@@ -87,19 +88,26 @@ export const AddProduct: FC = () => {
     useEffect(() => {
         if (isOpen) {
             const fetchPanels = async () => {
-                const csrf = generateCsrfToken(getCookie("csrf") ?? "");
-                const result = JSON.parse(
-                    await getPanelList({
+                try {
+                    const csrf = generateCsrfToken(getCookie("csrf") ?? "");
+                    const resultStr = await getPanelList({
                         csrf,
                         startIndex: 0,
                         limit: 100,
                         order: -1,
-                    })
-                );
-                if (result.success) {
-                    setPanels(result.data.items);
-                } else {
-                    toast.error("Failed to load panels.");
+                    });
+                    const result = JSON.parse(resultStr);
+
+                    if (result.success) {
+                        setPanels(result.data.items);
+                    } else {
+                        toast.error(`Failed to load panels: ${result.message}`);
+                    }
+                } catch (error) {
+                    toast.error(
+                        "An unexpected error occurred while loading panels."
+                    );
+                    console.error(error);
                 }
             };
             fetchPanels();
@@ -107,25 +115,36 @@ export const AddProduct: FC = () => {
     }, [isOpen]);
 
     const onSubmit = async (values: ProductFormValues) => {
-        const csrf = generateCsrfToken(getCookie("csrf") ?? "");
-        const payload = {
-            ...values,
-            csrf,
-            dataLimit: values.dataLimit * Math.pow(1024, 3),
-            usageDuration: values.usageDuration * 24 * 60 * 60,
-        };
+        setIsSubmitting(true);
+        try {
+            const csrf = generateCsrfToken(getCookie("csrf") ?? "");
+            const payload = {
+                ...values,
+                csrf,
+                dataLimit: values.dataLimit * Math.pow(1024, 3),
+                usageDuration: values.usageDuration * 24 * 60 * 60,
+            };
 
-        const result = JSON.parse(await addProduct(payload));
+            const resultStr = await addProduct(payload);
+            const result = JSON.parse(resultStr);
 
-        if (!result.success) {
-            toast.error(`${t("add-unsuccessfully")}: ${result.message}`);
-            return;
+            if (!result.success) {
+                toast.error(`${t("add-unsuccessfully")}: ${result.message}`);
+                return;
+            }
+
+            toast.success(t("added-successfully"));
+            emitter.emit("listProducts");
+            setIsOpen(false);
+            form.reset();
+        } catch (error) {
+            toast.error(
+                "An unexpected error occurred while adding the product."
+            );
+            console.error(error);
+        } finally {
+            setIsSubmitting(false);
         }
-
-        toast.success(t("added-successfully"));
-        emitter.emit("listProducts");
-        setIsOpen(false);
-        form.reset();
     };
 
     return (
@@ -154,14 +173,13 @@ export const AddProduct: FC = () => {
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        {" "}
                                         <FormLabel>
                                             {t("product-name")}
-                                        </FormLabel>{" "}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input {...field} />
-                                        </FormControl>{" "}
-                                        <FormMessage />{" "}
+                                        </FormControl>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -170,13 +188,11 @@ export const AddProduct: FC = () => {
                                 name="panel"
                                 render={({ field }) => (
                                     <FormItem>
-                                        {" "}
-                                        <FormLabel>{t("panel")}</FormLabel>{" "}
+                                        <FormLabel>{t("panel")}</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
-                                            {" "}
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue
@@ -185,9 +201,8 @@ export const AddProduct: FC = () => {
                                                         )}
                                                     />
                                                 </SelectTrigger>
-                                            </FormControl>{" "}
+                                            </FormControl>
                                             <SelectContent>
-                                                {" "}
                                                 {panels.map((p) => (
                                                     <SelectItem
                                                         key={p.id}
@@ -195,10 +210,10 @@ export const AddProduct: FC = () => {
                                                     >
                                                         {p.name}
                                                     </SelectItem>
-                                                ))}{" "}
-                                            </SelectContent>{" "}
-                                        </Select>{" "}
-                                        <FormMessage />{" "}
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -207,14 +222,13 @@ export const AddProduct: FC = () => {
                                 name="price"
                                 render={({ field }) => (
                                     <FormItem>
-                                        {" "}
                                         <FormLabel>
                                             {t("product-price")}
-                                        </FormLabel>{" "}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input type="number" {...field} />
-                                        </FormControl>{" "}
-                                        <FormMessage />{" "}
+                                        </FormControl>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -223,14 +237,13 @@ export const AddProduct: FC = () => {
                                 name="weight"
                                 render={({ field }) => (
                                     <FormItem>
-                                        {" "}
                                         <FormLabel>
                                             {t("product-weight")}
-                                        </FormLabel>{" "}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input type="number" {...field} />
-                                        </FormControl>{" "}
-                                        <FormMessage />{" "}
+                                        </FormControl>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -239,14 +252,13 @@ export const AddProduct: FC = () => {
                                 name="dataLimit"
                                 render={({ field }) => (
                                     <FormItem>
-                                        {" "}
                                         <FormLabel>
                                             {t("product-data-limit")} (GB)
-                                        </FormLabel>{" "}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input type="number" {...field} />
-                                        </FormControl>{" "}
-                                        <FormMessage />{" "}
+                                        </FormControl>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -255,14 +267,13 @@ export const AddProduct: FC = () => {
                                 name="usageDuration"
                                 render={({ field }) => (
                                     <FormItem>
-                                        {" "}
                                         <FormLabel>
                                             {t("product-usage-duration")} (Days)
-                                        </FormLabel>{" "}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input type="number" {...field} />
-                                        </FormControl>{" "}
-                                        <FormMessage />{" "}
+                                        </FormControl>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -271,37 +282,32 @@ export const AddProduct: FC = () => {
                                 name="userLimit"
                                 render={({ field }) => (
                                     <FormItem>
-                                        {" "}
                                         <FormLabel>
                                             {t("product-user-limit")}
-                                        </FormLabel>{" "}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input type="number" {...field} />
-                                        </FormControl>{" "}
-                                        <FormMessage />{" "}
+                                        </FormControl>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
-
                             <FormField
                                 control={form.control}
                                 name="test"
                                 render={({ field }) => (
                                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                                        {" "}
                                         <div className="space-y-0.5">
-                                            {" "}
                                             <FormLabel>
                                                 {t("test-account")}
-                                            </FormLabel>{" "}
-                                        </div>{" "}
+                                            </FormLabel>
+                                        </div>
                                         <FormControl>
-                                            {" "}
                                             <Switch
                                                 checked={field.value}
                                                 onCheckedChange={field.onChange}
-                                            />{" "}
-                                        </FormControl>{" "}
+                                            />
+                                        </FormControl>
                                     </FormItem>
                                 )}
                             />
@@ -310,20 +316,17 @@ export const AddProduct: FC = () => {
                                 name="payAsYouGo"
                                 render={({ field }) => (
                                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                                        {" "}
                                         <div className="space-y-0.5">
-                                            {" "}
                                             <FormLabel>
                                                 {t("pay-as-you-go")}
-                                            </FormLabel>{" "}
-                                        </div>{" "}
+                                            </FormLabel>
+                                        </div>
                                         <FormControl>
-                                            {" "}
                                             <Switch
                                                 checked={field.value}
                                                 onCheckedChange={field.onChange}
-                                            />{" "}
-                                        </FormControl>{" "}
+                                            />
+                                        </FormControl>
                                     </FormItem>
                                 )}
                             />
@@ -332,20 +335,17 @@ export const AddProduct: FC = () => {
                                 name="onHold"
                                 render={({ field }) => (
                                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                                        {" "}
                                         <div className="space-y-0.5">
-                                            {" "}
                                             <FormLabel>
                                                 {t("on-hold")}
-                                            </FormLabel>{" "}
-                                        </div>{" "}
+                                            </FormLabel>
+                                        </div>
                                         <FormControl>
-                                            {" "}
                                             <Switch
                                                 checked={field.value}
                                                 onCheckedChange={field.onChange}
-                                            />{" "}
-                                        </FormControl>{" "}
+                                            />
+                                        </FormControl>
                                     </FormItem>
                                 )}
                             />
@@ -355,10 +355,13 @@ export const AddProduct: FC = () => {
                                 type="button"
                                 variant="outline"
                                 onClick={() => setIsOpen(false)}
+                                disabled={isSubmitting}
                             >
                                 {t("cancel")}
                             </Button>
-                            <Button type="submit">{t("add")}</Button>
+                            <Button type="submit" disabled={isSubmitting}>
+                                {isSubmitting ? t("adding") : t("add")}
+                            </Button>
                         </DialogFooter>
                     </form>
                 </Form>
