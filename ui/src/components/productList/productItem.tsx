@@ -94,7 +94,7 @@ export const ProductItem: FC<Product> = ({ id, name, panel }) => {
                 </CardHeader>
             </Card>
 
-            {/* <EditProduct id={id} open={isEditOpen} onOpenChange={setEditOpen} /> */}
+            <EditProduct id={id} open={isEditOpen} onOpenChange={setEditOpen} />
             <DeleteProduct
                 id={id}
                 name={name}

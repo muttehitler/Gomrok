@@ -68,10 +68,19 @@ const formSchema = z.object({
 type ProductFormValues = z.infer<typeof formSchema>;
 
 const FormSkeleton = () => (
-    <div className="space-y-4 py-4">
-        {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-10 w-full" />
-        ))}
+    <div className="space-y-6 py-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[...Array(8)].map((_, i) => (
+                <div key={i} className="space-y-2">
+                    <Skeleton className="h-4 w-1/4" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+            ))}
+        </div>
+        <div className="flex justify-end gap-2">
+            <Skeleton className="h-10 w-24" />
+            <Skeleton className="h-10 w-24" />
+        </div>
     </div>
 );
 
@@ -82,91 +91,105 @@ export const EditProduct: FC<EditProductProp> = ({
 }) => {
     const t = useTranslations("i18n");
     const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [panels, setPanels] = useState<Panel[]>([]);
-    const [productCode, setProductCode] = useState("");
 
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: "",
-            panel: "",
-            price: 0,
-            weight: 0,
-            dataLimit: 0,
-            usageDuration: 0,
-            userLimit: 0,
-            payAsYouGo: false,
-            onHold: false,
-        },
     });
 
     useEffect(() => {
         if (open) {
-            setIsLoading(true);
             const fetchInitialData = async () => {
-                const csrf = generateCsrfToken(getCookie("csrf") ?? "");
+                setIsLoading(true);
                 try {
-                    const [panelResult, productResult] = await Promise.all([
-                        getPanelList({
-                            csrf,
-                            startIndex: 0,
-                            limit: 100,
-                            order: -1,
-                        }),
-                        getProduct({ id, csrf }),
-                    ]);
+                    const csrf = generateCsrfToken(getCookie("csrf") ?? "");
+                    const [panelResultStr, productResultStr] =
+                        await Promise.all([
+                            getPanelList({
+                                csrf,
+                                startIndex: 0,
+                                limit: 100,
+                                order: -1,
+                            }),
+                            getProduct({ id, csrf }),
+                        ]);
 
-                    const panelsData = JSON.parse(panelResult);
+                    const panelsData = JSON.parse(panelResultStr);
                     if (panelsData.success) {
                         setPanels(panelsData.data.items);
                     } else {
-                        toast.error("Failed to load panels.");
+                        toast.error(
+                            `Failed to load panels: ${panelsData.message}`
+                        );
                     }
 
-                    const productData = JSON.parse(productResult);
-                    form.reset({
-                        name: productData.name,
-                        panel: productData.panel,
-                        price: productData.price,
-                        weight: productData.weight,
-                        dataLimit: productData.dataLimit / Math.pow(1024, 3),
-                        usageDuration:
-                            productData.usageDuration / (24 * 60 * 60),
-                        userLimit: productData.userLimit,
-                        payAsYouGo: productData.payAsYouGo,
-                        onHold: productData.onHold,
-                    });
-                    setProductCode(productData.code);
+                    const productData = JSON.parse(productResultStr);
+                    if (productData.success) {
+                        form.reset({
+                            name: productData.data.name,
+                            panel: productData.data.panel,
+                            price: productData.data.price,
+                            weight: productData.data.weight,
+                            dataLimit:
+                                productData.data.dataLimit / Math.pow(1024, 3),
+                            usageDuration:
+                                productData.data.usageDuration / (24 * 60 * 60),
+                            userLimit: productData.data.userLimit,
+                            payAsYouGo: productData.data.payAsYouGo,
+                            onHold: productData.data.onHold,
+                        });
+                    } else {
+                        toast.error(
+                            `Failed to load product data: ${productData.message}`
+                        );
+                        onOpenChange(false); // Close modal if product data fails
+                    }
                 } catch (error) {
-                    toast.error("Failed to load product data.");
+                    toast.error(
+                        "An unexpected error occurred while loading data."
+                    );
+                    console.error(error);
+                    onOpenChange(false);
                 } finally {
                     setIsLoading(false);
                 }
             };
             fetchInitialData();
         }
-    }, [id, open, form]);
+    }, [id, open, form, onOpenChange]);
 
     const onSubmit = async (values: ProductFormValues) => {
-        const csrf = generateCsrfToken(getCookie("csrf") ?? "");
-        const payload = {
-            ...values,
-            id,
-            csrf,
-            dataLimit: values.dataLimit * Math.pow(1024, 3),
-            usageDuration: values.usageDuration * 24 * 60 * 60,
-        };
+        setIsSubmitting(true);
+        try {
+            const csrf = generateCsrfToken(getCookie("csrf") ?? "");
+            const payload = {
+                ...values,
+                id,
+                csrf,
+                dataLimit: values.dataLimit * Math.pow(1024, 3),
+                usageDuration: values.usageDuration * 24 * 60 * 60,
+            };
 
-        const result = JSON.parse(await updateProduct(payload));
+            const resultStr = await updateProduct(payload);
+            const result = JSON.parse(resultStr);
 
-        if (!result.success) {
-            toast.error(`${t("update-unsuccessfully")}: ${result.message}`);
-            return;
+            if (!result.success) {
+                toast.error(`${t("update-unsuccessfully")}: ${result.message}`);
+                return;
+            }
+
+            toast.success(t("updated-successfully"));
+            emitter.emit("listProducts");
+            onOpenChange(false);
+        } catch (error) {
+            toast.error(
+                "An unexpected error occurred while updating the product."
+            );
+            console.error(error);
+        } finally {
+            setIsSubmitting(false);
         }
-
-        toast.success(t("updated-successfully"));
-        emitter.emit("listProducts");
-        onOpenChange(false);
     };
 
     return (
@@ -193,14 +216,13 @@ export const EditProduct: FC<EditProductProp> = ({
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            {" "}
                                             <FormLabel>
                                                 {t("product-name")}
-                                            </FormLabel>{" "}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input {...field} />
-                                            </FormControl>{" "}
-                                            <FormMessage />{" "}
+                                            </FormControl>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
@@ -209,15 +231,11 @@ export const EditProduct: FC<EditProductProp> = ({
                                     name="panel"
                                     render={({ field }) => (
                                         <FormItem>
-                                            {" "}
-                                            <FormLabel>
-                                                {t("panel")}
-                                            </FormLabel>{" "}
+                                            <FormLabel>{t("panel")}</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                value={field.value}
                                             >
-                                                {" "}
                                                 <FormControl>
                                                     <SelectTrigger>
                                                         <SelectValue
@@ -226,9 +244,8 @@ export const EditProduct: FC<EditProductProp> = ({
                                                             )}
                                                         />
                                                     </SelectTrigger>
-                                                </FormControl>{" "}
+                                                </FormControl>
                                                 <SelectContent>
-                                                    {" "}
                                                     {panels.map((p) => (
                                                         <SelectItem
                                                             key={p.id}
@@ -236,10 +253,10 @@ export const EditProduct: FC<EditProductProp> = ({
                                                         >
                                                             {p.name}
                                                         </SelectItem>
-                                                    ))}{" "}
-                                                </SelectContent>{" "}
-                                            </Select>{" "}
-                                            <FormMessage />{" "}
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
@@ -248,17 +265,16 @@ export const EditProduct: FC<EditProductProp> = ({
                                     name="price"
                                     render={({ field }) => (
                                         <FormItem>
-                                            {" "}
                                             <FormLabel>
                                                 {t("product-price")}
-                                            </FormLabel>{" "}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"
                                                     {...field}
                                                 />
-                                            </FormControl>{" "}
-                                            <FormMessage />{" "}
+                                            </FormControl>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
@@ -267,17 +283,16 @@ export const EditProduct: FC<EditProductProp> = ({
                                     name="weight"
                                     render={({ field }) => (
                                         <FormItem>
-                                            {" "}
                                             <FormLabel>
                                                 {t("product-weight")}
-                                            </FormLabel>{" "}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"
                                                     {...field}
                                                 />
-                                            </FormControl>{" "}
-                                            <FormMessage />{" "}
+                                            </FormControl>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
@@ -286,17 +301,16 @@ export const EditProduct: FC<EditProductProp> = ({
                                     name="dataLimit"
                                     render={({ field }) => (
                                         <FormItem>
-                                            {" "}
                                             <FormLabel>
                                                 {t("product-data-limit")} (GB)
-                                            </FormLabel>{" "}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"
                                                     {...field}
                                                 />
-                                            </FormControl>{" "}
-                                            <FormMessage />{" "}
+                                            </FormControl>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
@@ -305,18 +319,17 @@ export const EditProduct: FC<EditProductProp> = ({
                                     name="usageDuration"
                                     render={({ field }) => (
                                         <FormItem>
-                                            {" "}
                                             <FormLabel>
                                                 {t("product-usage-duration")}{" "}
                                                 (Days)
-                                            </FormLabel>{" "}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"
                                                     {...field}
                                                 />
-                                            </FormControl>{" "}
-                                            <FormMessage />{" "}
+                                            </FormControl>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
@@ -325,47 +338,37 @@ export const EditProduct: FC<EditProductProp> = ({
                                     name="userLimit"
                                     render={({ field }) => (
                                         <FormItem>
-                                            {" "}
                                             <FormLabel>
                                                 {t("product-user-limit")}
-                                            </FormLabel>{" "}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"
                                                     {...field}
                                                 />
-                                            </FormControl>{" "}
-                                            <FormMessage />{" "}
+                                            </FormControl>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                                <FormItem>
-                                    <FormLabel>{t("product-code")}</FormLabel>
-                                    <FormControl>
-                                        <Input value={productCode} disabled />
-                                    </FormControl>
-                                </FormItem>
                                 <FormField
                                     control={form.control}
                                     name="payAsYouGo"
                                     render={({ field }) => (
-                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm col-span-1 sm:col-span-2">
-                                            {" "}
+                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                                             <div className="space-y-0.5">
-                                                {" "}
                                                 <FormLabel>
                                                     {t("pay-as-you-go")}
-                                                </FormLabel>{" "}
-                                            </div>{" "}
+                                                </FormLabel>
+                                            </div>
                                             <FormControl>
-                                                {" "}
                                                 <Switch
                                                     checked={field.value}
                                                     onCheckedChange={
                                                         field.onChange
                                                     }
-                                                />{" "}
-                                            </FormControl>{" "}
+                                                />
+                                            </FormControl>
                                         </FormItem>
                                     )}
                                 />
@@ -373,23 +376,20 @@ export const EditProduct: FC<EditProductProp> = ({
                                     control={form.control}
                                     name="onHold"
                                     render={({ field }) => (
-                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm col-span-1 sm:col-span-2">
-                                            {" "}
+                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                                             <div className="space-y-0.5">
-                                                {" "}
                                                 <FormLabel>
                                                     {t("on-hold")}
-                                                </FormLabel>{" "}
-                                            </div>{" "}
+                                                </FormLabel>
+                                            </div>
                                             <FormControl>
-                                                {" "}
                                                 <Switch
                                                     checked={field.value}
                                                     onCheckedChange={
                                                         field.onChange
                                                     }
-                                                />{" "}
-                                            </FormControl>{" "}
+                                                />
+                                            </FormControl>
                                         </FormItem>
                                     )}
                                 />
@@ -399,10 +399,13 @@ export const EditProduct: FC<EditProductProp> = ({
                                     type="button"
                                     variant="outline"
                                     onClick={() => onOpenChange(false)}
+                                    disabled={isSubmitting}
                                 >
                                     {t("cancel")}
                                 </Button>
-                                <Button type="submit">{t("update")}</Button>
+                                <Button type="submit" disabled={isSubmitting}>
+                                    {isSubmitting ? t("updating") : t("update")}
+                                </Button>
                             </DialogFooter>
                         </form>
                     </Form>
