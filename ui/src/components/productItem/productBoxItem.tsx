@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
 import { FC } from "react";
-import './style.css'
 import { useRouter } from "next/navigation";
 import { BatteryCharging, Bird, Clock, SaudiRiyal, User, Users } from "lucide-react";
 

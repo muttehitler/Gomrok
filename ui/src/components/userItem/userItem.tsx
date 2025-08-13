@@ -1,50 +1,68 @@
+"use client";
+
 import { useTranslations } from "next-intl";
-import { FC, useEffect, useState } from "react";
-import './style.css'
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { Pencil, Trash2 } from "lucide-react";
-import { getCookie } from "@/lib/utils/cookie.helper";
-import { generateCsrfToken } from "@/lib/utils/csrf.helper";
-import { getPanel } from "@/actions/panel.action";
-import { DeleteProduct } from "../deleteProduct/deleteProduct";
-import { EditProduct } from "../editProduct/editProduct";
-import { useRouter } from "next/navigation";
+import { FC } from "react";
+import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ChevronRight } from "lucide-react";
 
 type User = {
-    id: string
-    firstName: string
-    lastName: string
-    username: string
-    chatId: number
-    photoUrl: string
-    userDetailUrl?: string
-}
+    id: string;
+    firstName: string;
+    lastName: string;
+    username?: string;
+    photoUrl?: string;
+};
 
-export const UserItem: FC<User> = ({ id, firstName, lastName, username, chatId, photoUrl, userDetailUrl }: User) => {
-    const t = useTranslations('i18n');
+export const UserItem: FC<User> = ({
+    id,
+    firstName,
+    lastName,
+    username,
+    photoUrl,
+}) => {
+    const t = useTranslations("i18n");
+    const fullName = `${firstName} ${lastName || ""}`.trim();
 
-    const router = useRouter();
+    // Get user initials for avatar fallback
+    const getInitials = (name: string) => {
+        const names = name.split(" ");
+        if (names.length > 1) {
+            return `${names[0][0]}${names[names.length - 1][0]}`;
+        }
+        return names[0] ? names[0][0] : "U";
+    };
 
     return (
-        <div className='section'>
-            <div>
-                <div className='flex' key={id}>
-                    <div>
-                        <img src={photoUrl}
-                            alt="Profile Photo"
-                            width={10}
-                            className='p-img' />
+        <Card>
+            <CardContent className="p-3">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <Avatar>
+                            <AvatarImage src={photoUrl} alt={fullName} />
+                            <AvatarFallback>
+                                {getInitials(fullName)}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="grid gap-0.5">
+                            <p className="font-semibold">{fullName}</p>
+                            {username && (
+                                <p className="text-sm text-muted-foreground">
+                                    @{username}
+                                </p>
+                            )}
+                        </div>
                     </div>
-                    <div>
-                        <p>{firstName + ' ' + lastName}</p>
-                        {username && (<p className="username">@{username}</p>)}
-                    </div>
-                    <button onClick={() => { router.push(userDetailUrl ?? ('/admin/user/' + id)) }} className='detail-button ml-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
-                        {t('details')}
-                    </button>
-                    <br />
+                    <Button asChild variant="ghost" size="icon">
+                        <Link href={`/admin/user/${id}`}>
+                            <ChevronRight className="h-5 w-5" />
+                            <span className="sr-only">{t("details")}</span>
+                        </Link>
+                    </Button>
                 </div>
-            </div>
-        </div>
-    )
-}
+            </CardContent>
+        </Card>
+    );
+};

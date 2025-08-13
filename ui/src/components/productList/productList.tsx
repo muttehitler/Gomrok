@@ -1,80 +1,114 @@
+"use client";
+
 import { useTranslations } from "next-intl";
-import { FC, useEffect, useRef, useState } from "react";
-import './style.css'
+import { FC, useEffect, useState } from "react";
+import { getProductList } from "@/actions/product.action";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getCookie } from "@/lib/utils/cookie.helper";
 import { ProductItem } from "./productItem";
 import emitter from "@/lib/utils/eventEmitter";
 import toast from "react-hot-toast";
 import { Pagination } from "../pagination/pagination";
-import { getProductList } from "@/actions/product.action";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Product = {
-    id: string
-    name: string
-    panel: string
-    payAsYouGo: boolean
-    usageDuration: number
-    dataLimit: number
-    userLimit: number
-    onHold: boolean
-    price: number
-    weight: number
-    code: string
-}
+    id: string;
+    name: string;
+    panel: string;
+};
+
+const ProductListSkeleton = () => (
+    <div className="space-y-4">
+        {[...Array(3)].map((_, i) => (
+            <div key={i} className="p-4 border rounded-lg">
+                <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                        <Skeleton className="h-5 w-32" />
+                        <Skeleton className="h-4 w-24" />
+                    </div>
+                    <Skeleton className="h-8 w-8" />
+                </div>
+            </div>
+        ))}
+    </div>
+);
 
 export const ProductList: FC = () => {
-    const t = useTranslations('i18n');
-
-    const [products, setProducts] = useState<Product[]>([])
-    const [productsLength, setProductsLength] = useState(0)
-    const [currentPage, setCurrentPage] = useState(1)
-    const currentPageRef = useRef(currentPage)
-    const [pageSize, setPageSize] = useState(10)
-
-    useEffect(() => {
-        currentPageRef.current = currentPage
-        emitter.emit('listProducts')
-    }, [currentPage])
+    const t = useTranslations("i18n");
+    const [products, setProducts] = useState<Product[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [productsLength, setProductsLength] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize] = useState(10);
 
     useEffect(() => {
-        emitter.on('listProducts', async () => {
-            setProducts([])
+        const fetchProducts = async () => {
+            setIsLoading(true);
+            try {
+                const csrf = generateCsrfToken(getCookie("csrf") ?? "");
+                const resultStr = await getProductList({
+                    csrf,
+                    startIndex: (currentPage - 1) * pageSize,
+                    limit: pageSize,
+                    order: -1,
+                });
+                const result = JSON.parse(resultStr);
 
-            const result = JSON.parse(await getProductList({ csrf: generateCsrfToken(getCookie('csrf')!), startIndex: (currentPageRef.current - 1) * pageSize, limit: pageSize, order: -1 }))
+                if (!result.success) {
+                    toast.error(
+                        `${t("list-unsuccessfully")}: ${result.message}`
+                    );
+                    setProducts([]); // Clear products on error
+                    setProductsLength(0);
+                    return;
+                }
 
-            if (!result.success) {
-                toast.error(t('list-unsuccessfully') + ": " + result.message.toString(), {
-                    duration: 4000,
-                    className: 'toast'
-                })
-                return
+                setProductsLength(result.data.length);
+                setProducts(result.data.items);
+            } catch (error) {
+                toast.error(
+                    "An unexpected error occurred while fetching products."
+                );
+                console.error(error);
+                setProducts([]); // Also clear products on critical parse error
+                setProductsLength(0);
+            } finally {
+                setIsLoading(false);
             }
+        };
 
-            setProductsLength(result.data.length)
+        emitter.on("listProducts", fetchProducts);
+        fetchProducts(); // Initial fetch
 
-            setProducts(result.data.items)
-        })
-
-        emitter.emit('listProducts')
-    }, [])
+        return () => {
+            emitter.off("listProducts", fetchProducts);
+        };
+    }, [currentPage, pageSize, t]);
 
     return (
-        <div className='container'>
-            <h4>{t('products')}:</h4>
-            <br />
-            {products.length > 0 ? products.map(x =>
-                (<ProductItem id={x.id} name={x.name} panel={x.panel} key={x.name} />)
-            ) :
-                (<div role="status">
-                    <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
-                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
-                    </svg>
-                    <span className="sr-only">Loading...</span>
-                </div>)
-            }
-            <Pagination currentPageState={[currentPage, setCurrentPage]} pageCount={Math.ceil(productsLength / pageSize)} key={"pagination"} />
+        <div className="space-y-6">
+            {isLoading ? (
+                <ProductListSkeleton />
+            ) : (
+                <div className="space-y-4">
+                    {products.length > 0 ? (
+                        products.map((product) => (
+                            <ProductItem {...product} key={product.id} />
+                        ))
+                    ) : (
+                        <p className="text-muted-foreground text-center">
+                            {t("no-products-found")}
+                        </p>
+                    )}
+                </div>
+            )}
+
+            <div className="mt-6">
+                <Pagination
+                    currentPageState={[currentPage, setCurrentPage]}
+                    pageCount={Math.ceil(productsLength / pageSize)}
+                />
+            </div>
         </div>
-    )
-}
+    );
+};

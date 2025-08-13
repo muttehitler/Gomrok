@@ -1,62 +1,83 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import { FC, useState } from "react";
-import './style.css'
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { EditPanel } from "../editPanel/editPanel";
 import { DeletePanel } from "../deletePanel/deletePanel";
-import { Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 type Panel = {
-    id: string
-    name: string
-    type: string
-    url: string
-    weight: number
-}
+    id: string;
+    name: string;
+    type: string;
+    url: string;
+    weight: number;
+};
 
-export const PanelItem: FC<Panel> = ({ id, name, type, url, weight }: Panel) => {
-    const t = useTranslations('i18n');
+export const PanelItem: FC<Panel> = ({
+    id,
+    name,
+    type,
+    url,
+    weight,
+}: Panel) => {
+    const t = useTranslations("i18n");
 
-    const [isEditVisable, setEditVisablity] = useState(false)
-    const [isDeleteVisable, setDeleteVisablity] = useState(false)
+    const [isEditOpen, setEditOpen] = useState(false);
+    const [isDeleteOpen, setDeleteOpen] = useState(false);
 
     return (
-        <div className='section'>
-            <div>
-                <div className='flex' key={id}>
-                    <div>
-                        <p>{name}</p>
-                        <span className="url">{url}</span>
-                    </div>
-                    <Menu as="div" className="relative ml-auto inline-block text-left">
-                        <div>
-                            <MenuButton className="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-                                <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 4 15">
-                                    <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
-                                </svg>
-                            </MenuButton>
-                        </div>
+        <>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-lg font-medium">
+                        {name}
+                    </CardTitle>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreVertical className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setEditOpen(true)}>
+                                <Pencil className="me-2 h-4 w-4" />
+                                <span>{t("edit")}</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => setDeleteOpen(true)}
+                                className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/40"
+                            >
+                                <Trash2 className="me-2 h-4 w-4" />
+                                <span>{t("delete")}</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-xs text-muted-foreground truncate">
+                        {url}
+                    </p>
+                </CardContent>
+            </Card>
 
-                        <MenuItems transition className="absolute right-0 z-10 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
-                            <div className="py-1">
-                                <MenuItem>
-                                    <a onClick={() => { setEditVisablity(true) }} href="#" className="flex px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                        <Pencil size={16} />&ensp;{t('edit')}
-                                    </a>
-                                </MenuItem>
-                                <MenuItem>
-                                    <a onClick={() => { setDeleteVisablity(true) }} href="#" className="flex px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                        <Trash2 size={16} />&ensp;{t('delete')}
-                                    </a>
-                                </MenuItem>
-                            </div>
-                        </MenuItems>
-                    </Menu>
-                    <br />
-                </div>
-                {isEditVisable && (<EditPanel visableState={[isEditVisable, setEditVisablity]} id={id} />)}
-                <DeletePanel id={id} name={name} visableState={[isDeleteVisable, setDeleteVisablity]} />
-            </div>
-        </div>
-    )
-}
+            <EditPanel id={id} open={isEditOpen} onOpenChange={setEditOpen} />
+
+            <DeletePanel
+                id={id}
+                name={name}
+                open={isDeleteOpen}
+                onOpenChange={setDeleteOpen}
+            />
+        </>
+    );
+};

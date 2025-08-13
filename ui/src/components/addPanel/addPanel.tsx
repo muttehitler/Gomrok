@@ -1,8 +1,7 @@
-'use client'
+"use client";
 
 import { useTranslations } from "next-intl";
-import { FC, useEffect, useRef, useState } from "react";
-import './style.css'
+import { FC, useState } from "react";
 import { addPanel, testConnection } from "@/actions/panel.action";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { getCookie } from "@/lib/utils/cookie.helper";
@@ -11,138 +10,301 @@ import emitter from "@/lib/utils/eventEmitter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Weight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const schema = z.object({
-    name: z.string(),
-    type: z.string(),
-    url: z.string().url(),
-    username: z.string(),
-    password: z.string(),
-    weight: z.string(),
-    csrf: z.string(),
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { PlusCircle } from "lucide-react";
+
+const formSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    type: z.string({ required_error: "Please select a panel type." }),
+    url: z.string().url("Invalid URL format"),
+    username: z.string().min(1, "Username is required"),
+    password: z.string().min(1, "Password is required"),
+    weight: z
+        .string()
+        .refine((val) => !isNaN(parseInt(val, 10)), {
+            message: "Weight must be a number",
+        }),
 });
 
+type TestStatus = "idle" | "testing" | "success" | "fail";
+
 export const AddPanel: FC = () => {
-    const t = useTranslations('i18n');
+    const t = useTranslations("i18n");
+    const [isOpen, setIsOpen] = useState(false);
+    const [testStatus, setTestStatus] = useState<TestStatus>("idle");
 
-    const formRef = useRef<HTMLFormElement>(null)
-    const [testConnectionText, setTestConnectionText] = useState(t('test-panel-connection'))
-
-    const [isAddPanelOpen, setIsAddPanelOpen] = useState(false);
-    const [csrfToken, setCsrfToken] = useState('')
-
-    useEffect(() => {
-        (async () => {
-            setCsrfToken(generateCsrfToken(getCookie('csrf') ?? ''))
-        })()
-    }, [])
-
-    const openAddPanel = () => { setIsAddPanelOpen(true) }
-    const closeAddPanel = () => { setIsAddPanelOpen(false) }
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            name: "",
+            url: "",
+            username: "",
+            password: "",
+            weight: "0",
+        },
+    });
 
     const testConnectionHandler = async () => {
-        if (!formRef.current) return
-
-        const dataAsJson = Object.fromEntries(new FormData(formRef.current).entries())
-
-        setTestConnectionText(t("testing"))
-
-        const result = await testConnection(dataAsJson)
-
-        if (result == 200) {
-            setTestConnectionText(t("successed"))
+        const isValid = await form.trigger([
+            "url",
+            "username",
+            "password",
+            "type",
+        ]);
+        if (!isValid) {
+            toast.error("Please fill required fields for testing connection.");
             return;
         }
 
-        setTestConnectionText(t("fail"))
-    }
+        setTestStatus("testing");
+        const data = form.getValues();
+        const csrf = generateCsrfToken(getCookie("csrf") ?? "");
+        const result = await testConnection({ ...data, csrf });
 
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        resolver: zodResolver(schema),
-    });
+        if (result === 200) {
+            toast.success(t("successed"));
+            setTestStatus("success");
+        } else {
+            toast.error(t("fail"));
+            setTestStatus("fail");
+        }
+        setTimeout(() => setTestStatus("idle"), 2000); // Reset after 2 seconds
+    };
 
-    const addPanelHandler = async (data: any) => {
-        const result = JSON.parse(await addPanel(data))
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        const csrf = generateCsrfToken(getCookie("csrf") ?? "");
+        const result = JSON.parse(await addPanel({ ...values, csrf }));
 
         if (!result.success) {
-            toast.error(t('add-unsuccessfully') + ": " + result.message.toString(), {
-                duration: 4000,
-                className: 'toast'
-            })
-            return
+            toast.error(`${t("add-unsuccessfully")}: ${result.message}`);
+            return;
         }
 
-        emitter.emit('listPanels')
+        toast.success(t("added-successfully"));
+        emitter.emit("listPanels");
+        setIsOpen(false);
+        form.reset();
+    };
 
-        toast.success(t('added-successfully'), {
-            duration: 2000,
-            className: 'toast'
-        })
-
-        setIsAddPanelOpen(false)
-    }
+    const getTestButtonText = () => {
+        switch (testStatus) {
+            case "testing":
+                return t("testing");
+            case "success":
+                return t("successed");
+            case "fail":
+                return t("fail");
+            default:
+                return t("test-panel-connection");
+        }
+    };
 
     return (
-        <div>
-            <button onClick={openAddPanel} className='add-panel-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
-                {t('add-panel')}
-            </button>
-            {isAddPanelOpen && (
-                <div className='container add-panel-container'>
-                    <form ref={formRef} onSubmit={handleSubmit(addPanelHandler)}>
-                        <div className='add-panel-field-div'>
-                            <div className='panel-field'>
-                                <label htmlFor="panel_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('panel-name')}</label>
-                                <input {...register('name')} name='name' type="text" id="panel_name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={t('panel-name')} required />
-                                {errors.name && <p style={{ color: 'red' }}>{errors.name.message}</p>}
-                            </div>
-                            <div className='panel-field'>
-                                <label htmlFor="panel_types" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('panel-type')}</label>
-                                <select {...register('type')} name='type' id="panel_types" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                    <option>{t('choose-a-panel-type')}</option>
-                                    <option value="marzneshin">{t('marzneshin')}</option>
-                                    <option value="marzban">{t('marzban')}</option>
-                                </select>
-                                {errors.type && <p style={{ color: 'red' }}>{errors.type.message}</p>}
-                            </div>
-                            <div className='panel-field'>
-                                <label htmlFor="panel_url" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('panel-url')}</label>
-                                <input {...register('url')} name="url" type="text" id="panel_url" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={t('panel-url')} required />
-                                {errors.url && <p style={{ color: 'red' }}>{errors.url.message}</p>}
-                            </div>
-                            <div className='panel-field'>
-                                <label htmlFor="panel_username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('panel-username')}</label>
-                                <input {...register('username')} name="username" type="text" id="panel_username" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={t('panel-username')} required />
-                                {errors.username && <p style={{ color: 'red' }}>{errors.username.message}</p>}
-                            </div>
-                            <div className='panel-field'>
-                                <label htmlFor="panel_password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('panel-password')}</label>
-                                <input {...register('password')} name="password" type="password" id="panel_password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={t('panel-password')} required />
-                                {errors.password && <p style={{ color: 'red' }}>{errors.password.message}</p>}
-                            </div>
-                            <div className='panel-field'>
-                                <label htmlFor="panel_weight" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('panel-weight')}</label>
-                                <input {...register('weight')} name="weight" type="number" id="panel_weight" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={t('panel-weight')} required />
-                                {errors.weight && <p style={{ color: 'red' }}>{errors.weight.message}</p>}
-                            </div>
-                            <input {...register('csrf')} name="csrf" type="hidden" value={csrfToken} />
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+                <Button>
+                    <PlusCircle className="me-2 h-4 w-4" />
+                    {t("add-panel")}
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-lg w-[90%] rounded-lg">
+                <DialogHeader>
+                    <DialogTitle>{t("add-panel")}</DialogTitle>
+                    <DialogDescription>{t("add-panel-desc")}</DialogDescription>
+                </DialogHeader>
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-4"
+                    >
+                        <div className="grid gap-4 py-4">
+                            {/* Form Fields remain the same */}
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        {" "}
+                                        <FormLabel>
+                                            {t("panel-name")}
+                                        </FormLabel>{" "}
+                                        <FormControl>
+                                            <Input
+                                                placeholder={t("panel-name")}
+                                                {...field}
+                                            />
+                                        </FormControl>{" "}
+                                        <FormMessage />{" "}
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="type"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        {" "}
+                                        <FormLabel>
+                                            {t("panel-type")}
+                                        </FormLabel>{" "}
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
+                                            {" "}
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            "choose-a-panel-type"
+                                                        )}
+                                                    />
+                                                </SelectTrigger>
+                                            </FormControl>{" "}
+                                            <SelectContent>
+                                                {" "}
+                                                <SelectItem value="marzneshin">
+                                                    {t("marzneshin")}
+                                                </SelectItem>{" "}
+                                                <SelectItem value="marzban">
+                                                    {t("marzban")}
+                                                </SelectItem>{" "}
+                                            </SelectContent>{" "}
+                                        </Select>{" "}
+                                        <FormMessage />{" "}
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="url"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        {" "}
+                                        <FormLabel>
+                                            {t("panel-url")}
+                                        </FormLabel>{" "}
+                                        <FormControl>
+                                            <Input
+                                                placeholder="https://example.com"
+                                                {...field}
+                                            />
+                                        </FormControl>{" "}
+                                        <FormMessage />{" "}
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="username"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        {" "}
+                                        <FormLabel>
+                                            {t("panel-username")}
+                                        </FormLabel>{" "}
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>{" "}
+                                        <FormMessage />{" "}
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        {" "}
+                                        <FormLabel>
+                                            {t("panel-password")}
+                                        </FormLabel>{" "}
+                                        <FormControl>
+                                            <Input type="password" {...field} />
+                                        </FormControl>{" "}
+                                        <FormMessage />{" "}
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="weight"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        {" "}
+                                        <FormLabel>
+                                            {t("panel-weight")}
+                                        </FormLabel>{" "}
+                                        <FormControl>
+                                            <Input type="number" {...field} />
+                                        </FormControl>{" "}
+                                        <FormMessage />{" "}
+                                    </FormItem>
+                                )}
+                            />
                         </div>
-                        <div className='flex'>
-                            <button onClick={closeAddPanel} className='cancel-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full'>
-                                {t('cancel')}
-                            </button>
-                            <button onClick={testConnectionHandler} type="button" className='add-button ml-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
-                                {testConnectionText}
-                            </button>
-                            <button className='add-button ml-auto bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full'>
-                                {t('add')}
-                            </button>
-                        </div>
+                        <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-between">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setIsOpen(false)}
+                                className="w-full sm:w-auto"
+                            >
+                                {t("cancel")}
+                            </Button>
+                            <div className="flex w-full gap-2 sm:w-auto">
+                                <Button
+                                    type="button"
+                                    variant="secondary"
+                                    onClick={testConnectionHandler}
+                                    disabled={testStatus === "testing"}
+                                    className={cn("w-full sm:w-auto", {
+                                        "bg-green-500 hover:bg-green-600 text-white":
+                                            testStatus === "success",
+                                        "bg-red-500 hover:bg-red-600 text-white":
+                                            testStatus === "fail",
+                                    })}
+                                >
+                                    {getTestButtonText()}
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    className="w-full sm:w-auto"
+                                >
+                                    {t("add")}
+                                </Button>
+                            </div>
+                        </DialogFooter>
                     </form>
-                </div>
-            )}
-
-        </div>
-    )
-}
+                </Form>
+            </DialogContent>
+        </Dialog>
+    );
+};
