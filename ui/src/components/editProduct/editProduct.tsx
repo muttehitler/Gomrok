@@ -116,34 +116,41 @@ export const EditProduct: FC<EditProductProp> = ({
                         ]);
 
                     const panelsData = JSON.parse(panelResultStr);
-                    if (panelsData.success) {
+                    // FIX: Check for actual data instead of a 'success' flag
+                    if (
+                        panelsData &&
+                        panelsData.data &&
+                        panelsData.data.items
+                    ) {
                         setPanels(panelsData.data.items);
                     } else {
                         toast.error(
-                            `Failed to load panels: ${panelsData.message}`
+                            panelsData.message || "Failed to load panels."
                         );
                     }
 
                     const productData = JSON.parse(productResultStr);
-                    if (productData.success) {
+                    // FIX: Check for the existence of product data (e.g., by checking for an ID)
+                    if (productData && productData.id) {
                         form.reset({
-                            name: productData.data.name,
-                            panel: productData.data.panel,
-                            price: productData.data.price,
-                            weight: productData.data.weight,
+                            name: productData.name,
+                            panel: productData.panel,
+                            price: productData.price,
+                            weight: productData.weight,
                             dataLimit:
-                                productData.data.dataLimit / Math.pow(1024, 3),
+                                productData.dataLimit / Math.pow(1024, 3),
                             usageDuration:
-                                productData.data.usageDuration / (24 * 60 * 60),
-                            userLimit: productData.data.userLimit,
-                            payAsYouGo: productData.data.payAsYouGo,
-                            onHold: productData.data.onHold,
+                                productData.usageDuration / (24 * 60 * 60),
+                            userLimit: productData.userLimit,
+                            payAsYouGo: productData.payAsYouGo,
+                            onHold: productData.onHold,
                         });
                     } else {
                         toast.error(
-                            `Failed to load product data: ${productData.message}`
+                            productData.message ||
+                                "Failed to load product data."
                         );
-                        onOpenChange(false); // Close modal if product data fails
+                        onOpenChange(false);
                     }
                 } catch (error) {
                     toast.error(

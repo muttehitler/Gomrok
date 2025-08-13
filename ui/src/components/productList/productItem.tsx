@@ -10,7 +10,6 @@ import { EditProduct } from "../editProduct/editProduct";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import {
     Card,
-    CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
@@ -39,15 +38,20 @@ export const ProductItem: FC<Product> = ({ id, name, panel }) => {
 
     useEffect(() => {
         const fetchPanelName = async () => {
+            setIsLoading(true);
             try {
-                const panelDetail = JSON.parse(
-                    await getPanel({
-                        id: panel,
-                        csrf: generateCsrfToken(getCookie("csrf") ?? ""),
-                    })
-                );
-                setPanelName(panelDetail.name);
+                const csrf = generateCsrfToken(getCookie("csrf") ?? "");
+                const resultStr = await getPanel({ id: panel, csrf });
+                const panelDetail = JSON.parse(resultStr);
+
+                // FIX: Check for the existence of panel data (e.g., by checking for an ID)
+                if (panelDetail && panelDetail.id) {
+                    setPanelName(panelDetail.name);
+                } else {
+                    setPanelName("Unknown Panel");
+                }
             } catch (error) {
+                console.error("Failed to fetch panel name:", error);
                 setPanelName("Unknown Panel");
             } finally {
                 setIsLoading(false);
@@ -59,7 +63,7 @@ export const ProductItem: FC<Product> = ({ id, name, panel }) => {
     return (
         <>
             <Card>
-                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <div className="space-y-1">
                         <CardTitle>{name}</CardTitle>
                         <CardDescription>
