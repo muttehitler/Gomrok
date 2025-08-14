@@ -16,11 +16,12 @@ import { ChevronRight } from "lucide-react";
 
 type Order = {
     id: string;
-    name: string; 
-    product: string; 
+    name: string;
+    product: string;
     price: number;
     payed: boolean;
     finalPrice: number;
+    orderDetailUrl?: string
 };
 
 export const OrderItem: FC<Order> = ({
@@ -30,6 +31,7 @@ export const OrderItem: FC<Order> = ({
     price,
     payed,
     finalPrice,
+    orderDetailUrl
 }) => {
     const t = useTranslations("i18n");
 
@@ -48,7 +50,7 @@ export const OrderItem: FC<Order> = ({
                             {payed ? t("payed") : t("not-payed")}
                         </Badge>
                         <Button asChild variant="ghost" size="icon">
-                            <Link href={`/admin/order/${id}`}>
+                            <Link href={orderDetailUrl ?? `/order/${id}`}>
                                 <ChevronRight className="h-5 w-5" />
                                 <span className="sr-only">{t("details")}</span>
                             </Link>
