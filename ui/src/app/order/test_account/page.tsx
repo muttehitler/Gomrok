@@ -70,7 +70,7 @@ export default function Order() {
                 return
             }
 
-            const addOrderResult = JSON.parse(await addOrder({ csrf: csrfToken, name: 'sldkfj', product: testProduct.data.id }))
+            const addOrderResult = JSON.parse(await addOrder({ csrf: csrfToken, product: testProduct.data.id }))
 
             if (!addOrderResult.success) {
                 toast.error(t('add-unsuccessfully') + ": " + addOrderResult.message.toString(), {
