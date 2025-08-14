@@ -293,7 +293,7 @@ export default function OrderDetail({ params }: Props) {
                         </div>
                     </div>
 
-                    <RevokeSubscription id={id} visableState={[isRevokeSubVisable, setRevokeSubVisablity]} subscriptionUrl={[subUrl, setSubUrl]} key={order.name} />
+                    {/* <RevokeSubscription id={id} visableState={[isRevokeSubVisable, setRevokeSubVisablity]} subscriptionUrl={[subUrl, setSubUrl]} key={order.name} /> */}
                 </div>
                 <div className='container'>
                     <button onClick={() => { setRenewOrderVisablity(true) }} type="button" className='renew bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>

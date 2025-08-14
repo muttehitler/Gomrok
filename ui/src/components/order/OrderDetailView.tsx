@@ -34,6 +34,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { RevokeSubscription } from "../revokeSubscription/revokeSubscription";
 // Note: You will need to refactor RevokeSubscription and RenewOrder components later
 // import { RevokeSubscription } from '@/components/revokeSubscription/revokeSubscription';
 // import { RenewOrder } from '@/components/renewOrder/renewOrder';
@@ -122,10 +123,12 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
     const dataLimit = panelUser.dataLimit || 1; // Avoid division by zero
     const usagePercentage = Math.min((usedTraffic / dataLimit) * 100, 100);
 
+    const [isRevokeSubVisable, setRevokeSubVisablity] = useState(false)
     const [proxies, setProxies] = useState<string[]>([])
     const [qrModal, setQRModal] = useState(false)
     const [qrUrl, setQRUrl] = useState('')
     const [qrName, setQRName] = useState('')
+    const [subUrl, setSubUrl] = useState(panelUser.subscriptionUrl)
 
     const handleCopy = (text: string) => {
         navigator.clipboard.writeText(text);
@@ -134,14 +137,14 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
 
     useEffect(() => {
         (async () => {
-            if (!panelUser.subscriptionUrl)
+            if (!subUrl)
                 return
 
-            const proxiesDecode = atob(await (await fetch(panelUser.subscriptionUrl)).text()).split('\n')
+            const proxiesDecode = atob(await (await fetch(subUrl)).text()).split('\n')
 
             setProxies(proxiesDecode)
         })()
-    }, [panelUser.subscriptionUrl])
+    }, [subUrl])
 
     return (
         <div className="space-y-6">
@@ -208,12 +211,12 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
                     </AccordionTrigger>
                     <AccordionContent className="space-y-4">
                         <div className="flex items-center gap-2">
-                            <Input value={panelUser.subscriptionUrl} readOnly />
+                            <Input value={subUrl} readOnly />
                             <Button
                                 variant="outline"
                                 size="icon"
                                 onClick={() =>
-                                    handleCopy(panelUser.subscriptionUrl)
+                                    handleCopy(subUrl)
                                 }
                             >
                                 <Copy className="h-4 w-4" />
@@ -227,11 +230,15 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
                             </DialogTrigger>
                             <DialogContent className="flex flex-col items-center justify-center p-8">
                                 <QRCodeSVG
-                                    value={panelUser.subscriptionUrl}
+                                    value={subUrl}
                                     size={256}
                                 />
                             </DialogContent>
                         </Dialog>
+
+                        <Button onClick={() => setRevokeSubVisablity(true)} variant="destructive" className="w-full">
+                            {t("revoke-sub")}
+                        </Button>
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="proxies">
@@ -272,10 +279,13 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
-
-            {/* You need to refactor these components to work with the new structure */}
-            {/* <RevokeSubscription ... /> */}
-            {/* <RenewOrder ... /> */}
+            <RevokeSubscription
+                id={order.id}
+                name={order.name}
+                visableState={[isRevokeSubVisable, setRevokeSubVisablity]}
+                onOpenChange={() => { }}
+                subscriptionUrl={[subUrl, setSubUrl]}
+            />
         </div>
     );
 };
