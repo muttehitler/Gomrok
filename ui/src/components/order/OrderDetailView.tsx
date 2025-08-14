@@ -37,7 +37,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RevokeSubscription } from "../revokeSubscription/revokeSubscription";
 import { RenewOrder } from "../renewOrder/renewOrder";
 
-// ... (Types and helper functions like formatBytes, StatusBadge, etc. remain the same)
+// ... (Types and helper functions like formatBytes, StatusBadge, etc. can remain the same)
 type Order = { id: string; name: string; product: string };
 type PanelUser = {
     username: string;
@@ -213,7 +213,60 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
     return (
         <div className="space-y-6">
             <Card>
-                {/* ... (Status, Data Usage, Subscription Details Cards are the same) ... */}
+                <CardHeader>
+                    <div className="flex items-center justify-between">
+                        <CardTitle>{panelUser.username}</CardTitle>
+                        <StatusBadge panelUser={panelUser} />
+                    </div>
+                    <CardDescription className="pt-1">
+                        <Badge
+                            variant={
+                                panelUser.isActive ? "default" : "destructive"
+                            }
+                        >
+                            {panelUser.isActive ? t("active") : t("inactive")}
+                        </Badge>
+                    </CardDescription>
+                </CardHeader>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t("data-usage")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Progress value={usagePercentage} />
+                    <div className="flex justify-between text-sm text-muted-foreground mt-2">
+                        <span>{formatBytes(usedTraffic)}</span>
+                        <span>{formatBytes(dataLimit)}</span>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t("subscription-details")}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm">
+                    <p>
+                        <strong>{t("time-left")}:</strong>{" "}
+                        {panelUser.expireStrategy === "start_on_first_use" &&
+                        !panelUser.expireDate
+                            ? t("not-started-yet")
+                            : moment(panelUser.expireDate).fromNow()}
+                    </p>
+                    <p>
+                        <strong>{t("expires-in")}:</strong>{" "}
+                        {panelUser.expireStrategy === "start_on_first_use" &&
+                        !panelUser.expireDate
+                            ? `${(panelUser.usageDuration || 0) / 86400} ${t(
+                                  "days"
+                              )}`
+                            : jmoment(panelUser.expireDate).format(
+                                  "dddd jD jMMMM jYYYY"
+                              )}
+                    </p>
+                </CardContent>
             </Card>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -224,7 +277,6 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
             </div>
 
             <Accordion type="single" collapsible className="w-full">
-                {/* ... (Subscription Link and Proxies AccordionItems are the same) ... */}
                 <AccordionItem value="sub-link">
                     <AccordionTrigger>
                         {t("subscription-link")}
@@ -288,11 +340,12 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
                 onSubscriptionRevoked={setSubUrl}
             />
 
+            {/* FIX: Passing the correct props to RenewOrder component */}
             <RenewOrder
-                orderId={order.id}
-                currentProductId={order.product}
-                open={isRenewOpen}
-                onOpenChange={setIsRenewOpen}
+                id={order.id}
+                product={order.product}
+                visableState={[isRenewOpen, setIsRenewOpen]}
+                subscriptionUrl={[subUrl, setSubUrl]}
             />
         </div>
     );
