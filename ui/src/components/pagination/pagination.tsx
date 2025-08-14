@@ -35,20 +35,53 @@ export const Pagination: FC<PaginationProps> = ({
     };
 
     const renderPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= pageCount; i++) {
+        const pages: JSX.Element[] = [];
+        const windowSize = 1;
+
+        const firstPages = [1];
+        const lastPages = [pageCount];
+        const middlePages = [];
+
+        for (
+            let i = currentPage - windowSize;
+            i <= currentPage + windowSize;
+            i++
+        ) {
+            if (i > 0 && i <= pageCount) {
+                middlePages.push(i);
+            }
+        }
+
+        const allPages = Array.from(
+            new Set([...firstPages, ...middlePages, ...lastPages])
+        ).sort((a, b) => a - b);
+
+        let prevPage = 0;
+        allPages.forEach((page) => {
+            if (page - prevPage > 1) {
+                pages.push(
+                    <PaginationItem key={`ellipsis-${page}`}>
+                        <PaginationEllipsis />
+                    </PaginationItem>
+                );
+            }
             pages.push(
-                <PaginationItem key={i}>
+                <PaginationItem key={page}>
                     <PaginationLink
                         href="#"
-                        isActive={i === currentPage}
-                        onClick={() => setCurrentPage(i)}
+                        isActive={page === currentPage}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setCurrentPage(page);
+                        }}
                     >
-                        {i}
+                        {page}
                     </PaginationLink>
                 </PaginationItem>
             );
-        }
+            prevPage = page;
+        });
+
         return pages;
     };
 
