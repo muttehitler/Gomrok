@@ -125,6 +125,10 @@
         "pay-with-tron-network": "Оплата через сеть Tron",
         "top-up-with-trx": "Пополнение через TRX",
         "important-notes": "Важные примечания",
-        "amount-in-toman": "Сумма (в томанах)"
+        "amount-in-toman": "Сумма (в томанах)",
+        "complete-the-payment": "Завершите платеж",
+        "send-trx-to-this-address": "Отправьте указанную сумму на адрес ниже. Обязательно скопируйте и сохраните \"Хэш транзакции\" (TxID) для окончательной проверки.",
+        "transaction-hash": "Хэш транзакции (TxID)",
+        "verify-payment": "Подтвердить платеж"
     }
 }

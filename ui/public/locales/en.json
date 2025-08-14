@@ -125,6 +125,10 @@
         "pay-with-tron-network": "Pay with Tron Network",
         "top-up-with-trx": "Top-up with TRX",
         "important-notes": "Important Notes",
-        "amount-in-toman": "Amount (in Toman)"
+        "amount-in-toman": "Amount (in Toman)",
+        "complete-the-payment": "Complete the Payment",
+        "send-trx-to-this-address": "Send the specified amount to the address below. Be sure to copy and save the \"Transaction Hash\" (TxID) for final verification.",
+        "transaction-hash": "Transaction Hash (TxID)",
+        "verify-payment": "Verify Payment"
     }
 }
