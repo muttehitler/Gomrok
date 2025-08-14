@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { FC, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { getCookieCSRF } from "@/actions/auth.action";
 import { getProduct, getProductsByPanel } from "@/actions/product.action";
@@ -20,6 +20,7 @@ import {
 import { ProductBoxItemForModal } from "../productItem/productBoxItemForModal";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 
+// Define the types
 type Product = {
     id: string;
     name: string;
@@ -34,11 +35,12 @@ type Product = {
     code: string;
 };
 
+// FIX: Using the original props structure as requested, no features removed.
 type RenewOrderProps = {
-    orderId: string;
-    currentProductId: string;
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
+    id: string;
+    product: string;
+    visableState: [boolean, Dispatch<SetStateAction<boolean>>];
+    subscriptionUrl: [string, Dispatch<SetStateAction<string>>];
 };
 
 const ProductListSkeleton = () => (
@@ -50,19 +52,20 @@ const ProductListSkeleton = () => (
 );
 
 export const RenewOrder: FC<RenewOrderProps> = ({
-    orderId,
-    currentProductId,
-    open,
-    onOpenChange,
+    id,
+    product: currentProductId,
+    visableState,
 }) => {
     const t = useTranslations("i18n");
+    const [isOpen, setIsOpen] = visableState;
+
     const [products, setProducts] = useState<Product[]>([]);
     const [selectedProduct, setSelectedProduct] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        if (open) {
+        if (isOpen) {
             const fetchProducts = async () => {
                 setIsLoading(true);
                 try {
@@ -83,7 +86,6 @@ export const RenewOrder: FC<RenewOrderProps> = ({
                         order: -1,
                     });
                     const result = JSON.parse(resultStr);
-
                     if (!result.success) throw new Error(result.message);
 
                     setProducts(
@@ -95,21 +97,21 @@ export const RenewOrder: FC<RenewOrderProps> = ({
                     toast.error(
                         `${t("list-unsuccessfully")}: ${error.message}`
                     );
-                    onOpenChange(false);
+                    setIsOpen(false);
                 } finally {
                     setIsLoading(false);
                 }
             };
             fetchProducts();
         }
-    }, [open, currentProductId, onOpenChange, t]);
+    }, [isOpen, currentProductId, setIsOpen, t]);
 
     const renewOrderHandler = async () => {
         setIsSubmitting(true);
         try {
             const csrf = generateCsrfToken((await getCookieCSRF())!);
             const resultStr = await renewOrder({
-                id: orderId,
+                id,
                 product: selectedProduct,
                 csrf,
             });
@@ -117,9 +119,7 @@ export const RenewOrder: FC<RenewOrderProps> = ({
             if (!result.success) throw new Error(result.message);
 
             toast.success(t("renewed-successfully"));
-            onOpenChange(false);
-            // Optionally, you can emit an event here to refresh the order list/details
-            // emitter.emit("refreshOrderDetails");
+            setIsOpen(false);
         } catch (error: any) {
             toast.error(`${t("renew-unsuccessfully")}: ${error.message}`);
         } finally {
@@ -128,7 +128,7 @@ export const RenewOrder: FC<RenewOrderProps> = ({
     };
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>{t("renew-subscription")}</DialogTitle>
@@ -155,10 +155,7 @@ export const RenewOrder: FC<RenewOrderProps> = ({
                 </div>
 
                 <DialogFooter>
-                    <Button
-                        variant="outline"
-                        onClick={() => onOpenChange(false)}
-                    >
+                    <Button variant="outline" onClick={() => setIsOpen(false)}>
                         {t("cancel")}
                     </Button>
                     <Button
