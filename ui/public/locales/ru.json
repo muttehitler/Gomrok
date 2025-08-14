@@ -136,6 +136,10 @@
         "verify-payment": "Подтвердить платеж",
         "price": "Цена",
         "no-proxies-found": "No Proxies Found",
-        "panel": "Panel"
+        "panel": "Panel",
+        "final-price": "Итоговая цена",
+        "pay-from-wallet": "Оплатить с кошелька",
+        "your-free-test-plan": "Ваш бесплатный тестовый план",
+        "activate-test-account": "Активировать тестовый аккаунт"
     }
 }

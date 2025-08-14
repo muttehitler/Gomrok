@@ -135,7 +135,11 @@
         "transaction-hash": "هش تراکنش (TxID)",
         "verify-payment": "تایید پرداخت",
         "price": "قیمت",
-        "no-proxies-found":"پروکسی پیدا نشد",
-        "panel": "پنل"
+        "no-proxies-found": "پروکسی پیدا نشد",
+        "panel": "پنل",
+        "final-price": "قیمت نهایی",
+        "pay-from-wallet": "پرداخت از کیف پول",
+        "your-free-test-plan": "طرح تست رایگان شما",
+        "activate-test-account": "فعال‌سازی اکانت تست"
     }
 }
