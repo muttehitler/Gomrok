@@ -2,11 +2,12 @@
 
 import { useTranslations } from "next-intl";
 import { FC, useEffect, useState } from "react";
-import { Copy, QrCode } from "lucide-react";
+import { Copy, Earth, QrCode } from "lucide-react";
 import toast from "react-hot-toast";
 import moment from "moment";
 import jmoment from "moment-jalaali";
 import { QRCodeSVG } from "qrcode.react";
+import Link from "next/link";
 
 import {
     Card,
@@ -62,7 +63,7 @@ const StatusBadge = ({ panelUser }: { panelUser: PanelUser }) => {
     const isOnline =
         panelUser.onlineAt &&
         new Date().getTime() - new Date(panelUser.onlineAt + "Z").getTime() <
-            60000;
+        60000;
 
     if (isOnline) {
         return <Badge className="bg-green-500">{t("online")}</Badge>;
@@ -121,10 +122,26 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
     const dataLimit = panelUser.dataLimit || 1; // Avoid division by zero
     const usagePercentage = Math.min((usedTraffic / dataLimit) * 100, 100);
 
+    const [proxies, setProxies] = useState<string[]>([])
+    const [qrModal, setQRModal] = useState(false)
+    const [qrUrl, setQRUrl] = useState('')
+    const [qrName, setQRName] = useState('')
+
     const handleCopy = (text: string) => {
         navigator.clipboard.writeText(text);
         toast.success("Copied!");
     };
+
+    useEffect(() => {
+        (async () => {
+            if (!panelUser.subscriptionUrl)
+                return
+
+            const proxiesDecode = atob(await (await fetch(panelUser.subscriptionUrl)).text()).split('\n')
+
+            setProxies(proxiesDecode)
+        })()
+    }, [panelUser.subscriptionUrl])
 
     return (
         <div className="space-y-6">
@@ -174,12 +191,11 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
                         <p>
                             {t("expires-in")}:{" "}
                             {panelUser.expireStrategy === "start_on_first_use"
-                                ? `${
-                                      (panelUser.usageDuration || 0) / 86400
-                                  } ${t("days")}`
+                                ? `${(panelUser.usageDuration || 0) / 86400
+                                } ${t("days")}`
                                 : jmoment(panelUser.expireDate).format(
-                                      "dddd jD jMMMM jYYYY"
-                                  )}
+                                    "dddd jD jMMMM jYYYY"
+                                )}
                         </p>
                     </div>
                 </CardContent>
@@ -206,7 +222,7 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
                         <Dialog>
                             <DialogTrigger asChild>
                                 <Button variant="secondary" className="w-full">
-                                    {t("show-qr-code")}
+                                    <QrCode />&ensp;{t("show-qr-code")}
                                 </Button>
                             </DialogTrigger>
                             <DialogContent className="flex flex-col items-center justify-center p-8">
@@ -216,6 +232,43 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
                                 />
                             </DialogContent>
                         </Dialog>
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="proxies">
+                    <AccordionTrigger>
+                        <Earth size={24} />{t('proxies')}
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-4">
+                        <div className="space-y-4">
+                            {proxies && (
+                                proxies.map(x => {
+                                    const name = decodeURIComponent(x.split('#')[1])
+                                    return (
+                                        <Card key={name + Math.random()}>
+                                            <CardContent className="p-4">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="grid gap-1">
+                                                        <CardTitle className="text-base">name</CardTitle>
+                                                    </div>
+                                                    <div className="flex items-center gap-4">
+                                                        <Button asChild onClick={() => {
+                                                            setQRUrl(x)
+                                                            setQRName(name)
+                                                            setQRModal(true)
+                                                        }} variant="ghost" size="icon">
+                                                            <QrCode className="h-5 w-5" />
+                                                        </Button>
+                                                        <Button asChild onClick={() => { handleCopy(x) }} variant="ghost" size="icon">
+                                                            <Copy className="h-5 w-5" />
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    )
+                                })
+                            )}
+                        </div>
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
