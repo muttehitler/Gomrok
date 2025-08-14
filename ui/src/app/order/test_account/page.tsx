@@ -1,153 +1,217 @@
-'use client';
+"use client";
 
-import { useTranslations } from 'next-intl';
-import { Page } from '@/components/Page';
-import './style.css'
-import toast, { Toaster } from 'react-hot-toast';
-import { useEffect, useState } from 'react';
-import { generateCsrfToken } from '@/lib/utils/csrf.helper';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { getCookieCSRF } from '@/actions/auth.action';
-import { addOrder, buyOrder, getOrder } from '@/actions/order.action';
-import { getProduct, getTestProductByPanel } from '@/actions/product.action';
-import { getPanel } from '@/actions/panel.action';
-import { BatteryCharging, Bird, Clock, Earth, SaudiRiyal, ShoppingBag, User, Users } from 'lucide-react';
+import { useTranslations } from "next-intl";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import {
+    BatteryCharging,
+    Clock,
+    Infinity,
+    Loader2,
+    Package,
+    Server,
+    Users,
+} from "lucide-react";
 
-type Order = {
-    id: string
-    name: string
-    product: string
-    price: number
-    finalPrice: number
-    payed: boolean
-}
+import { getCookieCSRF } from "@/actions/auth.action";
+import { addOrder, buyOrder, getOrder } from "@/actions/order.action";
+import { getPanel } from "@/actions/panel.action";
+import { getProduct, getTestProductByPanel } from "@/actions/product.action";
+import { Page } from "@/components/Page";
+import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 
+// Define the types for our data
+type Order = { id: string };
 type Product = {
-    id: string
-    name: string
-    panel: string
-    payAsYouGo: boolean
-    usageDuration: number
-    dataLimit: number
-    userLimit: number
-    onHold: boolean
-    price: number
-    weight: number
-    code: string
-}
+    id: string;
+    name: string;
+    panel: string;
+    payAsYouGo: boolean;
+    usageDuration: number;
+    dataLimit: number;
+    userLimit: number;
+};
+type Panel = { id: string; name: string };
 
-type Panel = {
-    id: string
-    name: string
-    type: string
-    url: string
-    weight: number
-}
+// A detailed skeleton loader for a better UX
+const TestAccountSkeleton = () => (
+    <Card className="max-w-lg mx-auto">
+        <CardHeader className="space-y-2">
+            <Skeleton className="h-7 w-3/4" />
+            <Skeleton className="h-5 w-1/2" />
+        </CardHeader>
+        <CardContent className="space-y-4">
+            <Skeleton className="h-5 w-full" />
+            <Skeleton className="h-5 w-2/3" />
+        </CardContent>
+        <CardFooter>
+            <Skeleton className="h-10 w-40 ms-auto" />
+        </CardFooter>
+    </Card>
+);
 
-export default function Order() {
-    const t = useTranslations('i18n');
+const TestAccountView = () => {
+    const t = useTranslations("i18n");
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const panelId = searchParams.get("panel");
 
-    const searchParams = useSearchParams()
-    const router = useRouter()
-    const [order, setOrder] = useState<Order>()
-    const [product, setProduct] = useState<Product>()
-    const [panel, setPanel] = useState<Panel>()
-    const [csrf, setCSRF] = useState('')
+    const [product, setProduct] = useState<Product | null>(null);
+    const [panel, setPanel] = useState<Panel | null>(null);
+    const [order, setOrder] = useState<Order | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        (async () => {
-            const csrfToken = generateCsrfToken((await getCookieCSRF())!)
-
-            setCSRF(csrfToken)
-
-            const testProduct = JSON.parse(await getTestProductByPanel({ csrf: csrfToken, id: searchParams.get('panel') }))
-
-            if (!testProduct.success) {
-                toast.error(t('get-unsuccessfully') + ": " + testProduct.message.toString(), {
-                    duration: 4000,
-                    className: 'toast'
-                })
-                return
-            }
-
-            const addOrderResult = JSON.parse(await addOrder({ csrf: csrfToken, product: testProduct.data.id }))
-
-            if (!addOrderResult.success) {
-                toast.error(t('add-unsuccessfully') + ": " + addOrderResult.message.toString(), {
-                    duration: 4000,
-                    className: 'toast'
-                })
-                return
-            }
-
-            const result = JSON.parse(await getOrder({ id: addOrderResult.data, csrf: csrfToken }))
-
-            if (!result.success) {
-                toast.error(t('get-unsuccessfully') + ": " + result.message.toString(), {
-                    duration: 4000,
-                    className: 'toast'
-                })
-                return
-            }
-
-            if (result.data.payed)
-                router.push('/order/' + result.data.id)
-
-            const data = result.data
-
-            const product = JSON.parse(await getProduct({ id: data.product, csrf: csrfToken }))
-
-            const panel = JSON.parse(await getPanel({ id: product.panel, csrf: csrfToken }))
-
-            setOrder(data)
-            setProduct(product)
-            setPanel(panel)
-        })()
-    }, [])
-
-    const buy = async () => {
-        const result = JSON.parse(await buyOrder({ id: order?.id, csrf: csrf }))
-
-        if (!result.success) {
-            toast.error(t('get-unsuccessfully') + ": " + result.message.toString(), {
-                duration: 4000,
-                className: 'toast'
-            })
-            return
+        if (!panelId) {
+            toast.error(t("panel-id-is-missing"));
+            setIsLoading(false);
+            return;
         }
 
-        toast.success(t('test-created-successfully'), {
-            duration: 2000,
-            className: 'toast'
-        })
+        const createTestOrder = async () => {
+            setIsLoading(true);
+            try {
+                const csrf = generateCsrfToken((await getCookieCSRF())!);
 
-        setTimeout(() => {
-            router.push('/order/' + order?.id)
-        }, 2000)
-    }
+                // 1. Get the test product for the panel
+                const testProductStr = await getTestProductByPanel({
+                    csrf,
+                    id: panelId,
+                });
+                const testProductRes = JSON.parse(testProductStr);
+                if (!testProductRes.success)
+                    throw new Error(testProductRes.message);
+                const fetchedProduct = testProductRes.data;
+
+                // 2. Create an order for it
+                const addOrderStr = await addOrder({
+                    csrf,
+                    product: fetchedProduct.id,
+                });
+                const addOrderRes = JSON.parse(addOrderStr);
+                if (!addOrderRes.success) throw new Error(addOrderRes.message);
+                const newOrder = { id: addOrderRes.data };
+
+                // 3. Fetch panel details
+                const panelStr = await getPanel({
+                    id: fetchedProduct.panel,
+                    csrf,
+                });
+                const fetchedPanel = JSON.parse(panelStr);
+                if (!fetchedPanel || !fetchedPanel.id)
+                    throw new Error("Panel not found");
+
+                setProduct(fetchedProduct);
+                setPanel(fetchedPanel);
+                setOrder(newOrder);
+            } catch (error: any) {
+                toast.error(error.message || t("error-creating-test-order"));
+                router.push("/panel"); // Redirect on error
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        createTestOrder();
+    }, [panelId, router, t]);
+
+    const buyTestOrder = async () => {
+        if (!order) return;
+        setIsSubmitting(true);
+        try {
+            const csrf = generateCsrfToken((await getCookieCSRF())!);
+            const resultStr = await buyOrder({ id: order.id, csrf });
+            const result = JSON.parse(resultStr);
+
+            if (!result.success) throw new Error(result.message);
+
+            toast.success(t("test-account-activated-successfully"));
+            setTimeout(() => router.push(`/order/${order.id}`), 1000);
+        } catch (error: any) {
+            toast.error(`${t("activation-failed")}: ${error.message}`);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    if (isLoading) return <TestAccountSkeleton />;
+    if (!product || !panel)
+        return (
+            <p className="text-center text-muted-foreground">
+                {t("test-plan-not-found")}
+            </p>
+        );
+
+    const days = Math.round(product.usageDuration / 60 / 60 / 24);
+    const gigabytes = product.dataLimit / 1024 / 1024 / 1024;
 
     return (
-        <Page back={true}>
-            <Toaster position="top-right" reverseOrder={false} />
-            {(order && product && panel) && (
-                <div className='container'>
-                    <div className='flex'><Earth size={32} />&ensp;<h4 className='name-header'>{panel.name}</h4></div>
-                    <div className='flex'><ShoppingBag size={32} />&ensp;<h4 className='name-header'>{product.name}</h4></div>
-                    {product.payAsYouGo ? (<div>
-                        <span className="description flex"><Bird size={20} />&ensp;{t('free-triff')}</span>
-                    </div>) : (<div>
-                        <span className="description flex"><Clock size={20} />&ensp;{product.usageDuration / 60 / 60 / 24} {t('days')}</span>
-                        <span className="description flex"><BatteryCharging size={20} />&ensp;{product.dataLimit / 1024 / 1024 / 1024} {t('gb')}</span>
-                        <span className="description flex">{product.userLimit == 1 ? <User size={20} /> : <Users size={20} />}&ensp;{product.dataLimit} {t('user')}</span>
-                    </div>)}
-                    <br />
-                    <div className='flex'>
-                        <button onClick={buy} className='add-button ml-auto bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full'>
-                            {t('get-test')}
-                        </button>
+        <Card className="max-w-lg mx-auto">
+            <CardHeader>
+                <CardTitle className="flex items-center text-xl">
+                    <Package className="me-3 h-6 w-6" />{" "}
+                    {t("your-free-test-plan")}
+                </CardTitle>
+                <CardDescription className="flex items-center pt-1">
+                    <Server className="me-2 h-4 w-4" /> {panel.name}
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 text-muted-foreground">
+                {product.payAsYouGo ? (
+                    <div className="flex items-center">
+                        <Infinity className="me-2 h-4 w-4" />{" "}
+                        {t("pay-as-you-go")}
                     </div>
-                </div>
-            )}
+                ) : (
+                    <>
+                        <div className="flex items-center">
+                            <Clock className="me-2 h-4 w-4" /> {days}{" "}
+                            {t("days")}
+                        </div>
+                        <div className="flex items-center">
+                            <BatteryCharging className="me-2 h-4 w-4" />{" "}
+                            {gigabytes} {t("gb")}
+                        </div>
+                        <div className="flex items-center">
+                            <Users className="me-2 h-4 w-4" />{" "}
+                            {product.userLimit} {t("user")}
+                        </div>
+                    </>
+                )}
+            </CardContent>
+            <CardFooter className="flex justify-end pt-6">
+                <Button onClick={buyTestOrder} disabled={isSubmitting}>
+                    {isSubmitting && (
+                        <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                    )}
+                    {t("activate-test-account")}
+                </Button>
+            </CardFooter>
+        </Card>
+    );
+};
+
+export default function TestAccountOrderPage() {
+    return (
+        <Page back={true}>
+            <Toaster position="top-center" />
+            <div className="container mx-auto p-4 md-p-6">
+                <Suspense fallback={<TestAccountSkeleton />}>
+                    <TestAccountView />
+                </Suspense>
+            </div>
         </Page>
     );
 }
