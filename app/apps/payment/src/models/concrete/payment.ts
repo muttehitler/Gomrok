@@ -18,7 +18,7 @@ export default class Payment extends Document implements IEntity {
     cardNumber: string
     @Prop()
     walletAddress: string
-    @Prop({ type: String, unique: true })
+    @Prop()
     hash: string
 
     @Prop()
@@ -30,3 +30,8 @@ export default class Payment extends Document implements IEntity {
 
 export type PaymentDocument = Payment & Document;
 export const PaymentSchema = SchemaFactory.createForClass(Payment);
+
+PaymentSchema.index(
+    { hash: 1 },
+    { unique: true, partialFilterExpression: { hash: { $type: "string" } } }
+);
