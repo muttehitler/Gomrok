@@ -1,75 +1,122 @@
-'use client';
+"use client";
 
-import { useTranslations } from 'next-intl';
-import { Page } from '@/components/Page';
-import './style.css'
-import toast, { Toaster } from 'react-hot-toast';
-import { useEffect, useState } from 'react';
-import { generateCsrfToken } from '@/lib/utils/csrf.helper';
-import { getCookie } from '@/lib/utils/cookie.helper';
-import { getProductsByPanel } from '@/actions/product.action';
-import { ProductBoxItem } from '@/components/productItem/productBoxItem';
-import { useSearchParams } from 'next/navigation';
-import { getCookieCSRF } from '@/actions/auth.action';
+import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+
+import { getCookieCSRF } from "@/actions/auth.action";
+import { getProductsByPanel } from "@/actions/product.action";
+import { Page } from "@/components/Page";
+import {
+    ProductBoxItem,
+    ProductBoxItemSkeleton,
+} from "@/components/productItem/productBoxItem";
+import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 
 type Product = {
-    id: string
-    name: string
-    panel: string
-    payAsYouGo: boolean
-    usageDuration: number
-    dataLimit: number
-    userLimit: number
-    onHold: boolean
-    price: number
-    weight: number
-    code: string
-}
+    id: string;
+    name: string;
+    panel: string;
+    payAsYouGo: boolean;
+    usageDuration: number;
+    dataLimit: number;
+    userLimit: number;
+    onHold: boolean;
+    price: number;
+    weight: number;
+    code: string;
+};
 
-export default function Product() {
-    const t = useTranslations('i18n');
+// Skeleton loader for the entire product list
+const ProductListSkeleton = () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {Array.from({ length: 8 }).map((_, index) => (
+            <ProductBoxItemSkeleton key={index} />
+        ))}
+    </div>
+);
 
-    const [products, setProducts] = useState<Product[]>([])
-    const searchParams = useSearchParams()
+// Presentational Component
+const ProductListView = () => {
+    const t = useTranslations("i18n");
+    const [products, setProducts] = useState<Product[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const searchParams = useSearchParams();
+    const panelId = searchParams.get("panel");
 
     useEffect(() => {
-        (async () => {
-            setProducts([])
+        if (!panelId) return;
 
-            const result = JSON.parse(await getProductsByPanel({ id: searchParams.get('panel'), csrf: generateCsrfToken((await getCookieCSRF())!), startIndex: 0, limit: 1000, order: -1 }))
+        const fetchProducts = async () => {
+            setIsLoading(true);
+            try {
+                const csrfToken = await getCookieCSRF();
+                if (!csrfToken) throw new Error("CSRF token not found");
 
-            if (!result.success) {
-                toast.error(t('list-unsuccessfully') + ": " + result.message.toString(), {
-                    duration: 4000,
-                    className: 'toast'
-                })
-                return
+                const resultStr = await getProductsByPanel({
+                    id: panelId,
+                    csrf: generateCsrfToken(csrfToken),
+                    startIndex: 0,
+                    limit: 1000,
+                    order: -1,
+                });
+                const result = JSON.parse(resultStr);
+
+                if (!result.success) {
+                    toast.error(
+                        `${t("list-unsuccessfully")}: ${result.message}`
+                    );
+                    return;
+                }
+                const sortedProducts = result.data.items.sort(
+                    (a: Product, b: Product) => a.weight - b.weight
+                );
+                setProducts(sortedProducts);
+            } catch (error) {
+                toast.error(t("error-fetching-data"));
+                console.error("Failed to fetch products:", error);
+            } finally {
+                setIsLoading(false);
             }
+        };
 
-            setProducts(result.data.items)
-        })()
-    }, [])
+        fetchProducts();
+    }, [panelId, t]);
 
     return (
-        <Page back={true}>
-            <Toaster position="top-right" reverseOrder={false} />
-            <div className='container grid grid-cols-2 gap-4'>
-                <h4>{t('select-location')}:</h4>
-                <br />
-                {products.length > 0 ? products.sort((a, b) => a.weight - b.weight).map(x =>
-                (<ProductBoxItem id={x.id} name={x.name} panel={x.panel} payAsYouGo={x.payAsYouGo}
-                    usageDuration={x.usageDuration} dataLimit={x.dataLimit} userLimit={x.userLimit}
-                    onHold={x.onHold} price={x.price} code={x.code} weight={x.weight} key={x.name} />)
-                ) :
-                    (<div role="status">
-                        <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
-                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
-                        </svg>
-                        <span className="sr-only">Loading...</span>
-                    </div>)
-                }
+        <div className="container mx-auto p-4 md:p-6">
+            <div className="flex flex-col space-y-4">
+                <h1 className="text-2xl font-bold tracking-tight">
+                    {t("select-your-plan")}
+                </h1>
+
+                {isLoading ? (
+                    <ProductListSkeleton />
+                ) : products.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {products.map((product) => (
+                            <ProductBoxItem {...product} key={product.id} />
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-center text-muted-foreground">
+                        {t("no-products-found-for-this-location")}
+                    </p>
+                )}
             </div>
+        </div>
+    );
+};
+
+// Main Page Component (Container) wrapped in Suspense
+export default function ProductPage() {
+    return (
+        <Page back={true}>
+            <Toaster position="top-center" reverseOrder={false} />
+            <Suspense fallback={<ProductListSkeleton />}>
+                <ProductListView />
+            </Suspense>
         </Page>
     );
 }

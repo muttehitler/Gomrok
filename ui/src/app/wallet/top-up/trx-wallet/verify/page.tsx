@@ -1,111 +1,202 @@
-'use client';
+"use client";
 
-import { useTranslations } from 'next-intl';
-import './style.css'
-import { Page } from '@/components/Page';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { generateCsrfToken } from '@/lib/utils/csrf.helper';
-import { useEffect, useState } from 'react';
-import { getCookie } from '@/lib/utils/cookie.helper';
-import { createInvoice, getInvoice, verifyInvoice } from '@/actions/payment.action';
-import toast, { Toaster } from 'react-hot-toast';
-import { QRCodeSVG } from 'qrcode.react';
-import { themeParams, useSignal } from '@telegram-apps/sdk-react';
-import { Clipboard } from '@/components/clipboard/clipboard';
+import { useTranslations } from "next-intl";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import toast, { Toaster } from "react-hot-toast";
+import { QRCodeSVG } from "qrcode.react";
+import { themeParams, useSignal } from "@telegram-apps/sdk-react";
+import { Loader2 } from "lucide-react";
 
-const schema = z.object({
-    hash: z.string(),
-    csrf: z.string(),
+import { getCookieCSRF } from "@/actions/auth.action";
+import { getInvoice, verifyInvoice } from "@/actions/payment.action";
+import { Clipboard } from "@/components/clipboard/clipboard";
+import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Page } from "@/components/Page";
+import { Skeleton } from "@/components/ui/skeleton";
+import { generateCsrfToken } from "@/lib/utils/csrf.helper";
+
+const formSchema = z.object({
+    hash: z.string().min(10, "Transaction hash is required"),
 });
 
-export default function Verify() {
-    const t = useTranslations('i18n');
+const VerifySkeleton = () => (
+    <Card className="max-w-md mx-auto">
+        <CardHeader className="items-center">
+            <Skeleton className="h-8 w-3/4" />
+        </CardHeader>
+        <CardContent className="space-y-6">
+            <Skeleton className="h-64 w-64 mx-auto" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <div className="flex justify-end">
+                <Skeleton className="h-10 w-32" />
+            </div>
+        </CardContent>
+    </Card>
+);
 
-    const [csrfToken, setCsrfToken] = useState(generateCsrfToken(getCookie('csrf') ?? ''))
-    const [isReady, setReady] = useState(false)
-    const [walletAddress, setWalletAddress] = useState('')
-
+const VerifyView = () => {
+    const t = useTranslations("i18n");
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const invoiceId = searchParams.get("invoice");
     const tp = useSignal(themeParams.state);
 
-    const router = useRouter();
+    const [csrfToken, setCsrfToken] = useState("");
+    const [walletAddress, setWalletAddress] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const searchParams = useSearchParams()
-
-    useEffect(() => {
-        (async () => {
-            const result = JSON.parse(await getInvoice({ id: searchParams.get('invoice'), csrf: csrfToken }))
-
-            if (!result.success) {
-                toast.error(t('get-unsuccessfully') + ": " + result.message.toString(), {
-                    duration: 4000,
-                    className: 'toast'
-                })
-                return
-            }
-
-            setWalletAddress(result.data.walletAddress)
-            setReady(true)
-        })()
-    }, [])
-
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        resolver: zodResolver(schema),
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
     });
 
-    const verifyInvoiceHandler = async (data: any) => {
-        const result = JSON.parse(await verifyInvoice({ csrf: csrfToken, paymentMethod: 'trx-wallet', paymentData: data }))
-
-        if (!result.success) {
-            toast.error(t('add-unsuccessfully') + ": " + result.message.toString(), {
-                duration: 4000,
-                className: 'toast'
-            })
-            return
+    useEffect(() => {
+        if (!invoiceId) {
+            toast.error(t("invoice-id-is-missing"));
+            router.push("/wallet");
+            return;
         }
 
-        toast.success(t('added-successfully'), {
-            duration: 2000,
-            className: 'toast'
-        })
-        
-        setTimeout(()=>{
-            router.push('/wallet')
-        },2000)
-    }
+        const fetchInvoice = async () => {
+            setIsLoading(true);
+            try {
+                const token = await getCookieCSRF();
+                if (!token) throw new Error("Session not found");
+                const csrf = generateCsrfToken(token);
+                setCsrfToken(csrf);
+
+                const resultStr = await getInvoice({ id: invoiceId, csrf });
+                const result = JSON.parse(resultStr);
+
+                if (!result.success) throw new Error(result.message);
+                setWalletAddress(result.data.walletAddress);
+            } catch (error: any) {
+                toast.error(`${t("get-unsuccessfully")}: ${error.message}`);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchInvoice();
+    }, [invoiceId, router, t]);
+
+    const verifyInvoiceHandler = async (data: z.infer<typeof formSchema>) => {
+        setIsSubmitting(true);
+        try {
+            const payload = {
+                csrf: csrfToken,
+                paymentMethod: "trx-wallet",
+                paymentData: { ...data, invoiceId },
+            };
+            const resultStr = await verifyInvoice(payload);
+            const result = JSON.parse(resultStr);
+
+            if (!result.success) throw new Error(result.message);
+
+            toast.success(t("payment-verified-successfully"));
+            setTimeout(() => router.push("/wallet"), 2000);
+        } catch (error: any) {
+            toast.error(`${t("verification-failed")}: ${error.message}`);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    if (isLoading) return <VerifySkeleton />;
 
     return (
-        <Page back={true}>
-            <Toaster position="top-right" reverseOrder={false} />
-            <div className='container'>
-                {isReady ? (<div>
-                    <form onSubmit={handleSubmit(verifyInvoiceHandler)}>
-                        <QRCodeSVG value={walletAddress} size={256} className='container qr-code' bgColor={Object.entries(tp).filter(([title, value]) => title == 'bgColor')[0][1]} fgColor={Object.entries(tp).filter(([title, value]) => title == 'buttonTextColor')[0][1]} imageSettings={{ src: "https://cdn-icons-png.flaticon.com/512/12114/12114250.png", height: 64, width: 64, opacity: 1, excavate: true, }} />
-                        <Clipboard text={walletAddress} title={t('wallet-address')} />
-                        <br />
-                        <label htmlFor="hash" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{t('hash-code')}</label>
-                        <input {...register('hash')} name='hash' type="text" id="hash" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={t('hash-code')} required />
-                        {errors.hash && <p style={{ color: 'red' }}>{errors.hash.message}</p>}
-                        <br />
-                        <input {...register('csrf')} name="csrf" type="hidden" value={csrfToken} />
+        <Card className="max-w-md mx-auto">
+            <CardHeader className="items-center text-center">
+                <CardTitle>{t("complete-the-payment")}</CardTitle>
+                <CardDescription>
+                    {t("send-trx-to-this-address")}
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <div className="flex justify-center">
+                    <QRCodeSVG
+                        value={walletAddress}
+                        size={256}
+                        bgColor={tp.bgColor || "#ffffff"}
+                        fgColor={tp.buttonTextColor || "#000000"}
+                        imageSettings={{
+                            src: "https://cdn-icons-png.flaticon.com/512/12114/12114250.png",
+                            height: 64,
+                            width: 64,
+                            opacity: 1,
+                            excavate: true,
+                        }}
+                    />
+                </div>
 
-                        <div className='flex'>
-                            <button className='add-button ml-auto bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full'>
-                                {t('verify')}
-                            </button>
+                <Clipboard text={walletAddress} title={t("wallet-address")} />
+
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(verifyInvoiceHandler)}
+                        className="space-y-4"
+                    >
+                        <FormField
+                            control={form.control}
+                            name="hash"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        {t("transaction-hash")}
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Enter the transaction hash (TxID)"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <div className="flex justify-end pt-2">
+                            <Button type="submit" disabled={isSubmitting}>
+                                {isSubmitting && (
+                                    <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                                )}
+                                {t("verify-payment")}
+                            </Button>
                         </div>
                     </form>
-                </div>) :
-                    (<div role="status">
-                        <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
-                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
-                        </svg>
-                        <span className="sr-only">Loading...</span>
-                    </div>)
-                }
+                </Form>
+            </CardContent>
+        </Card>
+    );
+};
+
+export default function VerifyPage() {
+    return (
+        <Page back={true}>
+            <Toaster position="top-center" reverseOrder={false} />
+            <div className="container mx-auto p-4 md:p-6">
+                <Suspense fallback={<VerifySkeleton />}>
+                    <VerifyView />
+                </Suspense>
             </div>
         </Page>
     );
