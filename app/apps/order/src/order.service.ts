@@ -19,6 +19,7 @@ import ListDto from '@app/contracts/models/dtos/listDto';
 import PanelUserDto from '@app/contracts/models/dtos/panel/panelService/panelUserDto';
 import PanelModifyUserDto from '@app/contracts/models/dtos/panel/panelService/panelModifyUserDto';
 import RenewOrderDto from '@app/contracts/models/dtos/order/renewOrderDto';
+import generateRandomId from '@app/contracts/utils/random/randomString';
 
 @Injectable()
 export class OrderService {
@@ -30,7 +31,7 @@ export class OrderService {
 
   async add({ name, product }: AddOrderDto, authorId: string): Promise<DataResultDto<string>> {
     const order = new this.orderModel({
-      name: name,
+      name: name ?? generateRandomId(6),
       product: new Types.ObjectId(product),
       user: new Types.ObjectId(authorId)
     })
