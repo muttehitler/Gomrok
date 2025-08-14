@@ -2,7 +2,6 @@
 
 import { useTranslations } from 'next-intl';
 import { Page } from '@/components/Page';
-import './style.css'
 import toast, { Toaster } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { generateCsrfToken } from '@/lib/utils/csrf.helper';
