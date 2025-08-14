@@ -159,7 +159,7 @@ export const AddProduct: FC = () => {
                 <DialogHeader>
                     <DialogTitle>{t("add-product")}</DialogTitle>
                     <DialogDescription>
-                        {t("add_panel_description")}
+                        {t("add-panel-description")}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
