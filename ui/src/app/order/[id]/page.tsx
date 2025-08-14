@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useState, Suspense } from "react";
+import { use, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { getCookieCSRF } from "@/actions/auth.action";
@@ -13,7 +13,6 @@ import {
 } from "@/components/order/OrderDetailView";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 
-// Define the types for our data
 type Order = { id: string; name: string; product: string };
 type PanelUser = {
     username: string;
@@ -27,27 +26,26 @@ type PanelUser = {
     subscriptionUrl: string;
 };
 
-// This is the main view component that fetches and manages state.
-const OrderView = ({ orderId }: { orderId: string }) => {
+type Props = {
+    params: Promise<{ id: string }>;
+};
+
+export default function OrderIdPage({ params }: Props) {
     const t = useTranslations("i18n");
+    const { id } = use(params);
+
     const [order, setOrder] = useState<Order | null>(null);
     const [panelUser, setPanelUser] = useState<PanelUser | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (!orderId) {
-            setIsLoading(false);
-            return;
-        }
+        if (!id) return;
 
         const fetchOrderDetails = async () => {
             setIsLoading(true);
             try {
                 const csrf = generateCsrfToken((await getCookieCSRF()) ?? "");
-                const resultStr = await getOrderWithPanelUser({
-                    id: orderId,
-                    csrf,
-                });
+                const resultStr = await getOrderWithPanelUser({ id, csrf });
                 const result = JSON.parse(resultStr);
 
                 if (!result.success) {
@@ -64,33 +62,17 @@ const OrderView = ({ orderId }: { orderId: string }) => {
         };
 
         fetchOrderDetails();
-    }, [orderId, t]);
+    }, [id, t]); 
 
-    if (isLoading) {
-        return <OrderDetailSkeleton />;
-    }
-
-    if (!order || !panelUser) {
-        return (
-            <div className="text-center text-muted-foreground">
-                {t("order-could-not-be-loaded")}
-            </div>
-        );
-    }
-
-    // We now render the clean, refactored OrderDetailView component
-    return <OrderDetailView order={order} panelUser={panelUser} />;
-};
-
-// The page itself remains simple, handling Suspense and passing params.
-export default function OrderIdPage({ params }: { params: { id: string } }) {
     return (
         <Page back={true}>
             <Toaster position="top-center" reverseOrder={false} />
             <div className="container mx-auto p-4 md:p-6">
-                <Suspense fallback={<OrderDetailSkeleton />}>
-                    <OrderView orderId={params.id} />
-                </Suspense>
+                {isLoading ? (
+                    <OrderDetailSkeleton />
+                ) : (
+                    <OrderDetailView order={order} panelUser={panelUser} />
+                )}
             </div>
         </Page>
     );
