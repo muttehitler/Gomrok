@@ -102,9 +102,13 @@
         "test-account": "Test Account",
         "get-test": "Get Test",
         "test-created-successfully": "Test created successfully.",
-        "add-panel-description": "Fill in the form to add a new panel.",
+        "add-panel-desc": "Fill in the form to add a new panel.",
+        "add-product-desc": "Fill in the form to add a new product.",
         "user-details": "User Details",
         "edit-panel-desc": "Here you can edit the details of the existing panel.",
+        "edit-panel": "Edit Panel",
+        "edit-product-desc": "Here you can edit the details of the existing product.",
+        "edit-product": "Edit Product",
         "select-location-for-test-account": "Select Location for Test Account",
         "select-to-continue": "Select to continue",
         "data-usage": "Data Usage",
@@ -130,6 +134,8 @@
         "send-trx-to-this-address": "Send the specified amount to the address below. Be sure to copy and save the \"Transaction Hash\" (TxID) for final verification.",
         "transaction-hash": "Transaction Hash (TxID)",
         "verify-payment": "Verify Payment",
-        "price": "Price"
+        "price": "Price",
+        "no-proxies-found": "No Proxies Found",
+        "panel": "Panel"
     }
 }
