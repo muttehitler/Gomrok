@@ -129,6 +129,7 @@
         "complete-the-payment": "تکمیل پرداخت",
         "send-trx-to-this-address": "مبلغ مشخص شده را به آدرس زیر واریز کرده و حتماً «هش تراکنش» (TxID) را برای تایید نهایی کپی و ذخیره کنید.",
         "transaction-hash": "هش تراکنش (TxID)",
-        "verify-payment": "تایید پرداخت"
+        "verify-payment": "تایید پرداخت",
+        "price": "قیمت"
     }
 }

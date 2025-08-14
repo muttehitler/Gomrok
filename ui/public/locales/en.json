@@ -129,6 +129,7 @@
         "complete-the-payment": "Complete the Payment",
         "send-trx-to-this-address": "Send the specified amount to the address below. Be sure to copy and save the \"Transaction Hash\" (TxID) for final verification.",
         "transaction-hash": "Transaction Hash (TxID)",
-        "verify-payment": "Verify Payment"
+        "verify-payment": "Verify Payment",
+        "price": "Price"
     }
 }
