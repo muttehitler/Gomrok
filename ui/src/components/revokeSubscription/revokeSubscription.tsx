@@ -20,7 +20,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 
-// Simplified and standardized props
 type RevokeSubscriptionProps = {
     id: string;
     name: string;
@@ -41,7 +40,6 @@ export const RevokeSubscription: FC<RevokeSubscriptionProps> = ({
     const [confirmName, setConfirmName] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Fetch CSRF token when the dialog is about to open
     useEffect(() => {
         if (open) {
             const fetchCsrf = async () => {
@@ -67,7 +65,6 @@ export const RevokeSubscription: FC<RevokeSubscriptionProps> = ({
                 throw new Error(result.message);
             }
 
-            // Pass the new URL back to the parent component
             onSubscriptionRevoked(result.data.subscriptionUrl);
             toast.success(t("revoked-successfully"));
             handleClose();
@@ -83,7 +80,7 @@ export const RevokeSubscription: FC<RevokeSubscriptionProps> = ({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t("revoke-sub")} "{name}"?
+                        {t("revoke-sub")} &quot;{name}&quot;?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                         {t("are-sure-to-revoke-sub")}
