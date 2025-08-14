@@ -205,7 +205,7 @@ export const EditProduct: FC<EditProductProp> = ({
                 <DialogHeader>
                     <DialogTitle>{t("edit-product")}</DialogTitle>
                     <DialogDescription>
-                        {t("edit-panel-description")}
+                        {t("edit-panel-desc")}
                     </DialogDescription>
                 </DialogHeader>
 

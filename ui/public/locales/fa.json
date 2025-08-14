@@ -102,9 +102,13 @@
         "test-account": "اکانت تست",
         "get-test": "دریافت تست",
         "test-created-successfully": "اکانت تست با موفقیت ساخته شد.",
-        "add-panel-description": "برای افزودن پنل جدید، فرم زیر را پر کنید.",
+        "add-panel-desc": "برای افزودن پنل جدید، فرم زیر را پر کنید.",
+        "add-product-desc": "برای افزودن محصول جدید، فرم زیر را پر کنید.",
         "user-details": "اطلاعات کاربر",
         "edit-panel-desc": "در اینجا می‌توانید جزئیات پنل موجود را ویرایش کنید.",
+        "edit-panel": "ویرایش پنل",
+        "edit-product-desc": "در اینجا می‌توانید جزئیات محصول موجود را ویرایش کنید.",
+        "edit-product": "ویرایش محصول",
         "select-location-for-test-account": "انتخاب موقعیت برای دریافت اکانت تست",
         "select-to-continue": "برای ادامه انتخاب کنید",
         "data-usage": "میزان مصرف",
@@ -130,6 +134,8 @@
         "send-trx-to-this-address": "مبلغ مشخص شده را به آدرس زیر واریز کرده و حتماً «هش تراکنش» (TxID) را برای تایید نهایی کپی و ذخیره کنید.",
         "transaction-hash": "هش تراکنش (TxID)",
         "verify-payment": "تایید پرداخت",
-        "price": "قیمت"
+        "price": "قیمت",
+        "no-proxies-found":"پروکسی پیدا نشد",
+        "panel": "پنل"
     }
 }
