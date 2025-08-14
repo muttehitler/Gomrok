@@ -1,65 +1,117 @@
+"use client";
+
 import { useTranslations } from "next-intl";
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { BatteryCharging, Bird, Clock, SaudiRiyal, User, Users } from "lucide-react";
+import { Dispatch, FC, SetStateAction, useMemo } from "react";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+    BatteryCharging,
+    Clock,
+    Infinity,
+    Users,
+    CheckCircle2,
+} from "lucide-react";
 
-type Args = {
-    product: Product
-    selectedProductString: [string, Dispatch<SetStateAction<string>>]
-}
-
+// Define the types
 type Product = {
-    id: string
-    name: string
-    panel: string
-    payAsYouGo: boolean
-    usageDuration: number
-    dataLimit: number
-    userLimit: number
-    onHold: boolean
-    price: number
-    weight: number
-    code: string
-}
+    id: string;
+    name: string;
+    payAsYouGo: boolean;
+    usageDuration: number;
+    dataLimit: number;
+    userLimit: number;
+    price: number;
+};
 
-export const ProductBoxItemForModal: FC<Args> = ({ product, selectedProductString }: Args) => {
-    const t = useTranslations('i18n');
+type ProductBoxItemForModalProps = {
+    product: Product;
+    selectedProductState: [string, Dispatch<SetStateAction<string>>];
+};
 
-    const [selected, setSelected] = useState(false)
-    const [selectedProduct, setSelectedProduct] = selectedProductString;
-    const { id, name, usageDuration, dataLimit, userLimit, price, payAsYouGo, weight } = product;
+// Reusable component for displaying product features
+const ProductFeature: FC<{
+    icon: React.ElementType;
+    text: string | number;
+    label: string;
+}> = ({ icon: Icon, text, label }) => (
+    <div className="flex items-center text-sm text-muted-foreground">
+        <Icon className="me-2 h-4 w-4" />
+        <span>
+            {text} {label}
+        </span>
+    </div>
+);
 
-    useEffect(() => {
-        if (selected)
-            setSelectedProduct(id)
-    }, [selected])
+export const ProductBoxItemForModal: FC<ProductBoxItemForModalProps> = ({
+    product,
+    selectedProductState,
+}) => {
+    const t = useTranslations("i18n");
+    const [selectedProduct, setSelectedProduct] = selectedProductState;
+    const { id, name, usageDuration, dataLimit, userLimit, price, payAsYouGo } =
+        product;
 
-    useEffect(() => {
-        if (selectedProduct != id) {
-            setSelected(false)
-        }
-    }, [selectedProduct])
+    const isSelected = selectedProduct === id;
+
+    // Memoize calculations to avoid re-computing on every render
+    const { days, gigabytes } = useMemo(
+        () => ({
+            days: Math.round(usageDuration / 60 / 60 / 24),
+            gigabytes: dataLimit / 1024 / 1024 / 1024,
+        }),
+        [usageDuration, dataLimit]
+    );
 
     return (
-        <div onClick={() => { setSelected(true); }} className={(selected ? 'border border-blue-500' : '') + ' yarim-section'}>
-            <div>
-                <div className='' key={id}>
-                    <div>
-                        <p>{name}</p>
-                        <br />
-                        {payAsYouGo ? (<div>
-                            <span className="description flex"><Bird size={20} />&ensp;{t('free-triff')}</span>
-                        </div>) : (<div>
-                            <span className="description flex"><Clock size={20} />&ensp;{usageDuration / 60 / 60 / 24} {t('days')}</span>
-                            <span className="description flex"><BatteryCharging size={20} />&ensp;{dataLimit / 1024 / 1024 / 1024} {t('gb')}</span>
-                            <span className="description flex">{userLimit == 1 ? <User size={20} /> : <Users size={20} />}&ensp;{dataLimit} {t('user')}</span>
-                        </div>)}
-                        <br />
-                        <span className="description flex justify-end"><SaudiRiyal size={20} />&ensp;{price * 10}</span>
-                    </div>
-                    <br />
+        <Card
+            onClick={() => setSelectedProduct(id)}
+            className="cursor-pointer transition-all relative"
+            data-state={isSelected ? "selected" : "unselected"}
+        >
+            {isSelected && (
+                <div className="absolute top-2 end-2 text-green-500">
+                    <CheckCircle2 className="h-6 w-6" />
                 </div>
-            </div>
-        </div>
-    )
-}
+            )}
+            <CardHeader>
+                <CardTitle className="truncate">{name}</CardTitle>
+                <CardDescription>
+                    {price.toLocaleString()} {t("toman")}
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+                {payAsYouGo ? (
+                    <ProductFeature
+                        icon={Infinity}
+                        text={t("pay-as-you-go")}
+                        label=""
+                    />
+                ) : (
+                    <>
+                        <ProductFeature
+                            icon={Clock}
+                            text={days}
+                            label={t("days")}
+                        />
+                        <ProductFeature
+                            icon={BatteryCharging}
+                            text={gigabytes}
+                            label={t("gb")}
+                        />
+                        <ProductFeature
+                            icon={Users}
+                            text={userLimit} // Bug Fixed
+                            label={t("user")}
+                        />
+                    </>
+                )}
+            </CardContent>
+        </Card>
+    );
+};

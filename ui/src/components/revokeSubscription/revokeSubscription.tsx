@@ -1,96 +1,114 @@
-'use client'
+"use client";
 
 import { useTranslations } from "next-intl";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import './style.css'
-import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
+
 import { revokeSub } from "@/actions/order.action";
 import { getCookieCSRF } from "@/actions/auth.action";
-import { Button } from "../ui/button";
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
-import { Input } from "../ui/input";
+import {
+    AlertDialog,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 
-type RevokeSubscriptionProp = {
-    id: string,
-    visableState: [boolean, Dispatch<SetStateAction<boolean>>]
-    subscriptionUrl: [string, Dispatch<SetStateAction<string>>]
-    onOpenChange: Dispatch<SetStateAction<boolean>>
-    name: string
-}
+type RevokeSubscriptionProps = {
+    id: string;
+    name: string;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    onSubscriptionRevoked: (newUrl: string) => void;
+};
 
-export const RevokeSubscription: FC<RevokeSubscriptionProp> = ({ id, visableState, subscriptionUrl, onOpenChange, name }: RevokeSubscriptionProp) => {
-    const t = useTranslations('i18n');
-
-    const [csrfToken, setCsrfToken] = useState('')
+export const RevokeSubscription: FC<RevokeSubscriptionProps> = ({
+    id,
+    name,
+    open,
+    onOpenChange,
+    onSubscriptionRevoked,
+}) => {
+    const t = useTranslations("i18n");
+    const [csrfToken, setCsrfToken] = useState("");
     const [confirmName, setConfirmName] = useState("");
-
-    const [isVisable, setVisablity] = visableState
-    const [_, setUrl] = subscriptionUrl
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        (async () => {
-            setCsrfToken(generateCsrfToken(await getCookieCSRF() ?? ''))
-        })()
-    }, [])
+        if (open) {
+            const fetchCsrf = async () => {
+                const token = await getCookieCSRF();
+                setCsrfToken(generateCsrfToken(token ?? ""));
+            };
+            fetchCsrf();
+        }
+    }, [open]);
+
+    const handleClose = () => {
+        setConfirmName("");
+        onOpenChange(false);
+    };
 
     const revokeSubscriptionHandler = async () => {
-        const dataAsJson = {
-            id: id,
-            csrf: csrfToken
+        setIsSubmitting(true);
+        try {
+            const resultStr = await revokeSub({ id, csrf: csrfToken });
+            const result = JSON.parse(resultStr);
+
+            if (!result.success) {
+                throw new Error(result.message);
+            }
+
+            onSubscriptionRevoked(result.data.subscriptionUrl);
+            toast.success(t("revoked-successfully"));
+            handleClose();
+        } catch (error: any) {
+            toast.error(`${t("revoke-unsuccessfully")}: ${error.message}`);
+        } finally {
+            setIsSubmitting(false);
         }
-
-        const result = JSON.parse(await revokeSub(dataAsJson))
-
-        if (!result.success) {
-            toast.error(t('delete-unsuccessfully') + ": " + result.message.toString(), {
-                duration: 4000,
-                className: 'toast'
-            })
-            return
-        }
-
-        setUrl(result.data.subscriptionUrl)
-
-        toast.success(t('deleted-successfully'), {
-            duration: 2000,
-            className: 'toast'
-        })
-
-        setVisablity(false)
-    }
+    };
 
     return (
-        <AlertDialog open={isVisable} onOpenChange={onOpenChange}>
+        <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    {/* FIX: Replaced " with &quot; to fix ESLint error */}
                     <AlertDialogTitle>
-                        {t('revoke-sub')} &quot;{name}&quot;?
+                        {t("revoke-sub")} &quot;{name}&quot;?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                         {t("are-sure-to-revoke-sub")}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <Input
-                    value={confirmName}
-                    onChange={(e) => setConfirmName(e.target.value)}
-                    placeholder={name}
-                    className="mt-2"
-                />
+                <div className="py-2">
+                    <Input
+                        value={confirmName}
+                        onChange={(e) => setConfirmName(e.target.value)}
+                        placeholder={name}
+                    />
+                </div>
                 <AlertDialogFooter>
-                    <AlertDialogCancel onClick={() => { setConfirmName(""); setVisablity(false) }}>
+                    <AlertDialogCancel onClick={handleClose}>
                         {t("no-cancel")}
                     </AlertDialogCancel>
                     <Button
                         variant="destructive"
                         onClick={revokeSubscriptionHandler}
-                        disabled={confirmName !== name}
+                        disabled={confirmName !== name || isSubmitting}
                     >
+                        {isSubmitting && (
+                            <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                        )}
                         {t("yes-im-sure")}
                     </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-    )
-}
+    );
+};
