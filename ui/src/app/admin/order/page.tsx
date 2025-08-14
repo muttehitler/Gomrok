@@ -97,7 +97,7 @@ export default function OrderListPage() {
                         <OrderListSkeleton />
                     ) : orders.length > 0 ? (
                         orders.map((order) => (
-                            <OrderItem {...order} key={order.id} />
+                            <OrderItem {...order} key={order.id} orderDetailUrl={`/admin/order/${order.id}`} />
                         ))
                     ) : (
                         <p className="text-muted-foreground text-center">
