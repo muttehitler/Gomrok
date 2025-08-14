@@ -136,6 +136,10 @@
         "verify-payment": "Verify Payment",
         "price": "Price",
         "no-proxies-found": "No Proxies Found",
-        "panel": "Panel"
+        "panel": "Panel",
+        "final-price": "Final Price",
+        "pay-from-wallet": "Pay from Wallet",
+        "your-free-test-plan": "Your Free Test Plan",
+        "activate-test-account": "Activate Test Account"
     }
 }
