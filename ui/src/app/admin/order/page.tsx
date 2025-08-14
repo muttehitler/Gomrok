@@ -5,11 +5,11 @@ import { Page } from "@/components/Page";
 import { useEffect, useState } from "react";
 import { getOrderList } from "@/actions/order.action";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
-import { getCookie } from "@/lib/utils/cookie.helper";
 import { OrderItem } from "@/components/orderList/orderItem";
 import { Pagination } from "@/components/pagination/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import toast from "react-hot-toast";
+import { getCookieCSRF } from "@/actions/auth.action";
 
 type Order = {
     id: string;
@@ -52,7 +52,7 @@ export default function OrderListPage() {
         const fetchOrders = async () => {
             setIsLoading(true);
             try {
-                const csrf = generateCsrfToken(getCookie("csrf") ?? "");
+                const csrf = generateCsrfToken(await getCookieCSRF() ?? "");
                 const result = JSON.parse(
                     await getOrderList({
                         csrf,
