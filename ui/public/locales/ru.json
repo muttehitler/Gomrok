@@ -102,9 +102,13 @@
         "test-account": "Test Account",
         "get-test": "get-test",
         "test-created-successfully": "Test created successfully",
-        "add-panel-description": "Заполните форму, чтобы добавить новую панель.",
+        "add-panel-desc": "Заполните форму, чтобы добавить новую панель.",
+        "add-product-desc": "Заполните форму, чтобы добавить новую панель.",
         "user-details": "Данные пользователя",
         "edit-panel-desc": "Здесь вы можете редактировать детали существующей панели.",
+        "edit-panel": "Edit Panel",
+        "edit-product-desc": "Здесь вы можете редактировать детали существующей панели.",
+        "edit-product": "Edit Product",
         "select-location-for-test-account": "Выберите локацию для тестового аккаунта",
         "select-to-continue": "Выберите, чтобы продолжить",
         "data-usage": "Использование данных",
@@ -130,6 +134,8 @@
         "send-trx-to-this-address": "Отправьте указанную сумму на адрес ниже. Обязательно скопируйте и сохраните \"Хэш транзакции\" (TxID) для окончательной проверки.",
         "transaction-hash": "Хэш транзакции (TxID)",
         "verify-payment": "Подтвердить платеж",
-        "price": "Цена"
+        "price": "Цена",
+        "no-proxies-found": "No Proxies Found",
+        "panel": "Panel"
     }
 }
