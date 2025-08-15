@@ -36,16 +36,16 @@ export default function CheckAuth({ children }: CheckAuthProps) {
             try {
                 const data = await login(raw ?? "");
 
-                setCookie("token", data.token, 1 / 24, {
+                setCookie("token", data.token, {
                     path: "/",
                     httpOnly: false,
-                });
+                }, 1 / 24);
 
                 const csrfSecret = crypto.randomBytes(64).toString("hex");
-                setCookie("csrf", csrfSecret, 1 / 24, {
+                setCookie("csrf", csrfSecret, {
                     path: "/",
                     httpOnly: false,
-                });
+                }, 1 / 24);
             } catch (error) {
                 console.error("Authentication failed:", error);
                 // Optionally handle auth failure, e.g., show an error message
