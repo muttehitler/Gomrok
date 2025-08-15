@@ -3,56 +3,66 @@
 import { login } from "@/actions/auth.action";
 import { getCookie, setCookie } from "@/lib/utils/cookie.helper";
 import { initData, useSignal } from "@telegram-apps/sdk-react";
-import { ReactNode, useEffect, useState } from "react";
 import crypto from "crypto";
+import { Loader2 } from "lucide-react";
+import { ReactNode, useEffect, useState } from "react";
 
 type CheckAuthProps = {
     children: ReactNode;
 };
 
-export default function CheckAuth({ children }: CheckAuthProps) {
-    const [auth, setAuth] = useState(false);
+const AuthLoader = () => (
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-background text-primary">
+        <Loader2 className="h-10 w-10 animate-spin" />
+        <span className="mt-4 text-lg">Authenticating...</span>
+    </div>
+);
 
-    let token = getCookie("token");
-    let csrf = getCookie("csrf");
+export default function CheckAuth({ children }: CheckAuthProps) {
+    const [isAuthenticating, setIsAuthenticating] = useState(true);
 
     const raw = useSignal(initData.raw);
 
     useEffect(() => {
-        (async () => {
+        const authenticate = async () => {
+            const token = getCookie("token");
+            const csrf = getCookie("csrf");
+
             if (token && csrf) {
-                setAuth(true);
+                setIsAuthenticating(false);
                 return;
             }
 
-            const data = await login(raw ?? "");
+            try {
+                const data = await login(raw ?? "");
 
-            setCookie("token", data.token, 1 / 24, {
-                path: "/",
-                httpOnly: false,
-            });
+                setCookie("token", data.token, 1 / 24, {
+                    path: "/",
+                    httpOnly: false,
+                });
 
-            const csrfSecret = crypto.randomBytes(64).toString("hex");
+                const csrfSecret = crypto.randomBytes(64).toString("hex");
+                setCookie("csrf", csrfSecret, 1 / 24, {
+                    path: "/",
+                    httpOnly: false,
+                });
+            } catch (error) {
+                console.error("Authentication failed:", error);
+                // Optionally handle auth failure, e.g., show an error message
+            } finally {
+                setIsAuthenticating(false);
+            }
+        };
 
-            setCookie("csrf", csrfSecret ?? "sdkf", 1 / 24, {
-                path: "/",
-                httpOnly: false,
-            });
+        authenticate();
+    }, [raw]);
 
-            setAuth(true);
-        })();
-    }, [csrf, raw, token]); // Dependency array to prevent re-renders
-
-    if (!auth) {
-        return (
-            <div className="fixed inset-0 flex items-center justify-center bg-background">
-                Loading...
-            </div>
-        );
+    if (isAuthenticating) {
+        return <AuthLoader />;
     }
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex h-full flex-col">
             <main className="flex-1 overflow-y-auto">{children}</main>
         </div>
     );
