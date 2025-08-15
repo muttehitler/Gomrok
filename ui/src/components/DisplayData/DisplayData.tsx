@@ -1,59 +1,97 @@
-import { isRGB } from '@telegram-apps/sdk-react';
-import { Cell, Checkbox, Section } from '@telegram-apps/telegram-ui';
-import type { FC, ReactNode } from 'react';
+"use client";
 
-import { RGB } from '@/components/RGB/RGB';
-import { Link } from '@/components/Link/Link';
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import { isRGB } from "@telegram-apps/sdk-react";
+import Link from "next/link";
+import type { FC, ReactNode } from "react";
+import { buttonVariants } from "../ui/button";
 
-import './styles.css';
-
-export type DisplayDataRow =
-  & { title: string }
-  & (
-  | { type: 'link'; value?: string }
-  | { value: ReactNode }
-  )
+export type DisplayDataRow = {
+    title: string;
+} & ({ type: "link"; value?: string } | { value: ReactNode });
 
 export interface DisplayDataProps {
-  header?: ReactNode;
-  footer?: ReactNode;
-  rows: DisplayDataRow[];
+    header?: ReactNode;
+    footer?: ReactNode;
+    rows: DisplayDataRow[];
 }
 
-export const DisplayData: FC<DisplayDataProps> = ({ header, rows }) => (
-  <Section header={header}>
-    {rows.map((item, idx) => {
-      let valueNode: ReactNode;
+const renderValue = (item: DisplayDataRow) => {
+    if (item.value === undefined || item.value === null) {
+        return <span className="text-muted-foreground italic">empty</span>;
+    }
 
-      if (item.value === undefined) {
-        valueNode = <i>empty</i>;
-      } else {
-        if ('type' in item) {
-          valueNode = <Link href={item.value}>Open</Link>;
-        } else if (typeof item.value === 'string') {
-          valueNode = isRGB(item.value)
-            ? <RGB color={item.value}/>
-            : item.value;
-        } else if (typeof item.value === 'boolean') {
-          valueNode = <Checkbox checked={item.value} disabled/>;
-        } else {
-          valueNode = item.value;
-        }
-      }
+    if ("type" in item && item.type === "link") {
+        return (
+            <Link
+                href={item.value ?? "#"}
+                className={cn(
+                    buttonVariants({ variant: "default", size: "sm" })
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Open
+            </Link>
+        );
+    }
 
-      return (
-        <Cell
-          className='display-data__line'
-          subhead={item.title}
-          readOnly
-          multiline={true}
-          key={idx}
-        >
-          <span className='display-data__line-value'>
-            {valueNode}
-          </span>
-        </Cell>
-      );
-    })}
-  </Section>
+    if (typeof item.value === "boolean") {
+        return <Checkbox checked={item.value} disabled />;
+    }
+
+    if (typeof item.value === "string" && isRGB(item.value)) {
+        return (
+            <div className="flex items-center gap-x-2">
+                <div
+                    className="h-4 w-4 rounded-full border"
+                    style={{ backgroundColor: item.value }}
+                />
+                <span className="font-mono text-sm">{item.value}</span>
+            </div>
+        );
+    }
+
+    return String(item.value);
+};
+
+export const DisplayData: FC<DisplayDataProps> = ({ header, footer, rows }) => (
+    <Card>
+        {header && (
+            <CardHeader>
+                <CardTitle>{header}</CardTitle>
+            </CardHeader>
+        )}
+        <CardContent className="p-0">
+            <div className="flex flex-col">
+                {rows.map((row, idx) => (
+                    <div key={idx}>
+                        <div className="flex min-h-[3.5rem] items-center justify-between p-4">
+                            <span className="text-sm font-medium text-muted-foreground">
+                                {row.title}
+                            </span>
+                            <div className="text-end text-sm">
+                                {renderValue(row)}
+                            </div>
+                        </div>
+                        {idx < rows.length - 1 && <Separator />}
+                    </div>
+                ))}
+            </div>
+        </CardContent>
+        {footer && (
+            <CardFooter>
+                <p className="pt-4 text-sm text-muted-foreground">{footer}</p>
+            </CardFooter>
+        )}
+    </Card>
 );
