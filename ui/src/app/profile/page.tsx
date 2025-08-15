@@ -1,5 +1,7 @@
 "use client";
 
+import { getCookieCSRF } from "@/actions/auth.action";
+import { me } from "@/actions/user.action";
 import { BalanceDisplay } from "@/components/balance-display/balanceDisplay";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher/LocaleSwitcher";
 import { Page } from "@/components/Page";
@@ -14,12 +16,28 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { initData, useSignal } from "@telegram-apps/sdk-react";
 import { Check, Copy, CreditCard, PlusCircle, ShoppingBag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+
+type User = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    username: string;
+    chatId: number;
+    photoUrl: string;
+
+    claims: string[]
+    createdAt: Date
+    updatedAt: Date
+
+    orderCount?: number
+}
 
 // A small component for displaying a single piece of user info
 const InfoRow = ({
@@ -71,6 +89,20 @@ export default function ProfilePage() {
     const user = data?.user;
     const userInitials =
         (user?.firstName?.[0] || "") + (user?.lastName?.[0] || "");
+    const [userB, setUserB] = useState<User>();
+
+    useEffect(() => {
+        (async () => {
+            const csrf = generateCsrfToken(await getCookieCSRF() ?? "");
+            const result = JSON.parse(await me({ csrf }));
+
+            if (result.success) {
+                setUserB(result.data);
+            } else {
+                toast.error(`Failed to get user: ${result.message}`);
+            }
+        })()
+    }, [])
 
     return (
         <Page back={false}>
@@ -131,8 +163,7 @@ export default function ProfilePage() {
                                     {t("total-orders")}
                                 </span>
                             </div>
-                            {/* ZEUS: Connect this to your backend data */}
-                            <Skeleton className="h-6 w-8" />
+                            {userB ? userB.orderCount : (<Skeleton className="h-6 w-8" />)}
                         </div>
                     </CardContent>
                 </Card>
