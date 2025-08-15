@@ -60,7 +60,7 @@ const StatusBadge = ({ panelUser }: { panelUser: PanelUser }) => {
     const isOnline =
         panelUser.onlineAt &&
         new Date().getTime() - new Date(panelUser.onlineAt + "Z").getTime() <
-        60000;
+            60000;
 
     if (isOnline) {
         return (
@@ -169,8 +169,11 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
 }) => {
     const t = useTranslations("i18n");
     const locale = useLocale();
-    if (locale == 'fa')
-        jmoment.loadPersian({ dialect: "persian-modern", usePersianDigits: true });
+    if (locale == "fa")
+        jmoment.loadPersian({
+            dialect: "persian-modern",
+            usePersianDigits: true,
+        });
 
     const [isRevokeOpen, setIsRevokeOpen] = useState(false);
     const [isRenewOpen, setIsRenewOpen] = useState(false);
@@ -253,23 +256,24 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
                     <p>
                         <strong>{t("time-left")}:</strong>{" "}
                         {panelUser.expireStrategy === "start_on_first_use" &&
-                            !panelUser.expireDate
+                        !panelUser.expireDate
                             ? t("not-started-yet")
                             : moment(panelUser.expireDate).fromNow()}
                     </p>
                     <p>
                         <strong>{t("expires-in")}:</strong>{" "}
                         {panelUser.expireStrategy === "start_on_first_use" &&
-                            !panelUser.expireDate
+                        !panelUser.expireDate
                             ? `${(panelUser.usageDuration || 0) / 86400} ${t(
-                                "days"
-                            )}`
-                            : (locale == 'fa' ? jmoment(panelUser.expireDate).format(
-                                "dddd jD jMMMM jYYYY"
-                            ) :
-                                moment(panelUser.expireDate).format(
-                                    "dddd D MMMM YYYY"
-                                ))}
+                                  "days"
+                              )}`
+                            : locale == "fa"
+                            ? jmoment(panelUser.expireDate).format(
+                                  "dddd jD jMMMM jYYYY"
+                              )
+                            : moment(panelUser.expireDate).format(
+                                  "dddd D MMMM YYYY"
+                              )}
                     </p>
                 </CardContent>
             </Card>
