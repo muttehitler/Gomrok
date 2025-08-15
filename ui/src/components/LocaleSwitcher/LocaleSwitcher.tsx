@@ -1,26 +1,42 @@
-'use client';
+"use client";
 
-import { Select } from '@telegram-apps/telegram-ui';
-import { useLocale } from 'next-intl';
-import { FC } from 'react';
-
-import { localesMap } from '@/core/i18n/config';
-import { setLocale } from '@/core/i18n/locale';
-import { Locale } from '@/core/i18n/types';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { localesMap } from "@/core/i18n/config";
+import { setLocale } from "@/core/i18n/locale";
+import { Locale } from "@/core/i18n/types";
+import { useLocale, useTranslations } from "next-intl";
+import { FC } from "react";
 
 export const LocaleSwitcher: FC = () => {
-  const locale = useLocale();
+    const t = useTranslations("i18n");
+    const locale = useLocale() as Locale;
 
-  const onChange = (value: string) => {
-    const locale = value as Locale;
-    setLocale(locale);
-  };
+    const onSelect = (value: string) => {
+        const newLocale = value as Locale;
+        setLocale(newLocale);
+    };
 
-  return (
-    <Select value={locale} onChange={({ target }) => onChange(target.value)}>
-      {localesMap.map((locale) => (
-        <option key={locale.key} value={locale.key}>{locale.title}</option>
-      ))}
-    </Select>
-  );
+    return (
+        <div className="flex flex-col space-y-2">
+            <label className="text-sm font-medium">{t("language")}</label>
+            <Select value={locale} onValueChange={onSelect}>
+                <SelectTrigger>
+                    <SelectValue placeholder={t("select-language")} />
+                </SelectTrigger>
+                <SelectContent>
+                    {localesMap.map((l) => (
+                        <SelectItem key={l.key} value={l.key}>
+                            {l.title}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+        </div>
+    );
 };
