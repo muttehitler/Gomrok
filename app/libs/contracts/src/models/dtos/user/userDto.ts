@@ -6,4 +6,10 @@ export default interface UserDto {
     lastName: string
     username: string
     photoUrl: string
+
+    claims: string[]
+    createdAt: Date
+    updatedAt: Date
+
+    orderCount?: number
 }

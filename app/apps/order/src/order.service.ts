@@ -205,8 +205,12 @@ export class OrderService {
     }
   }
 
-  async myOrders({ startIndex, limit, order }: FilterDto, userId: string): Promise<DataResultDto<ListDto<OrderDto[]>>> {
-    const expression = { status: true, user: new Types.ObjectId(userId) }
+  async myOrders({ startIndex, limit, order, payed }: FilterDto, userId: string): Promise<DataResultDto<ListDto<OrderDto[]>>> {
+    const expression = {
+      status: true,
+      user: new Types.ObjectId(userId),
+      ...(payed !== undefined && { payed: payed })
+    }
 
     const query = this.orderModel.find(expression)
     const list = (await query.skip(startIndex).limit(limit).sort({ createdAt: order == 1 ? 1 : -1 })).map<OrderDto>(x => { return { id: String(x._id), name: x.name, payed: x.payed, product: String(x.product), price: x.price, finalPrice: x.finalPrice } })
