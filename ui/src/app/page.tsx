@@ -1,103 +1,87 @@
-'use client';
+"use client";
 
-import { Section, Cell, Image, List } from '@telegram-apps/telegram-ui';
-import { useTranslations } from 'next-intl';
+import { BalanceDisplay } from "@/components/balance-display/balanceDisplay";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { ArrowRight, Package, User } from "lucide-react";
+import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
-import { Link } from '@/components/Link/Link';
-import { LocaleSwitcher } from '@/components/LocaleSwitcher/LocaleSwitcher';
-import { Page } from '@/components/Page';
+const QuickLinkCard = ({
+    href,
+    title,
+    description,
+    icon,
+}: {
+    href: string;
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+}) => (
+    <Link
+        href={href}
+        className="block rounded-lg border bg-card text-card-foreground shadow-sm transition-transform hover:scale-[1.02]"
+    >
+        <Card className="h-full border-0">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-lg font-bold">{title}</CardTitle>
+                {icon}
+            </CardHeader>
+            <CardContent>
+                <p className="text-sm text-muted-foreground">{description}</p>
+            </CardContent>
+        </Card>
+    </Link>
+);
 
-import tonSvg from './_assets/ton.svg';
+export default function HomePage() {
+    const t = useTranslations("i18n");
 
-export default function Home() {
-  const t = useTranslations('i18n');
-
-  return (
-    <Page back={false}>
-      <List>
-        <Section
-          header="Features"
-          footer="You can use these pages to learn more about features, provided by Telegram Mini Apps and other useful projects"
-        >
-          <Link href="/ton-connect">
-            <Cell
-              before={
-                <Image
-                  src={tonSvg.src}
-                  style={{ backgroundColor: '#007AFF' }}
+    return (
+        <div className="container mx-auto max-w-4xl space-y-6 p-4">
+            <Card className="flex flex-col items-start bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
+                <CardHeader>
+                    <CardTitle className="text-3xl font-bold">
+                        {t("welcome-back")}
+                    </CardTitle>
+                    <CardDescription className="text-primary-foreground/80">
+                        {t("start-your-journey-with-us")}
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Link
+                        href="/panel"
+                        className={cn(
+                            buttonVariants({ variant: "secondary", size: "lg" })
+                        )}
+                    >
+                        {t("go-to-shop")}
+                        <ArrowRight className="ms-2 h-5 w-5" />
+                    </Link>
+                </CardContent>
+            </Card>
+            <BalanceDisplay />
+            <div className="grid gap-4 md:grid-cols-2">
+                <QuickLinkCard
+                    href="/order"
+                    title={t("my-orders")}
+                    description={t("view-your-order-history")}
+                    icon={<Package className="h-6 w-6 text-muted-foreground" />}
                 />
-              }
-              subtitle="Connect your TON wallet"
-            >
-              TON Connect
-            </Cell>
-          </Link>
-        </Section>
-        <Section
-          header="Application Launch Data"
-          footer="These pages help developer to learn more about current launch information"
-        >
-          <Link href="/panel/test_account">
-            <Cell subtitle="admin">
-              Test Account
-            </Cell>
-          </Link>
-
-          <Link href="/admin">
-            <Cell subtitle="admin">
-              Admin
-            </Cell>
-          </Link>
-          <Link href="/admin/user">
-            <Cell subtitle="admin users">
-              Admin Users
-            </Cell>
-          </Link>
-          <Link href="/admin/panel">
-            <Cell subtitle="admin panel">
-              Admin Panel
-            </Cell>
-          </Link>
-          <Link href="/admin/product">
-            <Cell subtitle="admin product">
-              Admin Product
-            </Cell>
-          </Link>
-          <Link href="/admin/order">
-            <Cell subtitle="admin product">
-              Admin Order
-            </Cell>
-          </Link>
-          <Link href="/order">
-            <Cell subtitle="my orders">
-              My Orders
-            </Cell>
-          </Link>
-          <Link href="/balance">
-            <Cell subtitle="balance">
-              Balance
-            </Cell>
-          </Link>
-          <Link href="/init-data">
-            <Cell subtitle="User data, chat information, technical data">
-              Init Data
-            </Cell>
-          </Link>
-          <Link href="/launch-params">
-            <Cell subtitle="Platform identifier, Mini Apps version, etc.">
-              Launch Parameters
-            </Cell>
-          </Link>
-          <Link href="/theme-params">
-            <Cell subtitle="Telegram application palette information">
-              Theme Parameters
-            </Cell>
-          </Link>
-        </Section>
-        <Section header={t('header')} footer={t('footer')}>
-          <LocaleSwitcher/>
-        </Section>
-      </List>
-    </Page>
-  );
+                <QuickLinkCard
+                    href="/profile"
+                    title={t("profile")}
+                    description={t("manage-your-account-settings")}
+                    icon={<User className="h-6 w-6 text-muted-foreground" />}
+                />
+            </div>
+        </div>
+    );
 }
