@@ -9,7 +9,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Package, User } from "lucide-react";
+import { ArrowRight, Package, Shield, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
@@ -41,11 +41,25 @@ const QuickLinkCard = ({
     </Link>
 );
 
+const AdminFAB = () => (
+    <Link
+        href="/admin"
+        className={cn(
+            buttonVariants({ variant: "default", size: "icon" }),
+            "fixed bottom-24 end-4 z-50 h-14 w-14 rounded-full shadow-lg"
+        )}
+        aria-label="Admin Panel"
+    >
+        <Shield className="h-6 w-6" />
+    </Link>
+);
+
 export default function HomePage() {
     const t = useTranslations("i18n");
 
     return (
-        <div className="container mx-auto max-w-4xl space-y-6 p-4">
+        <div className="container mx-auto max-w-4xl space-y-6 p-4 pb-28">
+            {/* Hero Section */}
             <Card className="flex flex-col items-start bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
                 <CardHeader>
                     <CardTitle className="text-3xl font-bold">
@@ -82,6 +96,7 @@ export default function HomePage() {
                     icon={<User className="h-6 w-6 text-muted-foreground" />}
                 />
             </div>
+            <AdminFAB />
         </div>
     );
 }
