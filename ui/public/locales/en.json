@@ -148,6 +148,9 @@
         "profile": "Profile",
         "manage-your-account-settings": "Manage your account settings and personal information.",
         "my-orders-description": "Here you can see a list of all your past and current orders.",
-        "telegram-user-id": "Telegram User ID"
+        "telegram-user-id": "Telegram User ID",
+        "user-id-copied": "User ID copied to clipboard!",
+        "create-invoice": "Create Invoice",
+        "revoked-successfully": "Subscription revoked successfully."
     }
 }

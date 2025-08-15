@@ -148,6 +148,9 @@
         "profile": "پروفایل",
         "manage-your-account-settings": "تنظیمات حساب کاربری و اطلاعات شخصی خود را مدیریت کنید.",
         "my-orders-description": "در این بخش می‌توانید لیست تمام سفارشات گذشته و فعلی خود را ببینید.",
-        "telegram-user-id": "شناسه کاربری تلگرام"
+        "telegram-user-id": "شناسه کاربری تلگرام",
+        "user-id-copied": "شناسه کاربری در کلیپ‌بورد کپی شد!",
+        "create-invoice": "ایجاد فاکتور",
+        "revoked-successfully": "اشتراک با موفقیت لغو شد."
     }
 }
