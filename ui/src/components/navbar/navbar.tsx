@@ -1,62 +1,82 @@
-import { FC } from "react";
-import './style.css'
-import { NavbarButton } from "./navbarbutton";
-import { Package, ShoppingBag } from "lucide-react";
+"use client";
+
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import {
+    Home,
+    LayoutGrid,
+    Package,
+    ShoppingBag,
+    User,
+    Wallet,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { FC, ReactNode } from "react";
+
+interface NavItemProps {
+    href: string;
+    label: string;
+    icon: ReactNode;
+    isCenter?: boolean;
+}
+
+const NavItem: FC<NavItemProps> = ({ href, label, icon, isCenter }) => {
+    const pathname = usePathname();
+    const isActive = pathname === href;
+
+    return (
+        <TooltipProvider delayDuration={100}>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Link
+                        href={href}
+                        className={cn(
+                            "group relative flex h-14 w-14 flex-col items-center justify-center transition-all duration-200 ease-in-out",
+                            isCenter
+                                ? "rounded-full bg-primary text-primary-foreground shadow-lg -translate-y-4"
+                                : "text-muted-foreground",
+                            isActive && !isCenter && "text-primary"
+                        )}
+                    >
+                        {icon}
+                        <span className="sr-only">{label}</span>
+                    </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{label}</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+    );
+};
 
 export const Navbar: FC = () => {
-    return (
-        <div className="fixed z-50 w-full h-16 max-w-lg -translate-x-1/2 bg-white border border-gray-200 rounded-full bottom-4 left-1/2 dark:bg-gray-700 dark:border-gray-600">
-            <div className="grid h-full max-w-lg grid-cols-5 mx-auto">
-                <NavbarButton href="/" text="home">
-                    <svg className="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
-                    </svg>
-                </NavbarButton>
-                <div id="tooltip-home" role="tooltip" className="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                    Home
-                    <div className="tooltip-arrow" data-popper-arrow></div>
-                </div>
-                <NavbarButton href="/wallet" text="Wallet">
-                    <svg className="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M11.074 4 8.442.408A.95.95 0 0 0 7.014.254L2.926 4h8.148ZM9 13v-1a4 4 0 0 1 4-4h6V6a1 1 0 0 0-1-1H1a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h17a1 1 0 0 0 1-1v-2h-6a4 4 0 0 1-4-4Z" />
-                        <path d="M19 10h-6a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1Zm-4.5 3.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2ZM12.62 4h2.78L12.539.41a1.086 1.086 0 1 0-1.7 1.352L12.62 4Z" />
-                    </svg>
-                </NavbarButton>
-                <div id="tooltip-wallet" role="tooltip" className="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                    Wallet
-                    <div className="tooltip-arrow" data-popper-arrow></div>
-                </div>
-                <div className="flex items-center justify-center">
-                <NavbarButton href="/panel" text="shop" className="inline-flex items-center justify-center w-10 h-10 font-medium bg-blue-600 rounded-full hover:bg-blue-700 group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800">
-                    <ShoppingBag size={28} />
-                    <span className="sr-only">Shop</span>
-                    </NavbarButton>
-                </div>
-                <div id="tooltip-new" role="tooltip" className="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                    Create new item
-                    <div className="tooltip-arrow" data-popper-arrow></div>
-                </div>
-                <div className="flex items-center justify-center">
-                    <NavbarButton href="/order" text="my orders">
-                        <Package size={28}/>
-                        <span className="sr-only">My Orders</span>
-                    </NavbarButton>
-                </div>
-                <div id="tooltip-settings" role="tooltip" className="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                    Settings
-                    <div className="tooltip-arrow" data-popper-arrow></div>
-                </div>
-                <NavbarButton href="/profile" text="profile">
-                    <svg className="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z" />
-                    </svg>
-                </NavbarButton>
+    const navItems = [
+        { href: "/", label: "Home", icon: <Home size={24} /> },
+        { href: "/wallet", label: "Wallet", icon: <Wallet size={24} /> },
+        {
+            href: "/panel",
+            label: "Shop",
+            icon: <ShoppingBag size={28} />,
+            isCenter: true,
+        },
+        { href: "/order", label: "My Orders", icon: <Package size={24} /> },
+        { href: "/profile", label: "Profile", icon: <User size={24} /> },
+    ];
 
-                <div id="tooltip-profile" role="tooltip" className="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                    Profile
-                    <div className="tooltip-arrow" data-popper-arrow></div>
-                </div>
+    return (
+        <div className="fixed bottom-4 inset-x-0 mx-auto w-full max-w-sm h-16">
+            <div className="relative flex items-center justify-around rounded-full border bg-background/80 shadow-md backdrop-blur-sm">
+                {navItems.map((item) => (
+                    <NavItem key={item.href} {...item} />
+                ))}
             </div>
         </div>
-    )
-}
+    );
+};
