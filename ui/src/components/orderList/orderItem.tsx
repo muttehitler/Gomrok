@@ -10,54 +10,54 @@ import {
     CardTitle,
     CardDescription,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronRight } from "lucide-react";
 
-type Order = {
+type OrderItemProps = {
     id: string;
     name: string;
     product: string;
     price: number;
     payed: boolean;
     finalPrice: number;
-    orderDetailUrl?: string
+    orderDetailUrl?: string;
 };
 
-export const OrderItem: FC<Order> = ({
+export const OrderItem: FC<OrderItemProps> = ({
     id,
     name,
-    product,
-    price,
     payed,
     finalPrice,
-    orderDetailUrl
+    orderDetailUrl,
 }) => {
     const t = useTranslations("i18n");
 
     return (
-        <Card>
-            <CardContent className="p-4">
-                <div className="flex items-center justify-between">
+        <Link href={orderDetailUrl ?? `/admin/order/${id}`}>
+            <Card className="transition-all hover:border-primary/80 hover:shadow-md">
+                <CardContent className="p-4 flex items-center justify-between">
                     <div className="grid gap-1">
-                        <CardTitle className="text-base">{name}</CardTitle>
-                        <CardDescription>
-                            {t("price")}: {finalPrice.toLocaleString()}
+                        <CardTitle className="text-base font-semibold">
+                            {name}
+                        </CardTitle>
+                        <CardDescription className="font-mono text-xs">
+                            ID: {id}
                         </CardDescription>
                     </div>
                     <div className="flex items-center gap-4">
-                        <Badge variant={payed ? "default" : "destructive"}>
-                            {payed ? t("payed") : t("not-payed")}
-                        </Badge>
-                        <Button asChild variant="ghost" size="icon">
-                            <Link href={orderDetailUrl ?? `/order/${id}`}>
-                                <ChevronRight className="h-5 w-5" />
-                                <span className="sr-only">{t("details")}</span>
-                            </Link>
-                        </Button>
+                        <div className="flex flex-col items-end gap-2">
+                            <Badge variant={payed ? "default" : "destructive"}>
+                                {payed ? t("payed") : t("not-payed")}
+                            </Badge>
+                            <span className="text-sm font-medium text-muted-foreground">
+                                {finalPrice.toLocaleString()} {t("toman")}
+                            </span>
+                        </div>
+
+                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
                     </div>
-                </div>
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+        </Link>
     );
 };
