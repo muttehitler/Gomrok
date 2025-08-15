@@ -7,9 +7,9 @@ export default interface UserDto {
     username: string
     photoUrl: string
 
-    claims: string[]
-    createdAt: Date
-    updatedAt: Date
+    claims?: string[]
+    createdAt?: Date
+    updatedAt?: Date
 
     orderCount?: number
 }
