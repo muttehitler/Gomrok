@@ -19,6 +19,7 @@ import { setLocale } from '@/core/i18n/locale';
 import { init } from '@/core/init';
 
 import './styles.css';
+import { getCookie } from '@/lib/utils/cookie.helper';
 
 function RootInner({ children }: PropsWithChildren) {
   const isDev = process.env.NODE_ENV === 'development';
@@ -42,7 +43,7 @@ function RootInner({ children }: PropsWithChildren) {
 
   // Set the user locale.
   useEffect(() => {
-    initDataUser && setLocale(initDataUser.languageCode);
+    initDataUser && setLocale(getCookie('NEXT_LOCALE') ?? initDataUser.languageCode);
   }, [initDataUser]);
 
   useEffect(() => {
@@ -73,7 +74,7 @@ export function Root(props: PropsWithChildren) {
 
   return didMount ? (
     <ErrorBoundary fallback={ErrorPage}>
-      <RootInner {...props}/>
+      <RootInner {...props} />
     </ErrorBoundary>
   ) : <div className="root__loading">Loading</div>;
 }

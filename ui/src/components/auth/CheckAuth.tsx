@@ -27,17 +27,17 @@ export default function CheckAuth({ children }: CheckAuthProps) {
 
             const data = await login(raw ?? "");
 
-            setCookie("token", data.token, 1 / 24, {
+            setCookie("token", data.token, {
                 path: "/",
                 httpOnly: false,
-            });
+            }, 1 / 24);
 
             const csrfSecret = crypto.randomBytes(64).toString("hex");
 
-            setCookie("csrf", csrfSecret ?? "sdkf", 1 / 24, {
+            setCookie("csrf", csrfSecret ?? "sdkf", {
                 path: "/",
                 httpOnly: false,
-            });
+            }, 1 / 24);
 
             setAuth(true);
         })();
