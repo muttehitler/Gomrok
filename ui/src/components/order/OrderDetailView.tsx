@@ -5,6 +5,8 @@ import { FC, useEffect, useState } from "react";
 import { Copy, Earth, QrCode, Check, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import moment from "moment";
+import 'moment/locale/ru';
+import 'moment/locale/fa';
 import jmoment from "moment-jalaali";
 import { QRCodeSVG } from "qrcode.react";
 
@@ -169,6 +171,7 @@ export const OrderDetailView: FC<OrderDetailViewProps> = ({
 }) => {
     const t = useTranslations("i18n");
     const locale = useLocale();
+    moment.locale(locale);
     if (locale == 'fa')
         jmoment.loadPersian({ dialect: "persian-modern", usePersianDigits: true });
 
