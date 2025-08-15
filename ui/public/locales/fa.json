@@ -140,6 +140,14 @@
         "final-price": "قیمت نهایی",
         "pay-from-wallet": "پرداخت از کیف پول",
         "your-free-test-plan": "طرح تست رایگان شما",
-        "activate-test-account": "فعال‌سازی اکانت تست"
+        "activate-test-account": "فعال‌سازی اکانت تست",
+        "welcome-back": "خوش آمدید",
+        "start-your-journey-with-us": "سفر خود را با ما آغاز کنید و محصولات ما را کشف کنید.",
+        "go-to-shop": "ورود به فروشگاه",
+        "view-your-order-history": "تاریخچه کامل سفارشات خود را مشاهده و خریدهایتان را پیگیری کنید.",
+        "profile": "پروفایل",
+        "manage-your-account-settings": "تنظیمات حساب کاربری و اطلاعات شخصی خود را مدیریت کنید.",
+        "my-orders-description": "در این بخش می‌توانید لیست تمام سفارشات گذشته و فعلی خود را ببینید.",
+        "telegram-user-id": "شناسه کاربری تلگرام"
     }
 }

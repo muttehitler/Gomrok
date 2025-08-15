@@ -140,6 +140,14 @@
         "final-price": "Final Price",
         "pay-from-wallet": "Pay from Wallet",
         "your-free-test-plan": "Your Free Test Plan",
-        "activate-test-account": "Activate Test Account"
+        "activate-test-account": "Activate Test Account",
+        "welcome-back": "Welcome Back",
+        "start-your-journey-with-us": "Start your journey with us and explore our products.",
+        "go-to-shop": "Go to Shop",
+        "view-your-order-history": "View your complete order history and track your purchases.",
+        "profile": "Profile",
+        "manage-your-account-settings": "Manage your account settings and personal information.",
+        "my-orders-description": "Here you can see a list of all your past and current orders.",
+        "telegram-user-id": "Telegram User ID"
     }
 }
