@@ -151,6 +151,21 @@
         "telegram-user-id": "شناسه کاربری تلگرام",
         "user-id-copied": "شناسه کاربری در کلیپ‌بورد کپی شد!",
         "create-invoice": "ایجاد فاکتور",
-        "revoked-successfully": "اشتراک با موفقیت لغو شد."
+        "revoked-successfully": "اشتراک با موفقیت لغو شد.",
+        "language-code": "کد زبان",
+        "total-orders": "تعداد کل سفارشات",
+        "settings": "تنظیمات",
+        "language": "زبان",
+        "account-stats": "آمار حساب",
+        "admin-dashboard": "داشبورد ادمین",
+        "admin-dashboard-description": "اپلیکیشن خود را از این داشبورد مرکزی مدیریت کنید.",
+        "manage-panels": "مدیریت پنل‌ها",
+        "add-edit-view-server-panels": "اضافه کردن، ویرایش و مشاهده پنل‌های سرور.",
+        "manage-products": "مدیریت محصولات",
+        "add-edit-view-subscription-plans": "اضافه کردن، ویرایش و مشاهده پلن‌های اشتراک.",
+        "manage-users": "مدیریت کاربران",
+        "view-user-details-and-activities": "مشاهده جزئیات و فعالیت‌های کاربران.",
+        "manage-orders": "مدیریت سفارشات",
+        "view-and-manage-all-user-orders": "مشاهده و مدیریت تمام سفارشات کاربران."
     }
 }
