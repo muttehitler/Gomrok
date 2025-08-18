@@ -91,17 +91,19 @@ export default function AdminOrderListPage() {
                     </p>
                 </header>
 
-                <div className="space-y-4">
+                <div>
                     {isLoading ? (
                         <OrderListSkeleton />
                     ) : orders.length > 0 ? (
-                        orders.map((order) => (
-                            <OrderItem
-                                {...order}
-                                key={order.id}
-                                orderDetailUrl={`/admin/order/${order.id}`}
-                            />
-                        ))
+                        <div className="space-y-4">
+                            {orders.map((order) => (
+                                <OrderItem
+                                    {...order}
+                                    key={order.id}
+                                    orderDetailUrl={`/admin/order/${order.id}`}
+                                />
+                            ))}
+                        </div>
                     ) : (
                         <div className="text-center py-10">
                             <p className="text-muted-foreground">
@@ -110,7 +112,6 @@ export default function AdminOrderListPage() {
                         </div>
                     )}
                 </div>
-
                 {ordersLength > pageSize && (
                     <div className="mt-6 flex justify-center">
                         <Pagination
