@@ -28,7 +28,10 @@ export default class User extends Document implements IEntity {
     claims: string[]
 }
 
-export type UserDocument = User & Document;
+export type UserDocument = User & Document & {
+    createdAt: Date;
+    updatedAt: Date;
+};
 export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.pre('save', function (next) {

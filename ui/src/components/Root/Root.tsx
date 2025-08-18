@@ -4,6 +4,7 @@ import { type PropsWithChildren, useEffect } from 'react';
 import {
   initData,
   miniApp,
+  settingsButton,
   useLaunchParams,
   useSignal,
 } from '@telegram-apps/sdk-react';
@@ -20,9 +21,11 @@ import { init } from '@/core/init';
 
 import './styles.css';
 import { getCookie } from '@/lib/utils/cookie.helper';
+import { useRouter } from 'next/navigation';
 
 function RootInner({ children }: PropsWithChildren) {
   const isDev = process.env.NODE_ENV === 'development';
+  const router = useRouter();
 
   // Mock Telegram environment in development mode if needed.
   if (isDev) {
@@ -45,6 +48,20 @@ function RootInner({ children }: PropsWithChildren) {
   useEffect(() => {
     initDataUser && setLocale(getCookie('NEXT_LOCALE') ?? initDataUser.languageCode);
   }, [initDataUser]);
+
+  useEffect(() => {
+    settingsButton.mount()
+    settingsButton.show()
+
+    const settingButtonOnClickEvent = settingsButton.onClick(() => {
+      router.replace('/profile')
+    })
+
+    return () => {
+      settingButtonOnClickEvent();
+      settingsButton.hide();
+    };
+  }, [])
 
   useEffect(() => {
     if (isDark) {

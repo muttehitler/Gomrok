@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import User, { UserDocument } from './models/concrete/user';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -8,10 +8,14 @@ import DataResultDto from '@app/contracts/models/dtos/dataResultDto';
 import UserDto from '@app/contracts/models/dtos/user/userDto';
 import FilterDto from '@app/contracts/models/dtos/filterDto';
 import ListDto from '@app/contracts/models/dtos/listDto';
+import { ClientProxy } from '@nestjs/microservices';
+import { ORDER_PATTERNS } from '@app/contracts/patterns/orderPattern';
+import OrderDto from '@app/contracts/models/dtos/order/orderDto';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,
+    @Inject(ORDER_PATTERNS.CLIENT) private orderClient: ClientProxy) { }
 
   async getUserBalance(userId: string): Promise<DataResultDto<number>> {
     return {
@@ -38,6 +42,8 @@ export class UserService {
     if (!user)
       throw new NotFoundException()
 
+    const orders = await this.orderClient.send(ORDER_PATTERNS.MY_ORDERS, { filter: { startIndex: 0, limit: 1, order: 1, payed: true } as FilterDto, userId: String(user._id) }).toPromise() as DataResultDto<ListDto<OrderDto[]>>
+
     return {
       success: true,
       message: Messages.USER.BALANCE_GOT_SUCCESSFULLY.message,
@@ -48,7 +54,11 @@ export class UserService {
         lastName: user.lastName,
         username: user.username,
         chatId: user.chatId,
-        photoUrl: user.photoUrl
+        photoUrl: user.photoUrl,
+        claims: user.claims,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        orderCount: orders.data.length
       }
     }
   }
@@ -62,7 +72,10 @@ export class UserService {
         lastName: x.lastName,
         username: x.username,
         chatId: x.chatId,
-        photoUrl: x.photoUrl
+        photoUrl: x.photoUrl,
+        claims: x.claims,
+        createdAt: x.createdAt,
+        updatedAt: x.updatedAt
       }
     })
 

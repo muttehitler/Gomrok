@@ -10,6 +10,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import User, { UserSchema } from './models/concrete/user';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
+import { ORDER_PATTERNS } from '@app/contracts/patterns/orderPattern';
 
 @Global()
 @Module({
@@ -28,6 +29,16 @@ import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
     ClientsModule.register([
       {
         name: USER_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      }
+    ]),
+    ClientsModule.register([
+      {
+        name: ORDER_PATTERNS.CLIENT,
         transport: Transport.REDIS,
         options: {
           host: process.env.REDIS_HOST ?? 'localhost',

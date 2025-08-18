@@ -13,6 +13,12 @@ export class UserController {
         return await this.userService.getUserBalance(req.user['sub'])
     }
 
+    @Get('/me')
+    @UseGuards(new JwtAuthGuard(['admin']))
+    async me(@Req() req) {
+        return await this.userService.get(req.user['sub'])
+    }
+
     @Get()
     @UseGuards(new JwtAuthGuard(['admin']))
     async getList(@Query() filter: FilterDto) {

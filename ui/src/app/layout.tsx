@@ -5,11 +5,12 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Root } from "@/components/Root/Root";
 import { I18nProvider } from "@/core/i18n/provider";
 import StyledComponentsRegistry from "@/lib/registry";
-import { Toaster } from "@/components/ui/toaster"; 
+import { Toaster } from "@/components/ui/toaster";
 
 import "./globals.css";
 import CheckAuth from "@/components/auth/CheckAuth";
 import { Navbar } from "@/components/navbar/navbar";
+import { Top } from "@/components/top/top";
 
 export const metadata: Metadata = {
     title: "Your Application Title Goes Here",
@@ -27,6 +28,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                     <I18nProvider>
                         <Root>
                             <CheckAuth>
+                                <Top />
                                 {children}
                                 <Navbar />
                                 <div className="min-h-[90px]"></div>
