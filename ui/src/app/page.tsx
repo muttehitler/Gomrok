@@ -82,7 +82,7 @@ export default function HomePage() {
                             )}
                         >
                             {t("go-to-shop")}
-                            <ArrowRight className="ms-2 h-5 w-5" />
+                            <ArrowRight className="ms-2 h-5 w-5 transition-transform rtl:rotate-180" />
                         </Link>
                     </CardContent>
                 </Card>
