@@ -7,7 +7,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Home, Package, ShoppingBag, User } from "lucide-react";
+import { Package, ShoppingBag, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FC, ReactNode } from "react";
@@ -51,7 +51,6 @@ const NavItem: FC<NavItemProps> = ({ href, label, icon, isCenter }) => {
 
 export const Navbar: FC = () => {
     const navItems = [
-        { href: "/", label: "Home", icon: <Home size={24} /> },
         { href: "/order", label: "My Orders", icon: <Package size={24} /> },
         {
             href: "/panel",
@@ -62,17 +61,10 @@ export const Navbar: FC = () => {
         { href: "/profile", label: "Profile", icon: <User size={24} /> },
     ];
 
-    const orderedNavItems = [
-        navItems[0],
-        navItems[1],
-        navItems[2],
-        navItems[3],
-    ];
-
     return (
-        <div className="fixed bottom-4 inset-x-0 mx-auto w-full max-w-sm h-16">
+        <div className="fixed bottom-4 inset-x-0 mx-auto w-full max-w-xs h-16">
             <div className="relative flex items-center justify-around rounded-full border bg-background/80 shadow-md backdrop-blur-sm">
-                {orderedNavItems.map((item) => (
+                {navItems.map((item) => (
                     <NavItem key={item.href} {...item} />
                 ))}
             </div>
