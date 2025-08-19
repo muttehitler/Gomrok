@@ -118,7 +118,9 @@ const TestAccountView = () => {
                 setOrder(newOrder);
             } catch (error: any) {
                 toast.error(error.message || t("error-creating-test-order"));
-                router.push("/panel"); // Redirect on error
+                setTimeout(() => {
+                    router.push("/")
+                }, 2000)
             } finally {
                 setIsLoading(false);
             }

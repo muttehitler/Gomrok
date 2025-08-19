@@ -33,7 +33,7 @@ export const OrderItem: FC<OrderItemProps> = ({
     const t = useTranslations("i18n");
 
     return (
-        <Link href={orderDetailUrl ?? `/admin/order/${id}`}>
+        <Link href={orderDetailUrl ?? `/admin/order/${id}`} className="block mb-4">
             <Card className="transition-all hover:border-primary/80 hover:shadow-md">
                 <CardContent className="p-4 flex items-center justify-between">
                     <div className="grid gap-1">
