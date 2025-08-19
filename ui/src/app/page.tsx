@@ -1,6 +1,8 @@
 "use client";
 
 import { BalanceDisplay } from "@/components/balance-display/balanceDisplay";
+import { Page } from "@/components/Page";
+import { buttonVariants } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -8,12 +10,46 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { getCookie } from "@/lib/utils/cookie.helper";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Package, Shield, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { Page } from "@/components/Page";
+import { useEffect, useState } from "react";
+
+type DecodedToken = {
+    claims: string[];
+    [key: string]: any;
+};
+
+const useAuth = () => {
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        const token = getCookie("token");
+        if (!token) {
+            setIsAdmin(false);
+            return;
+        }
+
+        try {
+            const payloadBase64 = token.split(".")[1];
+            const decodedPayload = atob(payloadBase64);
+            const parsedToken: DecodedToken = JSON.parse(decodedPayload);
+
+            if (parsedToken.claims && parsedToken.claims.includes("admin")) {
+                setIsAdmin(true);
+            } else {
+                setIsAdmin(false);
+            }
+        } catch (error) {
+            console.error("Failed to decode or parse JWT:", error);
+            setIsAdmin(false);
+        }
+    }, []);
+
+    return { isAdmin };
+};
 
 const QuickLinkCard = ({
     href,
@@ -57,6 +93,7 @@ const AdminFAB = () => (
 
 export default function HomePage() {
     const t = useTranslations("i18n");
+    const { isAdmin } = useAuth();
 
     return (
         <Page back={false}>
@@ -71,7 +108,7 @@ export default function HomePage() {
                             {t("start-your-journey-with-us")}
                         </CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="flex flex-col sm:flex-row gap-4">
                         <Link
                             href="/panel/test_account"
                             className={cn(
@@ -82,7 +119,6 @@ export default function HomePage() {
                             )}
                         >
                             {t("get-test-account")}
-                            <ArrowRight className="ms-2 h-5 w-5 transition-transform rtl:rotate-180" />
                         </Link>
                         <Link
                             href="/panel"
@@ -117,7 +153,7 @@ export default function HomePage() {
                         }
                     />
                 </div>
-                <AdminFAB />
+                {isAdmin && <AdminFAB />}
             </div>
         </Page>
     );
