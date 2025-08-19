@@ -151,6 +151,21 @@
         "telegram-user-id": "شناسه کاربری تلگرام",
         "user-id-copied": "ID пользователя скопирован в буфер обмена!",
         "create-invoice": "Создать счет",
-        "revoked-successfully": "Подписка успешно отозвана."
+        "revoked-successfully": "Подписка успешно отозвана.",
+        "language-code": "Код языка",
+        "total-orders": "Всего заказов",
+        "settings": "Настройки",
+        "language": "Язык",
+        "account-stats": "Статистика аккаунта",
+        "admin-dashboard": "Панель администратора",
+        "admin-dashboard-description": "Управляйте своим приложением с этой центральной панели.",
+        "manage-panels": "Управление панелями",
+        "add-edit-view-server-panels": "Добавляйте, редактируйте и просматривайте панели серверов.",
+        "manage-products": "Управление продуктами",
+        "add-edit-view-subscription-plans": "Добавляйте, редактируйте и просматривайте планы подписки.",
+        "manage-users": "Управление пользователями",
+        "view-user-details-and-activities": "Просмотр сведений о пользователях и их действиях.",
+        "manage-orders": "Управление заказами",
+        "view-and-manage-all-user-orders": "Просмотр и управление всеми заказами пользователей."
     }
 }

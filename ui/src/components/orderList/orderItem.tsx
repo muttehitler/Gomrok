@@ -53,8 +53,7 @@ export const OrderItem: FC<OrderItemProps> = ({
                                 {finalPrice.toLocaleString()} {t("toman")}
                             </span>
                         </div>
-
-                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                        <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform rtl:rotate-180" />{" "}
                     </div>
                 </CardContent>
             </Card>

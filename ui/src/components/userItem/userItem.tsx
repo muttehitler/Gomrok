@@ -57,7 +57,7 @@ export const UserItem: FC<User> = ({
                     </div>
                     <Button asChild variant="ghost" size="icon">
                         <Link href={`/admin/user/${id}`}>
-                            <ChevronRight className="h-5 w-5" />
+                            <ChevronRight className="h-5 w-5 transition-transform rtl:rotate-180" />{" "}
                             <span className="sr-only">{t("details")}</span>
                         </Link>
                     </Button>

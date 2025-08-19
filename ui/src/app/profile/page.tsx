@@ -105,7 +105,7 @@ export default function ProfilePage() {
     }, [])
 
     return (
-        <Page back={false}>
+        <Page>
             <Toaster position="top-center" reverseOrder={false} />
             <div className="container mx-auto max-w-lg space-y-6 p-4 pb-28">
                 {/* User Info Card */}

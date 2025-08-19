@@ -151,6 +151,21 @@
         "telegram-user-id": "Telegram User ID",
         "user-id-copied": "User ID copied to clipboard!",
         "create-invoice": "Create Invoice",
-        "revoked-successfully": "Subscription revoked successfully."
+        "revoked-successfully": "Subscription revoked successfully.",
+        "language-code": "Language Code",
+        "total-orders": "Total Orders",
+        "settings": "Settings",
+        "language": "Language",
+        "account-stats": "Account Stats",
+        "admin-dashboard": "Admin Dashboard",
+        "admin-dashboard-description": "Manage your application from this central dashboard.",
+        "manage-panels": "Manage Panels",
+        "add-edit-view-server-panels": "Add, edit, and view server panels.",
+        "manage-products": "Manage Products",
+        "add-edit-view-subscription-plans": "Add, edit, and view subscription plans.",
+        "manage-users": "Manage Users",
+        "view-user-details-and-activities": "View user details and activities.",
+        "manage-orders": "Manage Orders",
+        "view-and-manage-all-user-orders": "View and manage all user orders."
     }
 }
