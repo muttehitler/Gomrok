@@ -20,6 +20,10 @@ export class PanelService {
         return await this.panelClient.send(PANEL_PATTERNS.ADD, { panelDto: panelDto, authorUser: authorUser }).toPromise()
     }
 
+    async getForUser(id: string): Promise<PanelDto> {
+        return await this.panelClient.send(PANEL_PATTERNS.GET_FOR_USER, { id }).toPromise()
+    }
+
     async getList(filter: FilterDto): Promise<DataResultDto<ListDto<PanelDto[]>>> {
         return await this.panelClient.send(PANEL_PATTERNS.GET_LIST, filter).toPromise()
     }

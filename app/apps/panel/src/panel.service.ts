@@ -51,6 +51,18 @@ export class PanelService {
     }
   }
 
+  async getForUser(id: string): Promise<PanelDto> {
+    const panel = await this.panelModel.findById(new Types.ObjectId(id))
+    const panelDto: PanelDto = {
+      id: String(panel?._id),
+      name: panel?.name!,
+      url: panel?.url!,
+      type: panel?.type!,
+      weight: panel?.weight!
+    }
+    return panelDto
+  }
+
   async getList({ startIndex, limit, order }: FilterDto): Promise<DataResultDto<ListDto<PanelDto[]>>> {
     const query = this.panelModel.find({ status: true })
     const list = (await query.skip(startIndex).limit(limit).sort({ createdAt: order == 1 ? 1 : -1 })).map<PanelDto>(x => { return { id: String(x._id), name: x.name, type: x.type, url: x.url, weight: x.weight } })
