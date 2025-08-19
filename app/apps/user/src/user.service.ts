@@ -58,7 +58,8 @@ export class UserService {
         claims: user.claims,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        orderCount: orders.data.length
+        orderCount: orders.data.length,
+        testLimit: user.testLimit ?? 1
       }
     }
   }

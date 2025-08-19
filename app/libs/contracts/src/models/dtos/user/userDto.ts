@@ -12,4 +12,5 @@ export default interface UserDto {
     updatedAt?: Date
 
     orderCount?: number
+    testLimit?: number
 }

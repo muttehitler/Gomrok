@@ -20,6 +20,7 @@ import PanelUserDto from '@app/contracts/models/dtos/panel/panelService/panelUse
 import PanelModifyUserDto from '@app/contracts/models/dtos/panel/panelService/panelModifyUserDto';
 import RenewOrderDto from '@app/contracts/models/dtos/order/renewOrderDto';
 import generateRandomId from '@app/contracts/utils/random/randomString';
+import UserDto from '@app/contracts/models/dtos/user/userDto';
 
 @Injectable()
 export class OrderService {
@@ -37,6 +38,16 @@ export class OrderService {
     })
 
     const productResult = await this.productClient.send(PRODUCT_PATTERNS.GET, product).toPromise() as ProductDto
+
+    const user = await this.userClient.send(USER_PATTERNS.GET, { userId: authorId }).toPromise() as DataResultDto<UserDto>
+
+    if (productResult.test && (user.data.testLimit ?? 1) <= (await this.orderModel.find({ user: new Types.ObjectId(authorId), test: true })).length)
+      return {
+        success: false,
+        message: Messages.ORDER.TEST_ACCOUNT_LIMIT_REACHED.message,
+        statusCode: Messages.ORDER.TEST_ACCOUNT_LIMIT_REACHED.code,
+        data: ''
+      }
 
     order.price = productResult.price
     order.finalPrice = productResult.price
@@ -76,6 +87,7 @@ export class OrderService {
     if (!order)
       throw new NotFoundException()
 
+    const user = await this.userClient.send(USER_PATTERNS.GET, { userId: userId }).toPromise() as DataResultDto<UserDto>
     const userBalance = await this.userClient.send(USER_PATTERNS.GET_USER_BALANCE, userId).toPromise() as DataResultDto<number>
 
     if (!order.test) {
@@ -93,6 +105,13 @@ export class OrderService {
       }).toPromise() as ResultDto
       if (!balanceLogResult.success)
         return balanceLogResult
+    } else {
+      if ((user.data.testLimit ?? 1) <= (await this.orderModel.find({ user: new Types.ObjectId(userId), test: true })).length)
+        return {
+          success: false,
+          message: Messages.ORDER.TEST_ACCOUNT_LIMIT_REACHED.message,
+          statusCode: Messages.ORDER.TEST_ACCOUNT_LIMIT_REACHED.code,
+        }
     }
 
     order.payed = true
