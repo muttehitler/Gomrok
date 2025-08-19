@@ -17,8 +17,8 @@ import {
 
 import { getCookieCSRF } from "@/actions/auth.action";
 import { buyOrder, getOrder } from "@/actions/order.action";
-import { getPanel } from "@/actions/panel.action";
-import { getProduct } from "@/actions/product.action";
+import { getPanelForUser } from "@/actions/panel.action";
+import { getProductForUser } from "@/actions/product.action";
 import { Page } from "@/components/Page";
 import { Button } from "@/components/ui/button";
 import {
@@ -106,10 +106,10 @@ const OrderDetailView = () => {
                 setOrder(orderData.data);
 
                 const [productResultStr, panelResultStr] = await Promise.all([
-                    getProduct({ id: orderData.data.product, csrf }),
-                    getPanel({
+                    getProductForUser({ id: orderData.data.product, csrf }),
+                    getPanelForUser({
                         id: JSON.parse(
-                            await getProduct({
+                            await getProductForUser({
                                 id: orderData.data.product,
                                 csrf,
                             })

@@ -86,6 +86,20 @@ export async function addPanel(formData: any) {
     return await safeApiCall(config, formData.csrf);
 }
 
+export async function getPanelForUser(data: any) {
+    const config = {
+        method: "get",
+        url: process.env.API_ADDRESS + PANEL_PATTERNS.GET_FOR_USER.replace(':id', data.id),
+        headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+            authorization: "Bearer " + (await cookies()).get("token")?.value,
+        },
+        validateStatus: () => true,
+    };
+    return await safeApiCall(config, data.csrf);
+}
+
 export async function getPanelList(data: any) {
     const config = {
         method: "get",

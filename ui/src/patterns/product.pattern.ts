@@ -4,6 +4,7 @@ export const PRODUCT_PATTERNS = {
     DELETE: '/product/',
     UPDATE: '/product/',
     GET: '/product/',
+    GET_FOR_USER: '/product/:id/user',
     GET_BY_PANEL: '/product/panel/',
     GET_TEST_BY_PANEL: '/product/panel/:panel/test'
 }

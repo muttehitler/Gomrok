@@ -20,8 +20,8 @@ import {
 
 import { getCookieCSRF } from "@/actions/auth.action";
 import { addOrder } from "@/actions/order.action";
-import { getPanel } from "@/actions/panel.action";
-import { getProduct } from "@/actions/product.action";
+import { getPanelForUser } from "@/actions/panel.action";
+import { getProductForUser } from "@/actions/product.action";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -118,7 +118,7 @@ export const ProductDetailView: FC = () => {
             setIsLoading(true);
             try {
                 const csrf = generateCsrfToken((await getCookieCSRF())!);
-                const productResultStr = await getProduct({
+                const productResultStr = await getProductForUser({
                     id: productId,
                     csrf,
                 });
@@ -129,7 +129,7 @@ export const ProductDetailView: FC = () => {
                 }
                 setProduct(productData);
 
-                const panelResultStr = await getPanel({
+                const panelResultStr = await getPanelForUser({
                     id: productData.panel,
                     csrf,
                 });
