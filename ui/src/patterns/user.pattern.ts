@@ -2,5 +2,9 @@ export const USER_PATTERNS = {
     GET_USER_BALANCE: '/user/get_user_balance',
     GET_LIST: '/user',
     GET: '/user/',
-    ME: '/user/me'
+    ME: '/user/me',
+    AUTH:{
+        LOGIN:'/auth/login',
+        VERIFY:'/auth/verify'
+    }
 }
