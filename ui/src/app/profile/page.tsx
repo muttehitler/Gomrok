@@ -108,7 +108,6 @@ export default function ProfilePage() {
         <Page>
             <Toaster position="top-center" reverseOrder={false} />
             <div className="container mx-auto max-w-lg space-y-6 p-4 pb-28">
-                {/* User Info Card */}
                 <Card>
                     <CardHeader className="items-center text-center">
                         <Avatar className="mb-4 h-24 w-24">
@@ -134,15 +133,8 @@ export default function ProfilePage() {
                             value={user?.id}
                             canCopy
                         />
-                        <Separator />
-                        <InfoRow
-                            label={t("language-code")}
-                            value={user?.languageCode}
-                        />
                     </CardContent>
                 </Card>
-
-                {/* Account Stats Card */}
                 <Card>
                     <CardHeader>
                         <CardTitle>{t("account-stats")}</CardTitle>
@@ -167,8 +159,6 @@ export default function ProfilePage() {
                         </div>
                     </CardContent>
                 </Card>
-
-                {/* Settings Card */}
                 <Card>
                     <CardHeader>
                         <CardTitle>{t("settings")}</CardTitle>

@@ -3,7 +3,13 @@
 import { useTranslations } from "next-intl";
 import { Page } from "@/components/Page";
 import { AdminLinkCard } from "@/components/admin/AdminLinkCard";
-import { Users, Package, Server, ClipboardList } from "lucide-react";
+import {
+    Users,
+    Package,
+    Server,
+    ClipboardList,
+    CreditCard, // آیکون جدید
+} from "lucide-react";
 
 export default function AdminDashboardPage() {
     const t = useTranslations("i18n");
@@ -32,6 +38,12 @@ export default function AdminDashboardPage() {
             icon: <ClipboardList className="h-8 w-8" />,
             title: t("manage-orders"),
             description: t("view-and-manage-all-user-orders"),
+        },
+        {
+            href: "/admin/payment",
+            icon: <CreditCard className="h-8 w-8" />,
+            title: t("manage-payments"),
+            description: t("view-all-user-transactions"),
         },
     ];
 

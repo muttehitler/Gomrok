@@ -166,6 +166,14 @@
         "manage-users": "Manage Users",
         "view-user-details-and-activities": "View user details and activities.",
         "manage-orders": "Manage Orders",
-        "view-and-manage-all-user-orders": "View and manage all user orders."
+        "view-and-manage-all-user-orders": "View and manage all user orders.",
+        "get-test-account": "Get Test Account",
+        "manage-payments": "Manage Payments",
+        "view-all-user-transactions": "View and manage all user transactions.",
+        "no-payments-found": "No payments found.",
+        "pending": "Pending",
+        "completed": "Completed",
+        "failed": "Failed",
+        "failed-to-copy": "Failed to copy to clipboard."
     }
 }
