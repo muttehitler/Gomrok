@@ -167,6 +167,13 @@
         "view-user-details-and-activities": "Просмотр сведений о пользователях и их действиях.",
         "manage-orders": "Управление заказами",
         "view-and-manage-all-user-orders": "Просмотр и управление всеми заказами пользователей.",
-        "get-test-account": "Получить тестовый аккаунт"
+        "get-test-account": "Получить тестовый аккаунт",
+        "manage-payments": "Управление платежами",
+        "view-all-user-transactions": "Просмотр и управление всеми транзакциями пользователей.",
+        "no-payments-found": "Платежи не найдены.",
+        "pending": "В ожидании",
+        "completed": "Завершено",
+        "failed": "Не удалось",
+        "failed-to-copy": "Не удалось скопировать."
     }
 }

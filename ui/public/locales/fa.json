@@ -167,6 +167,13 @@
         "view-user-details-and-activities": "مشاهده جزئیات و فعالیت‌های کاربران.",
         "manage-orders": "مدیریت سفارشات",
         "view-and-manage-all-user-orders": "مشاهده و مدیریت تمام سفارشات کاربران.",
-        "get-test-account": "دریافت اکانت تست"
+        "get-test-account": "دریافت اکانت تست",
+        "manage-payments": "مدیریت پرداخت‌ها",
+        "view-all-user-transactions": "تمام تراکنش‌های کاربران را اینجا ببینید و مدیریت کنید.",
+        "no-payments-found": "هیچ پرداختی یافت نشد.",
+        "pending": "در انتظار",
+        "completed": "موفق",
+        "failed": "ناموفق",
+        "failed-to-copy": "خطا در کپی کردن."
     }
 }
