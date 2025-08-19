@@ -2,6 +2,7 @@ export const PANEL_PATTERNS = {
     CLIENT: 'panel_client',
     TEST_CONNECTION: 'panel.testConnection',
     ADD: 'panel.add',
+    GET_FOR_USER: 'panel.get_for_user',
     GET_LIST: 'panel.get_list',
     GET: 'panel.get',
     UPDATE: 'panel.update',
