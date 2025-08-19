@@ -47,7 +47,7 @@ const AdminFAB = () => (
         href="/admin"
         className={cn(
             buttonVariants({ variant: "default", size: "icon" }),
-            "fixed bottom-24 end-4 z-50 h-14 w-14 rounded-full shadow-lg"
+            "fixed bottom-24 start-4 z-50 h-14 w-14 rounded-full shadow-lg"
         )}
         aria-label="Admin Panel"
     >
