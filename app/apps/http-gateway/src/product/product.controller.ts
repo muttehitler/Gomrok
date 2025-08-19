@@ -43,6 +43,12 @@ export class ProductController {
         return await this.productService.update(id, product)
     }
 
+    @Get(':id/user')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getForUser(@Param('id') id: string) {
+        return await this.productService.get(id)
+    }
+
     @Get(':id')
     @UseGuards(new JwtAuthGuard(['admin']))
     async get(@Param('id') id: string) {
