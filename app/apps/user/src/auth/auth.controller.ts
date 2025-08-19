@@ -13,4 +13,9 @@ export class AuthController {
   async login(@Body() loginDto: TelegramLoginDto): Promise<any> {
     return await this.authService.login(loginDto);
   }
+
+  @MessagePattern(AUTH_PATTERNS.VERIFY)
+  async verify(data: { authHeader: string, loginDto: TelegramLoginDto }) {
+    return await this.authService.verify(data.authHeader, data.loginDto)
+  }
 }

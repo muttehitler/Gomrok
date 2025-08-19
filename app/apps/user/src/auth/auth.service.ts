@@ -8,6 +8,8 @@ import * as dotenv from 'dotenv'
 import { JwtService } from '@nestjs/jwt';
 import AccessTokenDto from '@app/contracts/models/dtos/accessToken.dto';
 import { InjectModel } from '@nestjs/mongoose';
+import ResultDto from '@app/contracts/models/dtos/resultDto';
+import { Messages } from '@app/contracts/messages/messages';
 
 
 @Injectable()
@@ -18,9 +20,6 @@ export class AuthService {
   }
 
   async login(loginDto: TelegramLoginDto): Promise<any> {
-    // if (HashHelper.comparePassword('password1234', (await this.userDal.findOne({ name: 'taha2' }))!.passwordHash, () => { }))
-    //   return await this.userDal.find({}).then((r) => { r.reverse(); return r[0] });
-    // throw new BadGatewayException();
     const parsed = new URLSearchParams(loginDto.raw)
     const hash = parsed.get("hash")
     if (!hash) throw new ForbiddenException()
@@ -80,5 +79,69 @@ export class AuthService {
     }
 
     return accessToken
+  }
+
+  async verify(authHeader: string, loginDto: TelegramLoginDto): Promise<ResultDto> {
+    const parsed = new URLSearchParams(loginDto.raw)
+    const hash = parsed.get("hash")
+    if (!hash) throw new ForbiddenException()
+    parsed.delete("hash")
+
+    const calculatedHash = crypto
+      .createHmac("sha256", crypto
+        .createHmac("sha256", "WebAppData")
+        .update(process.env.BOT_TOKEN ?? '')
+        .digest())
+      .update(Array.from(parsed.entries())
+        .map(([key, value]) => `${key}=${value}`)
+        .sort()
+        .join("\n"))
+      .digest("hex")
+
+    if (calculatedHash !== hash)
+      throw new ForbiddenException()
+
+    const token = authHeader?.split(' ')[1];
+    try {
+      const decoded = await this.jwt.verifyAsync(token);
+
+      const rawUser = JSON.parse(parsed.get("user") ?? '')
+
+      let user = await this.userModel.findOne({ chatId: rawUser.id })
+
+      if (!user) {
+        return {
+          success: false,
+          message: Messages.USER.AUTH.USER_NOT_FOUND.message,
+          statusCode: Messages.USER.AUTH.USER_NOT_FOUND.code
+        }
+      }
+
+      if (rawUser.id !== decoded["chatId"])
+        return {
+          success: false,
+          message: Messages.USER.AUTH.CHAT_ID_ISNT_SAME.message,
+          statusCode: Messages.USER.AUTH.CHAT_ID_ISNT_SAME.code
+        };
+
+      if (user.claims.length !== decoded["claims"].length && !user.claims.sort().every((val, i) => decoded["claims"].sort()[i] === val))
+        return {
+          success: false,
+          message: Messages.USER.AUTH.CLAIMS_ISNT_SAME.message,
+          statusCode: Messages.USER.AUTH.CLAIMS_ISNT_SAME.code
+        }
+
+      return {
+        success: true,
+        message: Messages.USER.AUTH.USER_VERIFIED_SUCCESSFULLY.message,
+        statusCode: Messages.USER.AUTH.USER_VERIFIED_SUCCESSFULLY.code
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+        statusCode: 5
+      };
+    }
   }
 }
