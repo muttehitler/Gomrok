@@ -132,6 +132,10 @@ export const Messages = {
             message: "Balance updated successfully",
             code: 1
         },
+        BALANCE_IS_LOW: {
+            message: "Balance is low",
+            code: 500
+        },
         BALANCE_GOT_SUCCESSFULLY: {
             message: "Balance got successfully",
             code: 1
