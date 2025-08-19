@@ -1,6 +1,6 @@
 "use client";
 
-import { login } from "@/actions/auth.action";
+import { login, verify } from "@/actions/auth.action";
 import { getCookie, setCookie } from "@/lib/utils/cookie.helper";
 import { initData, useSignal } from "@telegram-apps/sdk-react";
 import crypto from "crypto";
@@ -30,7 +30,8 @@ export default function CheckAuth({ children }: CheckAuthProps) {
 
             if (token && csrf) {
                 setIsAuthenticating(false);
-                return;
+                if ((await verify(raw ?? '')).success)
+                    return;
             }
 
             try {

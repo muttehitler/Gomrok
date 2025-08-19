@@ -14,7 +14,7 @@ export class UserController {
     }
 
     @Get('/me')
-    @UseGuards(new JwtAuthGuard(['admin']))
+    @UseGuards(new JwtAuthGuard(['user']))
     async me(@Req() req) {
         return await this.userService.get(req.user['sub'])
     }

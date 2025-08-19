@@ -139,6 +139,24 @@ export const Messages = {
         USER_LISTED_SUCCESSFULLY: {
             message: "User listed successfully.",
             code: 1
+        },
+        AUTH: {
+            USER_VERIFIED_SUCCESSFULLY: {
+                message: "User verified successfully!",
+                code: 1
+            },
+            USER_NOT_FOUND: {
+                message: "User not found!",
+                code: 2
+            },
+            CHAT_ID_ISNT_SAME: {
+                message: "ChatId isn't same!",
+                code: 3
+            },
+            CLAIMS_ISNT_SAME: {
+                message: "claims isn't same!",
+                code: 4
+            }
         }
     },
     PRODUCT: {
