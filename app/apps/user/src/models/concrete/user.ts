@@ -26,6 +26,9 @@ export default class User extends Document implements IEntity {
 
     @Prop({ type: [String], default: ['user'] })
     claims: string[]
+
+    @Prop({ type: Number })
+    testLimit: number
 }
 
 export type UserDocument = User & Document & {

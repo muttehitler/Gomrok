@@ -192,6 +192,10 @@ export const Messages = {
         ORDER_RENEWED_SUCCESSFULLY: {
             message: "Order renewed successfully.",
             code: 1
+        },
+        TEST_ACCOUNT_LIMIT_REACHED: {
+            message: "Test account limit reached.",
+            code: 2
         }
     }
 }
