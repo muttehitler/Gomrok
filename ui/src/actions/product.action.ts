@@ -50,6 +50,20 @@ export async function addProduct(formData: any) {
     return await safeApiCall(config, formData.csrf);
 }
 
+export async function getProductForUser(data: any) {
+    const config = {
+        method: "get",
+        url: process.env.API_ADDRESS + PRODUCT_PATTERNS.GET_FOR_USER.replace(':id', data.id),
+        headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+            authorization: "Bearer " + (await cookies()).get("token")?.value,
+        },
+        validateStatus: () => true,
+    };
+    return await safeApiCall(config, data.csrf);
+}
+
 export async function getProductList(data: any) {
     const config = {
         method: "get",

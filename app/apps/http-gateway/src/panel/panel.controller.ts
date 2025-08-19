@@ -31,6 +31,12 @@ export class PanelController {
         return await this.panelService.getLocations(filter)
     }
 
+    @Get(':id/user')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getForUser(@Param('id') id: string): Promise<PanelDto> {
+        return await this.panelService.get(id)
+    }
+
     @Get()
     @UseGuards(new JwtAuthGuard(['admin']))
     async getList(@Query() filter: FilterDto): Promise<DataResultDto<ListDto<PanelDto[]>>> {

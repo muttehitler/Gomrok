@@ -93,9 +93,8 @@ export class OrderService {
     if (!order.test) {
       const updateUserBalanceResult = await this.userClient.send(USER_PATTERNS.UPDATE_USER_BALANCE, { userId: userId, balance: (userBalance.data - order.finalPrice) }).toPromise() as ResultDto
 
-      if (!updateUserBalanceResult.success) {
-        throw new InternalServerErrorException("cannot update user balance")
-      }
+      if (!updateUserBalanceResult.success)
+        throw updateUserBalanceResult
 
       const balanceLogResult = await this.paymentClient.send(PAYMENT_PATTERNS.BALANCE_LOG.LOG, {
         type: 'reduce',

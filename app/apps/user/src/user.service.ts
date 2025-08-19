@@ -27,6 +27,14 @@ export class UserService {
   }
 
   async updateUserBalance(userId: string, balance: number): Promise<ResultDto> {
+    const user = await this.userModel.findOne({ _id: new Types.ObjectId(userId) })
+
+    if (balance < 0)
+      throw {
+        message: Messages.USER.BALANCE_IS_LOW.message,
+        statusCode: Messages.USER.BALANCE_IS_LOW.code
+      }
+
     await this.userModel.updateOne({ _id: new Types.ObjectId(userId) }, { $set: { balance: balance } })
 
     return {

@@ -23,6 +23,11 @@ export class PanelController {
     return await this.panelService.add(data.panelDto, data.authorUser)
   }
 
+  @MessagePattern(PANEL_PATTERNS.GET_FOR_USER)
+  async getForUser(id: string): Promise<PanelDto> {
+    return await this.panelService.getForUser(id)
+  }
+
   @MessagePattern(PANEL_PATTERNS.GET_LIST)
   async getList(filter: FilterDto): Promise<DataResultDto<ListDto<PanelDto[]>>> {
     return await this.panelService.getList(filter)
