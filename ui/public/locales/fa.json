@@ -166,6 +166,7 @@
         "manage-users": "مدیریت کاربران",
         "view-user-details-and-activities": "مشاهده جزئیات و فعالیت‌های کاربران.",
         "manage-orders": "مدیریت سفارشات",
-        "view-and-manage-all-user-orders": "مشاهده و مدیریت تمام سفارشات کاربران."
+        "view-and-manage-all-user-orders": "مشاهده و مدیریت تمام سفارشات کاربران.",
+        "get-test-account": "دریافت اکانت تست"
     }
 }
