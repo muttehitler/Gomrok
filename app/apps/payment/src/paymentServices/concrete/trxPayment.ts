@@ -15,6 +15,7 @@ import { firstValueFrom } from "rxjs";
 import { USER_PATTERNS } from "@app/contracts/patterns/userPattern";
 import { ClientProxy } from "@nestjs/microservices";
 import BalanceLog, { BalanceLogDocument } from "../../models/concrete/balanceLogs";
+import UserDto from "@app/contracts/models/dtos/user/userDto";
 
 @Injectable()
 export default class TRXPayment implements PaymentBase {
@@ -146,6 +147,8 @@ export default class TRXPayment implements PaymentBase {
         if (String(payment.user) != authorId)
             throw new ForbiddenException()
 
+        const user = await this.userClient.send(USER_PATTERNS.GET, { userId: String(payment.user) }).toPromise() as DataResultDto<UserDto>
+
         return {
             success: true,
             message: Messages.PAYMENT.INVOICE_GOT.message,
@@ -153,7 +156,23 @@ export default class TRXPayment implements PaymentBase {
             data: {
                 id: String(payment._id),
                 walletAddress: payment.walletAddress,
-                amount: payment.amount
+                amount: payment.amount,
+                cardNumber: payment.cardNumber,
+                completed: payment.completed,
+                createdAt: payment.createdAt,
+                currency: payment.currency,
+                hash: payment.hash,
+                paymentMethod: payment.paymentMethod,
+                status: payment.status,
+                updatedAt: payment.updatedAt,
+                user: {
+                    id: String(user.data.id),
+                    firstName: user.data.firstName,
+                    lastName: user.data.lastName,
+                    username: user.data.username,
+                    chatId: user.data.chatId,
+                    photoUrl: user.data.photoUrl
+                }
             }
         }
     }
