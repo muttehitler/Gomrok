@@ -45,14 +45,16 @@ export const OrderItem: FC<OrderItemProps> = ({
                         </CardDescription>
                     </div>
                     <div className="flex items-center gap-4">
-                        <div className="flex flex-col items-end gap-2">
-                            <Badge variant={payed ? "default" : "destructive"}>
-                                {payed ? t("payed") : t("not-payed")}
-                            </Badge>
-                            <span className="text-sm font-medium text-muted-foreground">
-                                {finalPrice.toLocaleString()} {t("toman")}
-                            </span>
-                        </div>
+                        {!payed && (
+                            <div className="flex flex-col items-end gap-2">
+                                <Badge variant={payed ? "default" : "destructive"}>
+                                    {t("not-payed")}
+                                </Badge>
+                                <span className="text-sm font-medium text-muted-foreground">
+                                    {finalPrice.toLocaleString()} {t("toman")}
+                                </span>
+                            </div>
+                        )}
                         <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform rtl:rotate-180" />{" "}
                     </div>
                 </CardContent>
