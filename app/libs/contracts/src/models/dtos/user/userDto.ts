@@ -6,7 +6,7 @@ export default interface UserDto {
     lastName: string
     username: string
     photoUrl: string
-    balance: number
+    balance?: number
 
     claims?: string[]
     createdAt?: Date
