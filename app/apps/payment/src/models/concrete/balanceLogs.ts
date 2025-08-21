@@ -18,6 +18,9 @@ export default class BalanceLog extends Document implements IEntity {
     payment: Payment
 
     @Prop({ type: Types.ObjectId, ref: 'User', required: false })
+    admin: Types.ObjectId
+
+    @Prop({ type: Types.ObjectId, ref: 'User', required: true })
     user: Types.ObjectId
 }
 

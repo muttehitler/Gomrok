@@ -4,5 +4,6 @@ export default interface BalanceLogDto {
     amount: number
     order?: string
     payment?: string
+    admin?: string
     user: string
 }
