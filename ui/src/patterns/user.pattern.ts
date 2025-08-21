@@ -3,8 +3,10 @@ export const USER_PATTERNS = {
     GET_LIST: '/user',
     GET: '/user/',
     ME: '/user/me',
-    AUTH:{
-        LOGIN:'/auth/login',
-        VERIFY:'/auth/verify'
+    INCREACE_BALANCE: '/user/increase_balance/',
+    DECREACE_BALANCE: '/user/decrease_balance/',
+    AUTH: {
+        LOGIN: '/auth/login',
+        VERIFY: '/auth/verify'
     }
 }

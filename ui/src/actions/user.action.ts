@@ -56,3 +56,33 @@ export async function me(data: any) {
     })
     return JSON.stringify(response.data)
 }
+
+export async function increaseUserBalance(data: any) {
+    validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
+    const response = await axios.post(process.env.API_ADDRESS + USER_PATTERNS.INCREACE_BALANCE + data.id, {
+        amount: data.amount
+    }, {
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + (await cookies()).get('token')?.value
+        },
+        validateStatus: () => true
+    })
+    return JSON.stringify(response.data)
+}
+
+export async function decreaseUserBalance(data: any) {
+    validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
+    const response = await axios.post(process.env.API_ADDRESS + USER_PATTERNS.DECREACE_BALANCE + data.id, {
+        amount: data.amount
+    }, {
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + (await cookies()).get('token')?.value
+        },
+        validateStatus: () => true
+    })
+    return JSON.stringify(response.data)
+}

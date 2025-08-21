@@ -7,6 +7,7 @@
         "wallet-logs-header": "تاریخچه کیف پول",
         "buy": "خرید",
         "top-up": "شارژ حساب",
+        "reduce": "کاهش",
         "add-panel": "افزودن پنل",
         "add-product": "افزودن محصول",
         "cancel": "لغو",
@@ -125,6 +126,7 @@
         "confirm-and-pay": "تایید و پرداخت",
         "your-wallet-balance": "موجودی کیف پول شما",
         "top-up-account": "شارژ حساب",
+        "reduce-account": "کاهش موجودی",
         "select-payment-method": "انتخاب روش پرداخت",
         "pay-with-tron-network": "پرداخت از طریق شبکه ترون",
         "top-up-with-trx": "شارژ با TRX",
@@ -174,6 +176,8 @@
         "pending": "در انتظار",
         "completed": "موفق",
         "failed": "ناموفق",
-        "failed-to-copy": "خطا در کپی کردن."
+        "failed-to-copy": "خطا در کپی کردن.",
+        "admin-top-up-desc": "افزایش دستی موجودی کاربر",
+        "admin-reduce-desc": "کاهش دستی موجودی کاربر"
     }
 }

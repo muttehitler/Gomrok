@@ -10,6 +10,7 @@ import {
     UserDetailView,
     UserDetailSkeleton,
 } from "@/components/user/UserDetailView";
+import emitter from "@/lib/utils/eventEmitter";
 
 type User = {
     id: string;
@@ -50,6 +51,9 @@ export default function UserDetailPage({ params }: Props) {
                 setIsLoading(false);
             }
         };
+
+        emitter.on("reload-user", fetchUser);
+
         fetchUser();
     }, [id]);
 

@@ -7,6 +7,7 @@
         "wallet-logs-header": "История кошелька",
         "buy": "Купить",
         "top-up": "Пополнить",
+        "reduce": "уменьшать",
         "add-panel": "Добавить панель",
         "add-product": "Добавить продукт",
         "cancel": "Отмена",
@@ -125,6 +126,7 @@
         "confirm-and-pay": "Подтвердить и оплатить",
         "your-wallet-balance": "Баланс вашего кошелька",
         "top-up-account": "Пополнить счет",
+        "reduce-account": "Уменьшить баланс пользователя",
         "select-payment-method": "Выберите способ оплаты",
         "pay-with-tron-network": "Оплата через сеть Tron",
         "top-up-with-trx": "Пополнение через TRX",
@@ -174,6 +176,8 @@
         "pending": "В ожидании",
         "completed": "Завершено",
         "failed": "Не удалось",
-        "failed-to-copy": "Не удалось скопировать."
+        "failed-to-copy": "Не удалось скопировать.",
+        "admin-top-up-desc": "Увеличить баланс пользователя вручную",
+        "admin-reduce-desc": "Уменьшить баланс пользователя вручную"
     }
 }

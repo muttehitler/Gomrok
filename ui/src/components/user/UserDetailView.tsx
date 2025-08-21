@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { FC } from "react";
-import { Copy } from "lucide-react";
+import { Copy, MinusCircle, PlusCircle, Wallet } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { AdminTopUpDialog } from "../adminTopUpDialog/adminTopUpDialog";
+import { AdminReduceDialog } from "../adminReduceDialog/adminReduceDialog";
 
 type User = {
     id: string;
@@ -18,6 +20,7 @@ type User = {
     username: string;
     chatId: number;
     photoUrl: string;
+    balance: number
 };
 
 const InfoRow = ({
@@ -121,6 +124,30 @@ export const UserDetailView: FC<UserDetailViewProps> = ({ user }) => {
                     <InfoRow label={t("chat-id")} value={user.chatId} />
                     <Separator />
                     <InfoRow label={t("id")} value={user.id} />
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t("your-wallet-balance")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center text-3xl font-bold text-primary">
+                        <Wallet className="me-3 h-8 w-8" />
+                        <span>
+                            {user.balance.toLocaleString() ?? "0"}{" "}
+                            <span className="text-lg font-medium text-muted-foreground">
+                                {t("toman")}
+                            </span>
+                        </span>
+                    </div>
+                    <br />
+                    <Separator />
+                    <br />
+                    <div className="flex gap-2 ">
+                        <AdminReduceDialog id={user.id} />
+                        <AdminTopUpDialog id={user.id} />
+                    </div>
                 </CardContent>
             </Card>
         </div>
