@@ -7,6 +7,7 @@
         "wallet-logs-header": "Wallet History",
         "buy": "Buy",
         "top-up": "Top-up",
+        "reduce": "Reduce",
         "add-panel": "Add Panel",
         "add-product": "Add Product",
         "cancel": "Cancel",
@@ -125,6 +126,7 @@
         "confirm-and-pay": "Confirm and Pay",
         "your-wallet-balance": "Your Wallet Balance",
         "top-up-account": "Top-up Account",
+        "reduce-account": "Reduce Account",
         "select-payment-method": "Select Payment Method",
         "pay-with-tron-network": "Pay with Tron Network",
         "top-up-with-trx": "Top-up with TRX",
@@ -174,6 +176,8 @@
         "pending": "Pending",
         "completed": "Completed",
         "failed": "Failed",
-        "failed-to-copy": "Failed to copy to clipboard."
+        "failed-to-copy": "Failed to copy to clipboard.",
+        "admin-top-up-desc": "Top-Up user balance manually",
+        "admin-reduce-desc": "Reduce user balance manually"
     }
 }
