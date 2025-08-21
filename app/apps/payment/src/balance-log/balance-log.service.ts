@@ -17,8 +17,9 @@ export class BalanceLogService {
         const balanceLogToAdd = new this.balanceLogModel({
             type: balanceLog.type,
             amount: balanceLog.amount,
-            order: new Types.ObjectId(balanceLog.order),
-            payment: new Types.ObjectId(balanceLog.payment),
+            order: balanceLog.order && new Types.ObjectId(balanceLog.order),
+            payment: balanceLog.payment && new Types.ObjectId(balanceLog.payment),
+            admin: balanceLog.admin && new Types.ObjectId(balanceLog.admin),
             user: new Types.ObjectId(balanceLog.user)
         })
         await balanceLogToAdd.save()
