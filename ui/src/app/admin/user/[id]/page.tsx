@@ -18,6 +18,7 @@ type User = {
     username: string;
     chatId: number;
     photoUrl: string;
+    balance: number
 };
 
 type Props = {

@@ -65,6 +65,7 @@ export class UserService {
         username: user.username,
         chatId: user.chatId,
         photoUrl: user.photoUrl,
+        balance: user.balance,
         claims: user.claims,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
@@ -84,6 +85,7 @@ export class UserService {
         username: x.username,
         chatId: x.chatId,
         photoUrl: x.photoUrl,
+        balance: x.balance,
         claims: x.claims,
         createdAt: x.createdAt,
         updatedAt: x.updatedAt
