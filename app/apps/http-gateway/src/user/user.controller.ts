@@ -1,5 +1,5 @@
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
-import { Body, Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import FilterDto from '@app/contracts/models/dtos/filterDto';
 
@@ -31,13 +31,13 @@ export class UserController {
         return await this.userService.get(id)
     }
 
-    @Get('increase_balance/:id')
+    @Post('increase_balance/:id')
     @UseGuards(new JwtAuthGuard(['admin']))
     async increaseBalance(@Param('id') id: string, @Body() body, @Req() req) {
         return await this.userService.increaseBalance(id, body.amount, req.user['sub'])
     }
 
-    @Get('decrease_balance/:id')
+    @Post('decrease_balance/:id')
     @UseGuards(new JwtAuthGuard(['admin']))
     async decreaseBalance(@Param('id') id: string, @Body() body, @Req() req) {
         return await this.userService.decreaseBalance(id, body.amount, req.user['sub'])
