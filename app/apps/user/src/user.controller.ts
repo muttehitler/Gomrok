@@ -28,4 +28,14 @@ export class UserController {
   async getList(data: { filter: FilterDto }) {
     return await this.userService.getList(data.filter)
   }
+
+  @MessagePattern(USER_PATTERNS.INCREASE_BALANCE)
+  async increaseBalance(data: { userId: string, amount: number, adminId: string }) {
+    return await this.userService.increaseBalance(data.userId, data.amount, data.adminId)
+  }
+
+  @MessagePattern(USER_PATTERNS.DECREASE_BALANCE)
+  async decreaseBalance(data: { userId: string, amount: number, adminId: string }) {
+    return await this.userService.decreaseBalance(data.userId, data.amount, data.adminId)
+  }
 }
