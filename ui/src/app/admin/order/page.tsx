@@ -101,6 +101,7 @@ export default function AdminOrderListPage() {
                                     {...order}
                                     key={order.id}
                                     orderDetailUrl={`/admin/order/${order.id}`}
+                                    showPayed={true}
                                 />
                             ))}
                         </div>
