@@ -46,7 +46,8 @@ function RootInner({ children }: PropsWithChildren) {
 
   // Set the user locale.
   useEffect(() => {
-    initDataUser && setLocale(getCookie('NEXT_LOCALE') ?? initDataUser.languageCode);
+    const cookieLocale = getCookie('NEXT_LOCALE')
+    initDataUser && cookieLocale && setLocale(cookieLocale);
   }, [initDataUser]);
 
   useEffect(() => {

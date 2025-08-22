@@ -6,6 +6,7 @@ import { initData, useSignal } from "@telegram-apps/sdk-react";
 import crypto from "crypto";
 import { Loader2 } from "lucide-react";
 import { ReactNode, useEffect, useState } from "react";
+import { SelectLanguageDialog } from "../selectLanguageDialog/selectLanguageDialog";
 
 type CheckAuthProps = {
     children: ReactNode;
@@ -20,6 +21,7 @@ const AuthLoader = () => (
 
 export default function CheckAuth({ children }: CheckAuthProps) {
     const [isAuthenticating, setIsAuthenticating] = useState(true);
+    const [locale, _] = useState(getCookie("NEXT_LOCALE"))
 
     const raw = useSignal(initData.raw);
 
@@ -64,6 +66,12 @@ export default function CheckAuth({ children }: CheckAuthProps) {
 
     return (
         <div className="flex h-full flex-col">
+            {
+                !locale && (
+                    <SelectLanguageDialog />
+                )
+            }
+
             <main className="flex-1 overflow-y-auto">{children}</main>
         </div>
     );

@@ -21,6 +21,7 @@ type OrderItemProps = {
     payed: boolean;
     finalPrice: number;
     orderDetailUrl?: string;
+    showPayed?: boolean;
 };
 
 export const OrderItem: FC<OrderItemProps> = ({
@@ -29,6 +30,7 @@ export const OrderItem: FC<OrderItemProps> = ({
     payed,
     finalPrice,
     orderDetailUrl,
+    showPayed = false
 }) => {
     const t = useTranslations("i18n");
 
@@ -45,10 +47,10 @@ export const OrderItem: FC<OrderItemProps> = ({
                         </CardDescription>
                     </div>
                     <div className="flex items-center gap-4">
-                        {!payed && (
+                        {(!payed || showPayed) && (
                             <div className="flex flex-col items-end gap-2">
                                 <Badge variant={payed ? "default" : "destructive"}>
-                                    {t("not-payed")}
+                                    {t(payed ? "payed" : "not-payed")}
                                 </Badge>
                                 <span className="text-sm font-medium text-muted-foreground">
                                     {finalPrice.toLocaleString()} {t("toman")}
