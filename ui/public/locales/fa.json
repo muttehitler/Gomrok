@@ -178,6 +178,11 @@
         "failed": "ناموفق",
         "failed-to-copy": "خطا در کپی کردن.",
         "admin-top-up-desc": "افزایش دستی موجودی کاربر",
-        "admin-reduce-desc": "کاهش دستی موجودی کاربر"
+        "admin-reduce-desc": "کاهش دستی موجودی کاربر",
+        "payment-details": "جزئیات پرداخت",
+        "currency": "واحد پول",
+        "payment-method": "روش پرداخت",
+        "created-at": "تاریخ ایجاد",
+        "updated-at": "تاریخ به‌روزرسانی"
     }
 }

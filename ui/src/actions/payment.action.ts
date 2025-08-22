@@ -33,7 +33,7 @@ export async function getInvoice(data: any) {
         (await cookies()).get("csrf")?.value ?? ""
     );
     const response = await axios.get(
-        process.env.API_ADDRESS + PAYMENT_PATTERNS.GET + data.id,
+        process.env.API_ADDRESS + PAYMENT_PATTERNS.GET_FOR_USER + data.id,
         {
             headers: {
                 accept: "application/json",
@@ -75,8 +75,28 @@ export async function getBalanceLogsList(data: any) {
     );
     const response = await axios.get(
         process.env.API_ADDRESS +
-            PAYMENT_PATTERNS.BALANCE_LOG.GET_LIST +
-            `?startIndex=${data.startIndex}&&limit=${data.limit}`,
+        PAYMENT_PATTERNS.BALANCE_LOG.GET_LIST +
+        `?startIndex=${data.startIndex}&&limit=${data.limit}`,
+        {
+            headers: {
+                accept: "application/json",
+                "Content-Type": "application/json",
+                authorization:
+                    "Bearer " + (await cookies()).get("token")?.value,
+            },
+            validateStatus: () => true,
+        }
+    );
+    return JSON.stringify(response.data);
+}
+
+export async function getPayment(data: any) {
+    validateCsrfTokenWithEx(
+        data.csrf,
+        (await cookies()).get("csrf")?.value ?? ""
+    );
+    const response = await axios.get(
+        process.env.API_ADDRESS + PAYMENT_PATTERNS.GET + data.id,
         {
             headers: {
                 accept: "application/json",

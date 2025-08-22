@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { FC } from "react";
-import { Copy, MinusCircle, PlusCircle, Wallet } from "lucide-react";
+import { Copy, Wallet } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
