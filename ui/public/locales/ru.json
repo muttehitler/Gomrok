@@ -183,6 +183,7 @@
         "currency": "Валюта",
         "payment-method": "Способ оплаты",
         "created-at": "Дата создания",
-        "updated-at": "Дата обновления"
+        "updated-at": "Дата обновления",
+        "select-language": "Выберите язык"
     }
 }
