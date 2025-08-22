@@ -140,7 +140,42 @@ export default class TRXPayment implements PaymentBase {
         return result
     }
 
-    async get(id: string, authorId: string): Promise<DataResultDto<PaymentResultDto>> {
+    async get(id: string): Promise<DataResultDto<PaymentResultDto>> {
+        const payment = await this.paymentModel.findById(new Types.ObjectId(id))
+        if (!payment)
+            throw new NotFoundException()
+
+        const user = await this.userClient.send(USER_PATTERNS.GET, { userId: String(payment.user) }).toPromise() as DataResultDto<UserDto>
+
+        return {
+            success: true,
+            message: Messages.PAYMENT.INVOICE_GOT.message,
+            statusCode: Messages.PAYMENT.INVOICE_GOT.code,
+            data: {
+                id: String(payment._id),
+                walletAddress: payment.walletAddress,
+                amount: payment.amount,
+                cardNumber: payment.cardNumber,
+                completed: payment.completed,
+                createdAt: payment.createdAt,
+                currency: payment.currency,
+                hash: payment.hash,
+                paymentMethod: payment.paymentMethod,
+                status: payment.status,
+                updatedAt: payment.updatedAt,
+                user: {
+                    id: String(user.data.id),
+                    firstName: user.data.firstName,
+                    lastName: user.data.lastName,
+                    username: user.data.username,
+                    chatId: user.data.chatId,
+                    photoUrl: user.data.photoUrl
+                }
+            }
+        }
+    }
+
+    async getForUser(id: string, authorId: string): Promise<DataResultDto<PaymentResultDto>> {
         const payment = await this.paymentModel.findById(new Types.ObjectId(id))
         if (!payment)
             throw new NotFoundException()

@@ -12,8 +12,12 @@ export class PaymentService {
         return await this.paymentClient.send(PAYMENT_PATTERNS.ADD, { payment: payment, authorId: authorId })
     }
 
-    async get(id: string, authorId: string) {
-        return await this.paymentClient.send(PAYMENT_PATTERNS.GET, { id: id, authorId: authorId })
+    async get(id: string) {
+        return await this.paymentClient.send(PAYMENT_PATTERNS.GET, { id: id })
+    }
+
+    async getForUser(id: string, authorId: string) {
+        return await this.paymentClient.send(PAYMENT_PATTERNS.GET_FOR_USER, { id: id, authorId: authorId })
     }
 
     async verify(payment: PaymentDto, authorId: string) {

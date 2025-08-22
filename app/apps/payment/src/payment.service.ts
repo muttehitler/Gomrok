@@ -26,13 +26,24 @@ export class PaymentService {
     return result;
   }
 
-  async get(id: string, authorId: string) {
+  async get(id: string) {
     const payment = await this.paymentModel.findById(new Types.ObjectId(id))
     if (!payment)
       throw new NotFoundException()
 
     const paymentService = await this.moduleRef.resolve<PaymentBase>(payment.paymentMethod)
-    const result = await paymentService.get(id, authorId)
+    const result = await paymentService.get(id)
+
+    return result
+  }
+
+  async getForUser(id: string, authorId: string) {
+    const payment = await this.paymentModel.findById(new Types.ObjectId(id))
+    if (!payment)
+      throw new NotFoundException()
+
+    const paymentService = await this.moduleRef.resolve<PaymentBase>(payment.paymentMethod)
+    const result = await paymentService.getForUser(id, authorId)
 
     return result
   }
