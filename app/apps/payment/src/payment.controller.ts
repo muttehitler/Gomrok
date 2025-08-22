@@ -15,8 +15,13 @@ export class PaymentController {
   }
 
   @MessagePattern(PAYMENT_PATTERNS.GET)
-  async get(data: { id: string, authorId: string }) {
-    return await this.paymentService.get(data.id, data.authorId)
+  async get(data: { id: string }) {
+    return await this.paymentService.get(data.id)
+  }
+
+  @MessagePattern(PAYMENT_PATTERNS.GET_FOR_USER)
+  async getForUser(data: { id: string, authorId: string }) {
+    return await this.paymentService.getForUser(data.id, data.authorId)
   }
 
   @MessagePattern(PAYMENT_PATTERNS.VERIFY)

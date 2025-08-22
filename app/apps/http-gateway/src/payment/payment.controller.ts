@@ -21,10 +21,16 @@ export class PaymentController {
         return await this.paymentService.getList(filter)
     }
 
+    @Get('admin/:id')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async get(@Param('id') id: string) {
+        return await this.paymentService.get(id)
+    }
+
     @Get(':id')
     @UseGuards(new JwtAuthGuard(['user']))
-    async get(@Param('id') id: string, @Req() req) {
-        return await this.paymentService.get(id, req.user['sub'])
+    async getForUser(@Param('id') id: string, @Req() req) {
+        return await this.paymentService.getForUser(id, req.user['sub'])
     }
 
     @Post('verify')
