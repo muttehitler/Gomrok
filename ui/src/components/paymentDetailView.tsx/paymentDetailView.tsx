@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { FC } from "react";
-import { Copy, Wallet } from "lucide-react";
+import { Copy } from "lucide-react";
 import toast from "react-hot-toast";
 
 import moment from "moment";
@@ -10,13 +10,10 @@ import "moment/locale/ru";
 import "moment/locale/fa";
 import jmoment from "moment-jalaali";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { AdminTopUpDialog } from "../adminTopUpDialog/adminTopUpDialog";
-import { AdminReduceDialog } from "../adminReduceDialog/adminReduceDialog";
 import { Payment } from "@/types/payment";
 import { UserItem } from "../userItem/userItem";
 
@@ -106,14 +103,6 @@ export const PaymentDetailView: FC<PaymentDetailViewProps> = ({ payment }) => {
         );
     }
 
-    const getInitials = (firstName: string, lastName: string) => {
-        const f = firstName?.[0] || "";
-        const l = lastName?.[0] || "";
-        return `${f}${l}`.toUpperCase() || "U";
-    };
-
-    const fullName = `${payment.user.firstName} ${payment.user.lastName || ""}`.trim();
-
     return (
         <div className="space-y-6">
             <Card>
@@ -127,7 +116,7 @@ export const PaymentDetailView: FC<PaymentDetailViewProps> = ({ payment }) => {
                     <Separator />
                     <InfoRow label={t("amount")} value={payment.amount ?? ''} copyButton={false} />
                     <Separator />
-                    <InfoRow label={t("completed")} value={payment.completed.toString()} copyButton={false} />
+                    <InfoRow label={t("completed")} value={t(payment.completed ? 'completed' : 'failed')} copyButton={false} />
                     <Separator />
                     <InfoRow label={t("currency")} value={payment.currency ?? ''} copyButton={false} />
                     <Separator />
