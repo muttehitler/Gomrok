@@ -184,6 +184,7 @@
         "payment-method": "روش پرداخت",
         "created-at": "تاریخ ایجاد",
         "updated-at": "تاریخ به‌روزرسانی",
-        "select-language": "انتخاب زبان"
+        "select-language": "انتخاب زبان",
+        "online": "آنلاین"
     }
 }

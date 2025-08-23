@@ -184,6 +184,7 @@
         "payment-method": "Payment Method",
         "created-at": "Created At",
         "updated-at": "Updated At",
-        "select-language": "Select Language"
+        "select-language": "Select Language",
+        "online": "Online"
     }
 }

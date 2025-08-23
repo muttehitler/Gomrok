@@ -184,6 +184,7 @@
         "payment-method": "Способ оплаты",
         "created-at": "Дата создания",
         "updated-at": "Дата обновления",
-        "select-language": "Выберите язык"
+        "select-language": "Выберите язык",
+        "online": "Онлайн"
     }
 }
