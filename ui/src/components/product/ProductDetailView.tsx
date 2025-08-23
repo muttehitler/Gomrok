@@ -46,7 +46,7 @@ import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 
 // Define Zod schema for the form
 const formSchema = z.object({
-    name: z.string().min(1, "Order name is required").regex(/^[a-z0-9]+$/, { message: "Username can only contain English and lowercase letters and numbers." }),
+    name: z.string().min(1, "Order name is required").regex(/^[a-z0-9_]+$/, { message: "Username can only contain English and lowercase letters and numbers." }),
 });
 
 // Define types for our data
