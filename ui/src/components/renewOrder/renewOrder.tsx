@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 
 import { getCookieCSRF } from "@/actions/auth.action";
-import { getProduct, getProductsByPanel } from "@/actions/product.action";
+import { getProductForUser, getProductsByPanel } from "@/actions/product.action";
 import { renewOrder } from "@/actions/order.action";
 import { Button } from "@/components/ui/button";
 import {
@@ -71,7 +71,7 @@ export const RenewOrder: FC<RenewOrderProps> = ({
                 try {
                     const csrf = generateCsrfToken((await getCookieCSRF())!);
                     const currentProduct = JSON.parse(
-                        await getProduct({ id: currentProductId, csrf })
+                        await getProductForUser({ id: currentProductId, csrf })
                     );
                     if (!currentProduct || !currentProduct.panel)
                         throw new Error(
