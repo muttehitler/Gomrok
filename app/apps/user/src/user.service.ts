@@ -12,12 +12,14 @@ import { ClientProxy } from '@nestjs/microservices';
 import { ORDER_PATTERNS } from '@app/contracts/patterns/orderPattern';
 import OrderDto from '@app/contracts/models/dtos/order/orderDto';
 import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
+import { REPORTING_PATTERNS } from '@app/contracts/patterns/reportingPattern';
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,
     @Inject(ORDER_PATTERNS.CLIENT) private orderClient: ClientProxy,
-    @Inject(PAYMENT_PATTERNS.CLIENT) private paymentClient: ClientProxy,) { }
+    @Inject(PAYMENT_PATTERNS.CLIENT) private paymentClient: ClientProxy,
+    @Inject(REPORTING_PATTERNS.CLIENT) private reportingClient: ClientProxy) { }
 
   async getUserBalance(userId: string): Promise<DataResultDto<number>> {
     return {
@@ -104,33 +106,57 @@ export class UserService {
   }
 
   async increaseBalance(userId: string, amount: number, adminId: string): Promise<ResultDto> {
-    const user = await this.getUserBalance(userId)
+    const userBalance = await this.getUserBalance(userId);
 
     const balanceLogResult = await this.paymentClient.send(PAYMENT_PATTERNS.BALANCE_LOG.LOG, {
       type: 'top-up',
       amount: amount,
       admin: adminId,
       user: userId
-    }).toPromise() as ResultDto
+    }).toPromise() as ResultDto;
     if (!balanceLogResult.success)
-      return balanceLogResult
+      return balanceLogResult;
 
-    return await this.updateUserBalance(userId, user.data + amount)
+    const result = await this.updateUserBalance(userId, userBalance.data + amount);
+
+    if (result.success) {
+      const admin = await this.get(adminId);
+      const user = await this.get(userId);
+      this.reportingClient.emit(REPORTING_PATTERNS.ADMIN_INCREASED_BALANCE, {
+        admin: admin.data,
+        user: user.data,
+        amount: amount
+      });
+    }
+
+    return result;
   }
 
   async decreaseBalance(userId: string, amount: number, adminId: string): Promise<ResultDto> {
-    const user = await this.getUserBalance(userId)
+    const userBalance = await this.getUserBalance(userId);
 
     const balanceLogResult = await this.paymentClient.send(PAYMENT_PATTERNS.BALANCE_LOG.LOG, {
       type: 'reduce',
       amount: amount,
       admin: adminId,
       user: userId
-    }).toPromise() as ResultDto
+    }).toPromise() as ResultDto;
     if (!balanceLogResult.success)
-      return balanceLogResult
+      return balanceLogResult;
 
-    return await this.updateUserBalance(userId, user.data - amount)
+    const result = await this.updateUserBalance(userId, userBalance.data - amount);
+
+    if (result.success) {
+      const admin = await this.get(adminId);
+      const user = await this.get(userId);
+      this.reportingClient.emit(REPORTING_PATTERNS.ADMIN_DECREASED_BALANCE, {
+        admin: admin.data,
+        user: user.data,
+        amount: amount
+      });
+    }
+
+    return result;
   }
 
   async getAdmins(): Promise<DataResultDto<ListDto<UserDto[]>>> {

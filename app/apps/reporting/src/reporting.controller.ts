@@ -94,4 +94,61 @@ ${new Date().toLocaleString('en-CA')}
     const admins = await this.getAdmins();
     await this.reportingService.sendReport(message, admins);
   }
+
+  @MessagePattern(REPORTING_PATTERNS.PAYMENT_VERIFIED)
+  async handlePaymentVerified(@Payload() data: { payment: any; user: UserDto; amount: number }) {
+    this.logger.log(`Received PAYMENT_VERIFIED event for user ${data.user.username}`);
+    const { user, amount } = data;
+
+    const message = `*Successful Payment Report* 💰
+
+*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
+*Amount:* 
+${amount.toLocaleString()}
+*Payment Method:* TRX
+*Date:* 
+${new Date().toLocaleString('en-CA')}
+    `;
+
+    const admins = await this.getAdmins();
+    await this.reportingService.sendReport(message, admins);
+  }
+
+  @MessagePattern(REPORTING_PATTERNS.ADMIN_INCREASED_BALANCE)
+  async handleAdminIncreasedBalance(@Payload() data: { admin: UserDto; user: UserDto; amount: number }) {
+    this.logger.log(`Received ADMIN_INCREASED_BALANCE event by ${data.admin.username}`);
+    const { admin, user, amount } = data;
+
+    const message = `*Admin Action: Balance Increased* 📈
+
+*Admin:* ${admin.firstName || ''} (@${admin.username || 'N/A'})
+*Target User:* ${user.firstName || ''} (@${user.username || 'N/A'})
+*Amount Increased:* 
+${amount.toLocaleString()}
+*Date:* 
+${new Date().toLocaleString('en-CA')}
+    `;
+
+    const admins = await this.getAdmins();
+    await this.reportingService.sendReport(message, admins);
+  }
+
+  @MessagePattern(REPORTING_PATTERNS.ADMIN_DECREASED_BALANCE)
+  async handleAdminDecreasedBalance(@Payload() data: { admin: UserDto; user: UserDto; amount: number }) {
+    this.logger.log(`Received ADMIN_DECREASED_BALANCE event by ${data.admin.username}`);
+    const { admin, user, amount } = data;
+
+    const message = `*Admin Action: Balance Decreased* 📉
+
+*Admin:* ${admin.firstName || ''} (@${admin.username || 'N/A'})
+*Target User:* ${user.firstName || ''} (@${user.username || 'N/A'})
+*Amount Decreased:* 
+${amount.toLocaleString()}
+*Date:* 
+${new Date().toLocaleString('en-CA')}
+    `;
+
+    const admins = await this.getAdmins();
+    await this.reportingService.sendReport(message, admins);
+  }
 }

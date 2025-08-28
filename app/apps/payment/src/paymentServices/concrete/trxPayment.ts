@@ -16,13 +16,15 @@ import { USER_PATTERNS } from "@app/contracts/patterns/userPattern";
 import { ClientProxy } from "@nestjs/microservices";
 import BalanceLog, { BalanceLogDocument } from "../../models/concrete/balanceLogs";
 import UserDto from "@app/contracts/models/dtos/user/userDto";
+import { REPORTING_PATTERNS } from "@app/contracts/patterns/reportingPattern";
 
 @Injectable()
 export default class TRXPayment implements PaymentBase {
     constructor(@InjectModel(Payment.name) private paymentModel: Model<PaymentDocument>,
         @InjectModel(BalanceLog.name) private balanceLogModel: Model<BalanceLogDocument>,
         private httpService: HttpService,
-        @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy) { }
+        @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy,
+        @Inject(REPORTING_PATTERNS.CLIENT) private reportingClient: ClientProxy) { }
 
     async verify(data: PaymentDataDto, authorId: string): Promise<ResultDto> {
         let result: ResultDto = { success: false, message: '', statusCode: 0 }
@@ -123,6 +125,14 @@ export default class TRXPayment implements PaymentBase {
                 userPayment.hash = data.hash
 
                 await userPayment.save()
+
+                const user = await this.userClient.send(USER_PATTERNS.GET, { userId: authorId }).toPromise() as DataResultDto<UserDto>;
+
+                this.reportingClient.emit(REPORTING_PATTERNS.PAYMENT_VERIFIED, {
+                    payment: userPayment,
+                    user: user.data,
+                    amount: rialPrice,
+                });
 
                 result = {
                     success: true,
