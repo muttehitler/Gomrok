@@ -132,4 +132,33 @@ export class UserService {
 
     return await this.updateUserBalance(userId, user.data - amount)
   }
+
+  async getAdmins(): Promise<DataResultDto<ListDto<UserDto[]>>> {
+    const admins = await this.userModel.find({ claims: 'admin' });
+
+    const adminDtos = admins.map<UserDto>(x => {
+      return {
+        id: String(x._id),
+        firstName: x.firstName,
+        lastName: x.lastName,
+        username: x.username,
+        chatId: x.chatId,
+        photoUrl: x.photoUrl,
+        balance: x.balance,
+        claims: x.claims,
+        createdAt: x.createdAt,
+        updatedAt: x.updatedAt
+      }
+    });
+
+    return {
+      success: true,
+      message: Messages.USER.USER_LISTED_SUCCESSFULLY.message,
+      statusCode: Messages.USER.USER_LISTED_SUCCESSFULLY.code,
+      data: {
+        items: adminDtos,
+        length: adminDtos.length
+      }
+    }
+  }
 }

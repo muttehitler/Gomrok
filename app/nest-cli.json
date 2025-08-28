@@ -82,6 +82,15 @@
         "tsConfigPath": "apps/product/tsconfig.app.json"
       }
     },
+    "reporting": {
+      "type": "application",
+      "root": "apps/reporting",
+      "entryFile": "main",
+      "sourceRoot": "apps/reporting/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/reporting/tsconfig.app.json"
+      }
+    },
     "user": {
       "type": "application",
       "root": "apps/user",

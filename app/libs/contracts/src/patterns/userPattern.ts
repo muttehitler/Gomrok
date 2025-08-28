@@ -5,5 +5,6 @@ export const USER_PATTERNS = {
     GET: 'user.get',
     GET_LIST: 'user.get_list',
     INCREASE_BALANCE: 'user.increase_balance',
-    DECREASE_BALANCE: 'user.decrease_balance'
+    DECREASE_BALANCE: 'user.decrease_balance',
+    GET_ADMINS: 'user.get_admins'
 }

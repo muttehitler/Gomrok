@@ -21,6 +21,7 @@ import PanelModifyUserDto from '@app/contracts/models/dtos/panel/panelService/pa
 import RenewOrderDto from '@app/contracts/models/dtos/order/renewOrderDto';
 import generateRandomId from '@app/contracts/utils/random/randomString';
 import UserDto from '@app/contracts/models/dtos/user/userDto';
+import { REPORTING_PATTERNS } from '@app/contracts/patterns/reportingPattern';
 
 @Injectable()
 export class OrderService {
@@ -28,7 +29,8 @@ export class OrderService {
     @Inject(PRODUCT_PATTERNS.CLIENT) private productClient: ClientProxy,
     @Inject(PAYMENT_PATTERNS.CLIENT) private paymentClient: ClientProxy,
     @Inject(PANEL_PATTERNS.CLIENT) private panelClient: ClientProxy,
-    @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy) { }
+    @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy,
+    @Inject(REPORTING_PATTERNS.CLIENT) private reportingClient: ClientProxy) { }
 
   async add({ name, product }: AddOrderDto, authorId: string): Promise<DataResultDto<string>> {
     const order = new this.orderModel({
@@ -140,6 +142,8 @@ export class OrderService {
 
     await order.save()
 
+    this.reportingClient.emit(REPORTING_PATTERNS.ORDER_PURCHASED, { order, user: user.data });
+
     return {
       success: true,
       message: Messages.ORDER.ORDER_PURCHASED_SUCCESSFULLY.message,
@@ -198,6 +202,9 @@ export class OrderService {
       if (!modifyUserResult.success)
         return modifyUserResult
     }
+
+    const user = await this.userClient.send(USER_PATTERNS.GET, { userId: userId }).toPromise() as DataResultDto<UserDto>
+    this.reportingClient.emit(REPORTING_PATTERNS.SERVICE_RENEWED, { order, user: user.data });
 
     return {
       success: true,
@@ -327,6 +334,9 @@ export class OrderService {
     const revokeSubResult = await this.panelClient.send(PANEL_PATTERNS.PANEL_SERVICE.REVOKE_SUB, { user: order.name, panel: product.panel }).toPromise() as DataResultDto<PanelUserDto>
     if (!revokeSubResult.success)
       throw new NotFoundException(revokeSubResult.message)
+
+    const user = await this.userClient.send(USER_PATTERNS.GET, { userId: userId }).toPromise() as DataResultDto<UserDto>
+    this.reportingClient.emit(REPORTING_PATTERNS.SERVICE_DELETED, { order, user: user.data });
 
     return revokeSubResult
   }

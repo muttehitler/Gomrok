@@ -38,4 +38,9 @@ export class UserController {
   async decreaseBalance(data: { userId: string, amount: number, adminId: string }) {
     return await this.userService.decreaseBalance(data.userId, data.amount, data.adminId)
   }
+
+  @MessagePattern(USER_PATTERNS.GET_ADMINS)
+  async getAdmins() {
+    return await this.userService.getAdmins();
+  }
 }
