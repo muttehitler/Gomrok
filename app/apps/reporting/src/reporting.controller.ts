@@ -40,8 +40,7 @@ export class ReportingController {
   async handleOrderPurchased(@Payload() data: { order: OrderDto; user: UserDto }) {
     this.logger.log(`Received ORDER_PURCHASED event for user ${data.user.username}`);
     const { order, user } = data;
-    const message = `
-*New Purchase Report* 🛍️
+    const message = `*New Purchase Report* 🛍️
 
 *User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
 *Order Name:* 
@@ -147,6 +146,101 @@ ${amount.toLocaleString()}
 ${new Date().toLocaleString('en-CA')}
     `;
 
+    const admins = await this.getAdmins();
+    await this.reportingService.sendReport(message, admins);
+  }
+
+  @MessagePattern(REPORTING_PATTERNS.TEST_ACCOUNT_RECEIVED)
+  async handleTestAccountReceived(@Payload() data: { order: OrderDto; user: UserDto }) {
+    this.logger.log(`Received TEST_ACCOUNT_RECEIVED event for user ${data.user.username}`);
+    const { order, user } = data;
+    const message = `*Test Account Report* 🧪
+
+*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
+*Order Name:* 
+${order.name}
+*Date:* 
+${new Date().toLocaleString('en-CA')}`;
+    const admins = await this.getAdmins();
+    await this.reportingService.sendReport(message, admins);
+  }
+
+  @MessagePattern(REPORTING_PATTERNS.NEW_USER_REGISTERED)
+  async handleNewUserRegistered(@Payload() data: { user: UserDto }) {
+    this.logger.log(`Received NEW_USER_REGISTERED event for user ${data.user.username}`);
+    const { user } = data;
+    const message = `*New User Registered* ✨
+
+*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
+*Date:* 
+${new Date().toLocaleString('en-CA')}`;
+    const admins = await this.getAdmins();
+    await this.reportingService.sendReport(message, admins);
+  }
+
+  @MessagePattern(REPORTING_PATTERNS.ADMIN_LOGGED_IN)
+  async handleAdminLoggedIn(@Payload() data: { user: UserDto }) {
+    this.logger.log(`Received ADMIN_LOGGED_IN event for admin ${data.user.username}`);
+    const { user } = data;
+    const message = `*Admin Login Alert* 🛡️
+
+*Admin:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
+*Date:* 
+${new Date().toLocaleString('en-CA')}`;
+    const admins = await this.getAdmins();
+    await this.reportingService.sendReport(message, admins);
+  }
+
+  // --- FAILURE EVENTS ---
+
+  @MessagePattern(REPORTING_PATTERNS.INSUFFICIENT_BALANCE)
+  async handleInsufficientBalance(@Payload() data: { user: UserDto; order: OrderDto; balance: number }) {
+    this.logger.log(`Received INSUFFICIENT_BALANCE event for user ${data.user.username}`);
+    const { user, order, balance } = data;
+    const message = `*ALERT: Insufficient Balance* ⚠️
+
+*User:* ${user.firstName || ''} (@${user.username || 'N/A'})
+*Attempted Order:* 
+${order.name}
+*Order Price:* 
+${order.finalPrice}
+*User Balance:* 
+${balance}
+*Date:* 
+${new Date().toLocaleString('en-CA')}`;
+    const admins = await this.getAdmins();
+    await this.reportingService.sendReport(message, admins);
+  }
+
+  @MessagePattern(REPORTING_PATTERNS.PANEL_INTEGRATION_FAILED)
+  async handlePanelIntegrationFailed(@Payload() data: { user: UserDto; order: OrderDto; error: string }) {
+    this.logger.log(`Received PANEL_INTEGRATION_FAILED event for user ${data.user.username}`);
+    const { user, order, error } = data;
+    const message = `*CRITICAL: Panel Integration Failed* ❌
+
+*User:* ${user.firstName || ''} (@${user.username || 'N/A'})
+*Order:* 
+${order.name}
+*Error:* 
+${error}
+*Date:* 
+${new Date().toLocaleString('en-CA')}`;
+    const admins = await this.getAdmins();
+    await this.reportingService.sendReport(message, admins);
+  }
+
+  @MessagePattern(REPORTING_PATTERNS.PAYMENT_VERIFICATION_FAILED)
+  async handlePaymentVerificationFailed(@Payload() data: { user: UserDto; reason: string; details: string }) {
+    this.logger.log(`Received PAYMENT_VERIFICATION_FAILED event for user ${data.user.username}`);
+    const { user, reason, details } = data;
+    const message = `*ALERT: Payment Verification Failed* ❗
+
+*User:* ${user.firstName || ''} (@${user.username || 'N/A'})
+*Reason:* ${reason}
+*Details:* 
+${details}
+*Date:* 
+${new Date().toLocaleString('en-CA')}`;
     const admins = await this.getAdmins();
     await this.reportingService.sendReport(message, admins);
   }
