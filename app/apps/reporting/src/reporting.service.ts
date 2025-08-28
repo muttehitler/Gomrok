@@ -8,9 +8,9 @@ export class ReportingService implements OnModuleInit {
   private readonly logger = new Logger(ReportingService.name);
 
   onModuleInit() {
-    const token = process.env.TELEGRAM_BOT_TOKEN;
+    const token = process.env.BOT_TOKEN;
     if (!token) {
-      this.logger.error('TELEGRAM_BOT_TOKEN is not configured.');
+      this.logger.error('BOT_TOKEN is not configured.');
       return;
     }
     this.bot = new Telegraf(token);
