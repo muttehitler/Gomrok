@@ -34,11 +34,12 @@ export class ReportingController {
     }
   }
 
+  // --- SUCCESS EVENTS ---
+
   @MessagePattern(REPORTING_PATTERNS.ORDER_PURCHASED)
   async handleOrderPurchased(@Payload() data: { order: OrderDto; user: UserDto }) {
     this.logger.log(`Received ORDER_PURCHASED event for user ${data.user.username}`);
     const { order, user } = data;
-
     const message = `
 *New Purchase Report* 🛍️
 
@@ -55,20 +56,18 @@ ${new Date().toLocaleString('en-CA')}
     await this.reportingService.sendReport(message, admins);
   }
 
-  @MessagePattern(REPORTING_PATTERNS.SERVICE_DELETED)
-  async handleServiceDeleted(@Payload() data: { order: OrderDto; user: UserDto }) {
-    this.logger.log(`Received SERVICE_DELETED event for user ${data.user.username}`);
+  @MessagePattern(REPORTING_PATTERNS.SERVICE_REVOKED)
+  async handleServiceRevoked(@Payload() data: { order: OrderDto; user: UserDto }) {
+    this.logger.log(`Received SERVICE_REVOKED event for user ${data.user.username}`);
     const { order, user } = data;
 
-    const message = `
-*Service Deletion Report* 🗑️
+    const message = `*Service Revocation Report* 🔄
 
 *User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
 *Service Name:* 
 ${order.name}
 *Date:* 
-${new Date().toLocaleString('en-CA')}
-    `;
+${new Date().toLocaleString('en-CA')}`;
 
     const admins = await this.getAdmins();
     await this.reportingService.sendReport(message, admins);

@@ -1,4 +1,4 @@
-import { BadGatewayException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadGatewayException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import User, { UserDocument } from '../models/concrete/user';
 import { Model, Types } from 'mongoose';
 import { HashHelper } from '@app/contracts/utils/hashing/hashHelper';
@@ -10,13 +10,18 @@ import AccessTokenDto from '@app/contracts/models/dtos/accessToken.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import ResultDto from '@app/contracts/models/dtos/resultDto';
 import { Messages } from '@app/contracts/messages/messages';
+import { ClientProxy } from '@nestjs/microservices';
+import { REPORTING_PATTERNS } from '@app/contracts/patterns/reportingPattern';
 
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>, private jwt: JwtService) {
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private jwt: JwtService,
+    @Inject(REPORTING_PATTERNS.CLIENT) private reportingClient: ClientProxy
+  ) {
     dotenv.config();
-
   }
 
   async login(loginDto: TelegramLoginDto): Promise<any> {
@@ -46,31 +51,31 @@ export class AuthService {
     const expiration = new Date(new Date().getTime() + 1 * 60 * 60 * 1000)
 
     if (user) {
-      const token = await this.jwt.signAsync({ chatId: user.chatId, claims: user.claims, sub: String(user._id) })
-
-      const accessToken: AccessTokenDto = {
-        type: 'Bearer',
-        token: token,
-        expiration: expiration
+      if (user.claims.includes('admin')) {
+        this.reportingClient.emit(REPORTING_PATTERNS.ADMIN_LOGGED_IN, { user });
       }
+    } else {
+      const userToAdd = await this.userModel.create({
+        chatId: rawUser.id,
+        firstName: rawUser.first_name,
+        lastName: rawUser.last_name,
+        username: rawUser.username,
+        languageCode: rawUser.language_code,
+        allowsWriteToPm: rawUser.allows_write_to_pm,
+        photoUrl: rawUser.photo_url,
+        passwordHash: rawUser.chatId + parsed.get('auth_date')
+      })
 
-      return accessToken
+      await userToAdd.save()
+      this.reportingClient.emit(REPORTING_PATTERNS.NEW_USER_REGISTERED, { user: userToAdd });
+      user = userToAdd;
+
+      if (user.claims.includes('admin')) {
+        this.reportingClient.emit(REPORTING_PATTERNS.ADMIN_LOGGED_IN, { user });
+      }
     }
 
-    const userToAdd = await this.userModel.create({
-      chatId: rawUser.id,
-      firstName: rawUser.first_name,
-      lastName: rawUser.last_name,
-      username: rawUser.username,
-      languageCode: rawUser.language_code,
-      allowsWriteToPm: rawUser.allows_write_to_pm,
-      photoUrl: rawUser.photo_url,
-      passwordHash: rawUser.chatId + parsed.get('auth_date')
-    })
-
-    await userToAdd.save()
-
-    const token = await this.jwt.signAsync({ chatId: rawUser.id, claims: userToAdd.claims, sub: String(userToAdd._id) })
+    const token = await this.jwt.signAsync({ chatId: user.chatId, claims: user.claims, sub: String(user._id) })
 
     const accessToken: AccessTokenDto = {
       type: 'Bearer',
