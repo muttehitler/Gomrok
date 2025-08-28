@@ -12,6 +12,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
 import { ORDER_PATTERNS } from '@app/contracts/patterns/orderPattern';
 import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
+import { REPORTING_PATTERNS } from '@app/contracts/patterns/reportingPattern';
 
 @Global()
 @Module({
@@ -35,9 +36,7 @@ import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
           host: process.env.REDIS_HOST ?? 'localhost',
           port: parseInt(process.env.REDIS_PORT ?? '6379')
         }
-      }
-    ]),
-    ClientsModule.register([
+      },
       {
         name: ORDER_PATTERNS.CLIENT,
         transport: Transport.REDIS,
@@ -45,11 +44,17 @@ import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
           host: process.env.REDIS_HOST ?? 'localhost',
           port: parseInt(process.env.REDIS_PORT ?? '6379')
         }
-      }
-    ]),
-    ClientsModule.register([
+      },
       {
         name: PAYMENT_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      },
+      {
+        name: REPORTING_PATTERNS.CLIENT,
         transport: Transport.REDIS,
         options: {
           host: process.env.REDIS_HOST ?? 'localhost',
