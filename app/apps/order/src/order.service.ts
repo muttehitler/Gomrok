@@ -1,4 +1,4 @@
-import { Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import Order, { OrderDocument } from './models/concrete/order';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -38,6 +38,14 @@ export class OrderService {
     })
 
     const productResult = await this.productClient.send(PRODUCT_PATTERNS.GET, product).toPromise() as ProductDto
+
+    const getUserResult = await this.panelClient.send(PANEL_PATTERNS.PANEL_SERVICE.GET_USER, {
+      user: order.name,
+      panel: productResult.panel
+    }).toPromise() as ResultDto
+
+    if (getUserResult.success)
+      throw new ConflictException("User is exits")
 
     const user = await this.userClient.send(USER_PATTERNS.GET, { userId: authorId }).toPromise() as DataResultDto<UserDto>
 
