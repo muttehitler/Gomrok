@@ -1,4 +1,4 @@
-import { ConflictException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import Order, { OrderDocument } from './models/concrete/order';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -21,6 +21,7 @@ import PanelModifyUserDto from '@app/contracts/models/dtos/panel/panelService/pa
 import RenewOrderDto from '@app/contracts/models/dtos/order/renewOrderDto';
 import generateRandomId from '@app/contracts/utils/random/randomString';
 import UserDto from '@app/contracts/models/dtos/user/userDto';
+import { REPORTING_PATTERNS } from '@app/contracts/patterns/reportingPattern';
 
 @Injectable()
 export class OrderService {
@@ -28,7 +29,8 @@ export class OrderService {
     @Inject(PRODUCT_PATTERNS.CLIENT) private productClient: ClientProxy,
     @Inject(PAYMENT_PATTERNS.CLIENT) private paymentClient: ClientProxy,
     @Inject(PANEL_PATTERNS.CLIENT) private panelClient: ClientProxy,
-    @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy) { }
+    @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy,
+    @Inject(REPORTING_PATTERNS.CLIENT) private reportingClient: ClientProxy) { }
 
   async add({ name, product }: AddOrderDto, authorId: string): Promise<DataResultDto<string>> {
     const order = new this.orderModel({
@@ -91,45 +93,53 @@ export class OrderService {
   }
 
   async buy(id: string, userId: string): Promise<ResultDto> {
-    const order = await this.orderModel.findOne({ _id: new Types.ObjectId(id), user: new Types.ObjectId(userId), status: true, payed: false })
+    const order = await this.orderModel.findOne({ _id: new Types.ObjectId(id), user: new Types.ObjectId(userId), status: true, payed: false });
     if (!order)
-      throw new NotFoundException()
+      throw new NotFoundException();
 
-    const user = await this.userClient.send(USER_PATTERNS.GET, { userId: userId }).toPromise() as DataResultDto<UserDto>
-    const userBalance = await this.userClient.send(USER_PATTERNS.GET_USER_BALANCE, userId).toPromise() as DataResultDto<number>
+    const user = await this.userClient.send(USER_PATTERNS.GET, { userId: userId }).toPromise() as DataResultDto<UserDto>;
+    const userBalance = await this.userClient.send(USER_PATTERNS.GET_USER_BALANCE, userId).toPromise() as DataResultDto<number>;
 
     if (!order.test) {
-      const updateUserBalanceResult = await this.userClient.send(USER_PATTERNS.UPDATE_USER_BALANCE, { userId: userId, balance: (userBalance.data - order.finalPrice) }).toPromise() as ResultDto
+      if (userBalance.data < order.finalPrice) {
+        this.reportingClient.emit(REPORTING_PATTERNS.INSUFFICIENT_BALANCE, {
+          user: user.data,
+          order: order,
+          balance: userBalance.data
+        });
+        throw new ForbiddenException(Messages.USER.BALANCE_IS_LOW.message);
+      }
+
+      const updateUserBalanceResult = await this.userClient.send(USER_PATTERNS.UPDATE_USER_BALANCE, { userId: userId, balance: (userBalance.data - order.finalPrice) }).toPromise() as ResultDto;
 
       if (!updateUserBalanceResult.success)
-        throw updateUserBalanceResult
+        throw updateUserBalanceResult;
 
       const balanceLogResult = await this.paymentClient.send(PAYMENT_PATTERNS.BALANCE_LOG.LOG, {
         type: 'reduce',
         amount: order.finalPrice,
         order: String(order._id),
         user: userId
-      }).toPromise() as ResultDto
+      }).toPromise() as ResultDto;
       if (!balanceLogResult.success)
-        return balanceLogResult
+        return balanceLogResult;
     } else {
       if ((user.data.testLimit ?? 1) <= (await this.orderModel.find({ user: new Types.ObjectId(userId), test: true })).length)
         return {
           success: false,
           message: Messages.ORDER.TEST_ACCOUNT_LIMIT_REACHED.message,
           statusCode: Messages.ORDER.TEST_ACCOUNT_LIMIT_REACHED.code,
-        }
+        };
     }
 
-    order.payed = true
+    order.payed = true;
 
-    await order.save()
+    await order.save();
 
-    const product = await this.productClient.send(PRODUCT_PATTERNS.GET, order.product).toPromise() as ProductDto
+    const product = await this.productClient.send(PRODUCT_PATTERNS.GET, order.product).toPromise() as ProductDto;
 
     const addUserResult = await this.panelClient.send(PANEL_PATTERNS.PANEL_SERVICE.ADD_USER, {
       user: {
-        // activationDeadline: undefined,
         dataLimit: product.dataLimit,
         dataLimitResetStrategy: "no_reset",
         expireStrategy: product.usageDuration == 0 ? "never" : (product.onHold ? "start_on_first_use" : "fixed_date"),
@@ -139,20 +149,32 @@ export class OrderService {
         username: order.name
       } as PanelAddUserDto,
       panel: product.panel
-    }).toPromise() as ResultDto
+    }).toPromise() as ResultDto;
 
-    if (!addUserResult.success)
-      return addUserResult
+    if (!addUserResult.success) {
+      this.reportingClient.emit(REPORTING_PATTERNS.PANEL_INTEGRATION_FAILED, {
+        user: user.data,
+        order: order,
+        error: addUserResult.message
+      });
+      return addUserResult;
+    }
 
-    order.orderCreated = true
+    order.orderCreated = true;
 
-    await order.save()
+    await order.save();
+
+    if (order.test) {
+      this.reportingClient.emit(REPORTING_PATTERNS.TEST_ACCOUNT_RECEIVED, { order, user: user.data });
+    } else {
+      this.reportingClient.emit(REPORTING_PATTERNS.ORDER_PURCHASED, { order, user: user.data });
+    }
 
     return {
       success: true,
       message: Messages.ORDER.ORDER_PURCHASED_SUCCESSFULLY.message,
       statusCode: Messages.ORDER.ORDER_PURCHASED_SUCCESSFULLY.code,
-    }
+    };
   }
 
   async renew(id: string, renewOptions: RenewOrderDto, userId: string): Promise<ResultDto> {
@@ -206,6 +228,9 @@ export class OrderService {
       if (!modifyUserResult.success)
         return modifyUserResult
     }
+
+    const user = await this.userClient.send(USER_PATTERNS.GET, { userId: userId }).toPromise() as DataResultDto<UserDto>
+    this.reportingClient.emit(REPORTING_PATTERNS.SERVICE_RENEWED, { order, user: user.data });
 
     return {
       success: true,
@@ -335,6 +360,9 @@ export class OrderService {
     const revokeSubResult = await this.panelClient.send(PANEL_PATTERNS.PANEL_SERVICE.REVOKE_SUB, { user: order.name, panel: product.panel }).toPromise() as DataResultDto<PanelUserDto>
     if (!revokeSubResult.success)
       throw new NotFoundException(revokeSubResult.message)
+
+    const user = await this.userClient.send(USER_PATTERNS.GET, { userId: userId }).toPromise() as DataResultDto<UserDto>
+    this.reportingClient.emit(REPORTING_PATTERNS.SERVICE_REVOKED, { order, user: user.data });
 
     return revokeSubResult
   }

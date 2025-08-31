@@ -9,6 +9,7 @@ import { PRODUCT_PATTERNS } from '@app/contracts/patterns/productPattern';
 import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
 import { PAYMENT_PATTERNS } from '@app/contracts/patterns/paymentPattern';
 import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
+import { REPORTING_PATTERNS } from '@app/contracts/patterns/reportingPattern';
 
 @Global()
 @Module({
@@ -24,9 +25,7 @@ import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
           host: process.env.REDIS_HOST ?? 'localhost',
           port: parseInt(process.env.REDIS_PORT ?? '6379')
         }
-      }
-    ]),
-    ClientsModule.register([
+      },
       {
         name: USER_PATTERNS.CLIENT,
         transport: Transport.REDIS,
@@ -34,9 +33,7 @@ import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
           host: process.env.REDIS_HOST ?? 'localhost',
           port: parseInt(process.env.REDIS_PORT ?? '6379')
         }
-      }
-    ]),
-    ClientsModule.register([
+      },
       {
         name: PAYMENT_PATTERNS.CLIENT,
         transport: Transport.REDIS,
@@ -44,11 +41,17 @@ import { PANEL_PATTERNS } from '@app/contracts/patterns/panelPattern';
           host: process.env.REDIS_HOST ?? 'localhost',
           port: parseInt(process.env.REDIS_PORT ?? '6379')
         }
-      }
-    ]),
-    ClientsModule.register([
+      },
       {
         name: PANEL_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      },
+      {
+        name: REPORTING_PATTERNS.CLIENT,
         transport: Transport.REDIS,
         options: {
           host: process.env.REDIS_HOST ?? 'localhost',

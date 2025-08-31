@@ -16,19 +16,23 @@ import { USER_PATTERNS } from "@app/contracts/patterns/userPattern";
 import { ClientProxy } from "@nestjs/microservices";
 import BalanceLog, { BalanceLogDocument } from "../../models/concrete/balanceLogs";
 import UserDto from "@app/contracts/models/dtos/user/userDto";
+import { REPORTING_PATTERNS } from "@app/contracts/patterns/reportingPattern";
 
 @Injectable()
 export default class TRXPayment implements PaymentBase {
     constructor(@InjectModel(Payment.name) private paymentModel: Model<PaymentDocument>,
         @InjectModel(BalanceLog.name) private balanceLogModel: Model<BalanceLogDocument>,
         private httpService: HttpService,
-        @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy) { }
+        @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy,
+        @Inject(REPORTING_PATTERNS.CLIENT) private reportingClient: ClientProxy) { }
 
     async verify(data: PaymentDataDto, authorId: string): Promise<ResultDto> {
         let result: ResultDto = { success: false, message: '', statusCode: 0 }
         const session = await this.paymentModel.startSession()
         try {
             await session.withTransaction(async () => {
+                const user = await this.userClient.send(USER_PATTERNS.GET, { userId: authorId }).toPromise() as DataResultDto<UserDto>;
+
                 if (await this.paymentModel.findOne({ hash: data.hash })) {
                     result = {
                         success: true,
@@ -56,6 +60,11 @@ export default class TRXPayment implements PaymentBase {
                 const response = await firstValueFrom(this.httpService.get("https://apilist.tronscanapi.com/api/transaction-info?hash=" + data.hash, { headers, validateStatus: () => true }))
 
                 if (response.data.toAddress != userPayment?.walletAddress) {
+                    this.reportingClient.emit(REPORTING_PATTERNS.PAYMENT_VERIFICATION_FAILED, { 
+                        user: user.data, 
+                        reason: Messages.PAYMENT.WALLET_ADDRESS_INVALID.message,
+                        details: `Expected: ${userPayment?.walletAddress}, Got: ${response.data.toAddress}`
+                    });
                     result = {
                         success: false,
                         message: Messages.PAYMENT.WALLET_ADDRESS_INVALID.message,
@@ -64,6 +73,11 @@ export default class TRXPayment implements PaymentBase {
                     return
                 }
                 if (response.data.contractRet != 'SUCCESS') {
+                    this.reportingClient.emit(REPORTING_PATTERNS.PAYMENT_VERIFICATION_FAILED, { 
+                        user: user.data, 
+                        reason: Messages.PAYMENT.TRANSACTION_ISNT_COMPLETED.message,
+                        details: `Contract Ret: ${response.data.contractRet}`
+                    });
                     result = {
                         success: false,
                         message: Messages.PAYMENT.TRANSACTION_ISNT_COMPLETED.message,
@@ -75,6 +89,11 @@ export default class TRXPayment implements PaymentBase {
                 const trxAmount = response.data.contractData.amount / 1000000
 
                 if (userPayment.createdAt > new Date(response.data.timestamp / 1000)) {
+                    this.reportingClient.emit(REPORTING_PATTERNS.PAYMENT_VERIFICATION_FAILED, { 
+                        user: user.data, 
+                        reason: Messages.PAYMENT.HASH_ISNT_YOURS.message,
+                        details: `Payment created after transaction timestamp.`
+                    });
                     result = {
                         success: false,
                         message: Messages.PAYMENT.HASH_ISNT_YOURS.message,
@@ -84,6 +103,11 @@ export default class TRXPayment implements PaymentBase {
                 }
 
                 if ((userPayment.amount - 0.5) > trxAmount || (userPayment.amount + 0.5) < trxAmount) {
+                    this.reportingClient.emit(REPORTING_PATTERNS.PAYMENT_VERIFICATION_FAILED, { 
+                        user: user.data, 
+                        reason: Messages.PAYMENT.HASH_ISNT_YOURS.message, // Or a more specific message
+                        details: `Expected amount: ~${userPayment.amount}, Got: ${trxAmount}`
+                    });
                     result = {
                         success: false,
                         message: Messages.PAYMENT.HASH_ISNT_YOURS.message,
@@ -123,6 +147,12 @@ export default class TRXPayment implements PaymentBase {
                 userPayment.hash = data.hash
 
                 await userPayment.save()
+
+                this.reportingClient.emit(REPORTING_PATTERNS.PAYMENT_VERIFIED, {
+                    payment: userPayment,
+                    user: user.data,
+                    amount: rialPrice,
+                });
 
                 result = {
                     success: true,

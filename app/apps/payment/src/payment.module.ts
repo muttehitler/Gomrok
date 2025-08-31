@@ -11,6 +11,7 @@ import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import BalanceLog, { BalanceLogSchema } from './models/concrete/balanceLogs';
 import { BalanceLogModule } from './balance-log/balance-log.module';
+import { REPORTING_PATTERNS } from '@app/contracts/patterns/reportingPattern';
 
 @Global()
 @Module({
@@ -23,6 +24,14 @@ import { BalanceLogModule } from './balance-log/balance-log.module';
     ClientsModule.register([
       {
         name: USER_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      },
+      {
+        name: REPORTING_PATTERNS.CLIENT,
         transport: Transport.REDIS,
         options: {
           host: process.env.REDIS_HOST ?? 'localhost',
