@@ -97,7 +97,7 @@ export class OrderService {
     if (!order)
       throw new NotFoundException();
 
-    const user = await this.userClient.send(USER_PATTERNS.GET, { userId: userId }).toPromise() as DataResultDto<UserDto>;
+    const user = await this.userClient.send(USER_PATTERNS.GET_USER_FOR_REPORTING, userId).toPromise() as DataResultDto<UserDto>;
     const userBalance = await this.userClient.send(USER_PATTERNS.GET_USER_BALANCE, userId).toPromise() as DataResultDto<number>;
 
     if (!order.test) {
@@ -229,7 +229,7 @@ export class OrderService {
         return modifyUserResult
     }
 
-    const user = await this.userClient.send(USER_PATTERNS.GET, { userId: userId }).toPromise() as DataResultDto<UserDto>
+    const user = await this.userClient.send(USER_PATTERNS.GET_USER_FOR_REPORTING, userId).toPromise() as DataResultDto<UserDto>
     this.reportingClient.emit(REPORTING_PATTERNS.SERVICE_RENEWED, { order, user: user.data });
 
     return {
@@ -361,7 +361,7 @@ export class OrderService {
     if (!revokeSubResult.success)
       throw new NotFoundException(revokeSubResult.message)
 
-    const user = await this.userClient.send(USER_PATTERNS.GET, { userId: userId }).toPromise() as DataResultDto<UserDto>
+    const user = await this.userClient.send(USER_PATTERNS.GET_USER_FOR_REPORTING, userId).toPromise() as DataResultDto<UserDto>
     this.reportingClient.emit(REPORTING_PATTERNS.SERVICE_REVOKED, { order, user: user.data });
 
     return revokeSubResult
