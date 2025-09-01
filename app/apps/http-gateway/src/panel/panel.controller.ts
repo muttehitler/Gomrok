@@ -51,13 +51,13 @@ export class PanelController {
 
     @Put(':id')
     @UseGuards(new JwtAuthGuard(['admin']))
-    async update(@Req() req, @Param('id') id: string, @Body() panel: PanelDto): Promise<ResultDto> {
-        return await this.panelService.update(id, panel, req.user['sub'])
+    async update(@Param('id') id: string, @Body() panel: PanelDto): Promise<ResultDto> {
+        return await this.panelService.update(id, panel)
     }
 
     @Delete(':id')
     @UseGuards(new JwtAuthGuard(['admin']))
-    async delete(@Req() req, @Param('id') id: string) {
-        return await this.panelService.delete(id, req.user['sub'])
+    async delete(@Param('id') id: string) {
+        return await this.panelService.delete(id)
     }
 }

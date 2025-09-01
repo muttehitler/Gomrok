@@ -33,14 +33,14 @@ export class ProductController {
 
     @Delete(':id')
     @UseGuards(new JwtAuthGuard(['admin']))
-    async delete(@Req() req, @Param('id') id: string) {
-        return await this.productService.delete(id, req.user['sub'])
+    async delete(@Param('id') id: string) {
+        return await this.productService.delete(id)
     }
 
     @Put(':id')
     @UseGuards(new JwtAuthGuard(['admin']))
-    async update(@Req() req, @Param('id') id: string, @Body() product) {
-        return await this.productService.update(id, product, req.user['sub'])
+    async update(@Param('id') id: string, @Body() product) {
+        return await this.productService.update(id, product)
     }
 
     @Get(':id/user')
