@@ -53,6 +53,26 @@ import { OrderModule } from './order/order.module';
         }
       }
     ]),
+    ClientsModule.register([
+      {
+        name: USER_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      }
+    ]),
+    ClientsModule.register([
+      {
+        name: REPORTING_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      }
+    ]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: {
