@@ -28,7 +28,7 @@ export class ReportingService implements OnModuleInit {
       this.logger.warn('TELEGRAM_REPORT_CHANNEL_ID is not configured. Skipping channel report.');
     } else {
       try {
-        await this.bot.telegram.sendMessage(reportChannelId, message, { parse_mode: 'Markdown' });
+        await this.bot.telegram.sendMessage(reportChannelId, message, { parse_mode: 'MarkdownV2' });
         this.logger.log(`Report sent to channel ${reportChannelId}`);
       } catch (error) {
         this.logger.error(`Failed to send report to channel ${reportChannelId}:`, error);
@@ -43,7 +43,7 @@ export class ReportingService implements OnModuleInit {
     this.logger.log(`Sending private reports to ${admins.length} admin(s).`);
     for (const admin of admins) {
       try {
-        await this.bot.telegram.sendMessage(admin.chatId, message, { parse_mode: 'Markdown' });
+        await this.bot.telegram.sendMessage(admin.chatId, message, { parse_mode: 'MarkdownV2' });
       } catch (error) {
         this.logger.error(`Failed to send report to admin ${admin.username} (chatId: ${admin.chatId}):`, error);
       }

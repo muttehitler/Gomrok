@@ -18,6 +18,11 @@ export class ReportingController {
     @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy,
   ) {}
 
+  private escapeMarkdown(text: string): string {
+    if (!text) return '';
+    return text.replace(/[_*[\]()~`>#+\-=|"{}.!]/g, '\$&');
+  }
+
   private async getAdmins(): Promise<UserDto[]> {
     try {
       const adminsResult = await firstValueFrom(
@@ -42,9 +47,9 @@ export class ReportingController {
     const { order, user } = data;
     const message = `*New Purchase Report* 🛍️
 
-*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
+*User:* ${this.escapeMarkdown(user.firstName || '')} ${this.escapeMarkdown(user.lastName || '')} (@${this.escapeMarkdown(user.username || 'N/A')})
 *Order Name:* 
-${order.name}
+${this.escapeMarkdown(order.name)}
 *Price:* 
 ${order.finalPrice}
 *Date:* 
@@ -62,9 +67,9 @@ ${new Date().toLocaleString('en-CA')}
 
     const message = `*Service Revocation Report* 🔄
 
-*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
+*User:* ${this.escapeMarkdown(user.firstName || '')} ${this.escapeMarkdown(user.lastName || '')} (@${this.escapeMarkdown(user.username || 'N/A')})
 *Service Name:* 
-${order.name}
+${this.escapeMarkdown(order.name)}
 *Date:* 
 ${new Date().toLocaleString('en-CA')}`;
 
@@ -80,9 +85,9 @@ ${new Date().toLocaleString('en-CA')}`;
     const message = `
 *Service Renewal Report* 🔄
 
-*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
+*User:* ${this.escapeMarkdown(user.firstName || '')} ${this.escapeMarkdown(user.lastName || '')} (@${this.escapeMarkdown(user.username || 'N/A')})
 *Service Name:* 
-${order.name}
+${this.escapeMarkdown(order.name)}
 *New Price:* 
 ${order.finalPrice}
 *Date:* 
@@ -100,7 +105,7 @@ ${new Date().toLocaleString('en-CA')}
 
     const message = `*Successful Payment Report* 💰
 
-*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
+*User:* ${this.escapeMarkdown(user.firstName || '')} ${this.escapeMarkdown(user.lastName || '')} (@${this.escapeMarkdown(user.username || 'N/A')})
 *Amount:* 
 ${amount.toLocaleString()}
 *Payment Method:* TRX
@@ -119,8 +124,8 @@ ${new Date().toLocaleString('en-CA')}
 
     const message = `*Admin Action: Balance Increased* 📈
 
-*Admin:* ${admin.firstName || ''} (@${admin.username || 'N/A'})
-*Target User:* ${user.firstName || ''} (@${user.username || 'N/A'})
+*Admin:* ${this.escapeMarkdown(admin.firstName || '')} (@${this.escapeMarkdown(admin.username || 'N/A')})
+*Target User:* ${this.escapeMarkdown(user.firstName || '')} (@${this.escapeMarkdown(user.username || 'N/A')})
 *Amount Increased:* 
 ${amount.toLocaleString()}
 *Date:* 
@@ -138,8 +143,8 @@ ${new Date().toLocaleString('en-CA')}
 
     const message = `*Admin Action: Balance Decreased* 📉
 
-*Admin:* ${admin.firstName || ''} (@${admin.username || 'N/A'})
-*Target User:* ${user.firstName || ''} (@${user.username || 'N/A'})
+*Admin:* ${this.escapeMarkdown(admin.firstName || '')} (@${this.escapeMarkdown(admin.username || 'N/A')})
+*Target User:* ${this.escapeMarkdown(user.firstName || '')} (@${this.escapeMarkdown(user.username || 'N/A')})
 *Amount Decreased:* 
 ${amount.toLocaleString()}
 *Date:* 
@@ -156,9 +161,9 @@ ${new Date().toLocaleString('en-CA')}
     const { order, user } = data;
     const message = `*Test Account Report* 🧪
 
-*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
+*User:* ${this.escapeMarkdown(user.firstName || '')} ${this.escapeMarkdown(user.lastName || '')} (@${this.escapeMarkdown(user.username || 'N/A')})
 *Order Name:* 
-${order.name}
+${this.escapeMarkdown(order.name)}
 *Date:* 
 ${new Date().toLocaleString('en-CA')}`;
     const admins = await this.getAdmins();
@@ -171,7 +176,7 @@ ${new Date().toLocaleString('en-CA')}`;
     const { user } = data;
     const message = `*New User Registered* ✨
 
-*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
+*User:* ${this.escapeMarkdown(user.firstName || '')} ${this.escapeMarkdown(user.lastName || '')} (@${this.escapeMarkdown(user.username || 'N/A')})
 *Date:* 
 ${new Date().toLocaleString('en-CA')}`;
     const admins = await this.getAdmins();
@@ -184,7 +189,7 @@ ${new Date().toLocaleString('en-CA')}`;
     const { user } = data;
     const message = `*Admin Login Alert* 🛡️
 
-*Admin:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
+*Admin:* ${this.escapeMarkdown(user.firstName || '')} ${this.escapeMarkdown(user.lastName || '')} (@${this.escapeMarkdown(user.username || 'N/A')})
 *Date:* 
 ${new Date().toLocaleString('en-CA')}`;
     const admins = await this.getAdmins();
@@ -199,9 +204,9 @@ ${new Date().toLocaleString('en-CA')}`;
     const { user, order, balance } = data;
     const message = `*ALERT: Insufficient Balance* ⚠️
 
-*User:* ${user.firstName || ''} (@${user.username || 'N/A'})
+*User:* ${this.escapeMarkdown(user.firstName || '')} (@${this.escapeMarkdown(user.username || 'N/A')})
 *Attempted Order:* 
-${order.name}
+${this.escapeMarkdown(order.name)}
 *Order Price:* 
 ${order.finalPrice}
 *User Balance:* 
@@ -218,11 +223,11 @@ ${new Date().toLocaleString('en-CA')}`;
     const { user, order, error } = data;
     const message = `*CRITICAL: Panel Integration Failed* ❌
 
-*User:* ${user.firstName || ''} (@${user.username || 'N/A'})
+*User:* ${this.escapeMarkdown(user.firstName || '')} (@${this.escapeMarkdown(user.username || 'N/A')})
 *Order:* 
-${order.name}
+${this.escapeMarkdown(order.name)}
 *Error:* 
-${error}
+${this.escapeMarkdown(error)}
 *Date:* 
 ${new Date().toLocaleString('en-CA')}`;
     const admins = await this.getAdmins();
@@ -235,10 +240,10 @@ ${new Date().toLocaleString('en-CA')}`;
     const { user, reason, details } = data;
     const message = `*ALERT: Payment Verification Failed* ❗
 
-*User:* ${user.firstName || ''} (@${user.username || 'N/A'})
-*Reason:* ${reason}
+*User:* ${this.escapeMarkdown(user.firstName || '')} (@${this.escapeMarkdown(user.username || 'N/A')})
+*Reason:* ${this.escapeMarkdown(reason)}
 *Details:* 
-${details}
+${this.escapeMarkdown(details)}
 *Date:* 
 ${new Date().toLocaleString('en-CA')}`;
     const admins = await this.getAdmins();
