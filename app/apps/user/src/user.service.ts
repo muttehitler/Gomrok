@@ -120,8 +120,8 @@ export class UserService {
     const result = await this.updateUserBalance(userId, userBalance.data + amount);
 
     if (result.success) {
-      const admin = await this.get(adminId);
-      const user = await this.get(userId);
+      const admin = await this.getUserForReporting(adminId);
+      const user = await this.getUserForReporting(userId);
       this.reportingClient.emit(REPORTING_PATTERNS.ADMIN_INCREASED_BALANCE, {
         admin: admin.data,
         user: user.data,
@@ -147,8 +147,8 @@ export class UserService {
     const result = await this.updateUserBalance(userId, userBalance.data - amount);
 
     if (result.success) {
-      const admin = await this.get(adminId);
-      const user = await this.get(userId);
+      const admin = await this.getUserForReporting(adminId);
+      const user = await this.getUserForReporting(userId);
       this.reportingClient.emit(REPORTING_PATTERNS.ADMIN_DECREASED_BALANCE, {
         admin: admin.data,
         user: user.data,
@@ -157,6 +157,34 @@ export class UserService {
     }
 
     return result;
+  }
+
+  async getUserForReporting(userId: string): Promise<DataResultDto<UserDto>> {
+    const user = await this.userModel.findOne({ _id: new Types.ObjectId(userId) });
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return {
+      success: true,
+      message: Messages.USER.BALANCE_GOT_SUCCESSFULLY.message,
+      statusCode: Messages.USER.BALANCE_GOT_SUCCESSFULLY.code,
+      data: {
+        id: String(user.id),
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+        chatId: user.chatId,
+        photoUrl: user.photoUrl,
+        balance: user.balance,
+        claims: user.claims,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        orderCount: 0, // Not needed for reporting
+        testLimit: user.testLimit ?? 1,
+      },
+    };
   }
 
   async getAdmins(): Promise<DataResultDto<ListDto<UserDto[]>>> {

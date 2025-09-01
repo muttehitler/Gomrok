@@ -10,6 +10,12 @@ export const REPORTING_PATTERNS = {
     TEST_ACCOUNT_RECEIVED: 'reporting.test_account_received',
     NEW_USER_REGISTERED: 'reporting.new_user_registered',
     ADMIN_LOGGED_IN: 'reporting.admin_logged_in',
+    NEW_PANEL: 'reporting.new_panel',
+    EDIT_PANEL: 'reporting.edit_panel',
+    DELETE_PANEL: 'reporting.delete_panel',
+    NEW_PRODUCT: 'reporting.new_product',
+    EDIT_PRODUCT: 'reporting.edit_product',
+    DELETE_PRODUCT: 'reporting.delete_product',
 
     // Failure Events
     INSUFFICIENT_BALANCE: 'reporting.insufficient_balance',

@@ -11,237 +11,251 @@ import { firstValueFrom } from 'rxjs';
 
 @Controller()
 export class ReportingController {
-  private readonly logger = new Logger(ReportingController.name);
+	private readonly logger = new Logger(ReportingController.name);
 
-  constructor(
-    private readonly reportingService: ReportingService,
-    @Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy,
-  ) {}
+	constructor(
+		private readonly reportingService: ReportingService,
+		@Inject(USER_PATTERNS.CLIENT) private userClient: ClientProxy,
+	) { }
 
-  private async getAdmins(): Promise<UserDto[]> {
-    try {
-      const adminsResult = await firstValueFrom(
-        this.userClient.send<DataResultDto<ListDto<UserDto[]>>>(USER_PATTERNS.GET_ADMINS, {})
-      );
-      if (adminsResult.success && adminsResult.data) {
-        return adminsResult.data.items;
-      }
-      this.logger.error('Could not fetch admins:', adminsResult.message);
-      return [];
-    } catch (error) {
-      this.logger.error('Error fetching admins:', error);
-      return [];
-    }
-  }
+	private async getAdmins(): Promise<UserDto[]> {
+		try {
+			const adminsResult = await firstValueFrom(
+				this.userClient.send<DataResultDto<ListDto<UserDto[]>>>(
+					USER_PATTERNS.GET_ADMINS,
+					{},
+				),
+			);
+			if (adminsResult.success && adminsResult.data) {
+				return adminsResult.data.items;
+			}
+			this.logger.error('Could not fetch admins:', adminsResult.message);
+			return [];
+		} catch (error) {
+			this.logger.error('Error fetching admins:', error);
+			return [];
+		}
+	}
 
-  // --- SUCCESS EVENTS ---
+	// --- SUCCESS EVENTS ---
 
-  @MessagePattern(REPORTING_PATTERNS.ORDER_PURCHASED)
-  async handleOrderPurchased(@Payload() data: { order: OrderDto; user: UserDto }) {
-    this.logger.log(`Received ORDER_PURCHASED event for user ${data.user.username}`);
-    const { order, user } = data;
-    const message = `*New Purchase Report* 🛍️
+	@MessagePattern(REPORTING_PATTERNS.ORDER_PURCHASED)
+	async handleOrderPurchased(
+		@Payload() data: { order: OrderDto; user: UserDto },
+	) {
+		this.logger.log(
+			`Received ORDER_PURCHASED event for user ${data.user.username}`,
+		);
+		const { order, user } = data;
+		const message =
+			`<b>New Purchase Report</b> 🛍️\n\n` +
+			`<b>User:</b> ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})\n` +
+			`<b>Order Name:</b>\n${order.name}\n` +
+			`<b>Price:</b>\n${order.finalPrice}\n` +
+			`<b>Date:</b>\n${new Date().toLocaleString('en-CA')}`;
 
-*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
-*Order Name:* 
-${order.name}
-*Price:* 
-${order.finalPrice}
-*Date:* 
-${new Date().toLocaleString('en-CA')}
-    `;
+		const admins = await this.getAdmins();
+		await this.reportingService.sendReport(message, admins);
+	}
 
-    const admins = await this.getAdmins();
-    await this.reportingService.sendReport(message, admins);
-  }
+	@MessagePattern(REPORTING_PATTERNS.SERVICE_REVOKED)
+	async handleServiceRevoked(
+		@Payload() data: { order: OrderDto; user: UserDto },
+	) {
+		this.logger.log(
+			`Received SERVICE_REVOKED event for user ${data.user.username}`,
+		);
+		const { order, user } = data;
 
-  @MessagePattern(REPORTING_PATTERNS.SERVICE_REVOKED)
-  async handleServiceRevoked(@Payload() data: { order: OrderDto; user: UserDto }) {
-    this.logger.log(`Received SERVICE_REVOKED event for user ${data.user.username}`);
-    const { order, user } = data;
+		const message =
+			`<b>Service Revocation Report</b> 🔄\n\n` +
+			`<b>User:</b> ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})\n` +
+			`<b>Service Name:</b>\n${order.name}\n` +
+			`<b>Date:</b>\n${new Date().toLocaleString('en-CA')}`;
 
-    const message = `*Service Revocation Report* 🔄
+		const admins = await this.getAdmins();
+		await this.reportingService.sendReport(message, admins);
+	}
 
-*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
-*Service Name:* 
-${order.name}
-*Date:* 
-${new Date().toLocaleString('en-CA')}`;
+	@MessagePattern(REPORTING_PATTERNS.SERVICE_RENEWED)
+	async handleServiceRenewed(
+		@Payload() data: { order: OrderDto; user: UserDto },
+	) {
+		this.logger.log(
+			`Received SERVICE_RENEWED event for user ${data.user.username}`,
+		);
+		const { order, user } = data;
 
-    const admins = await this.getAdmins();
-    await this.reportingService.sendReport(message, admins);
-  }
+		const message =
+			`<b>Service Renewal Report</b> 🔄\n\n` +
+			`<b>User:</b> ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})\n` +
+			`<b>Service Name:</b>\n${order.name}\n` +
+			`<b>New Price:</b>\n${order.finalPrice}\n` +
+			`<b>Date:</b>\n${new Date().toLocaleString('en-CA')}`;
 
-  @MessagePattern(REPORTING_PATTERNS.SERVICE_RENEWED)
-  async handleServiceRenewed(@Payload() data: { order: OrderDto; user: UserDto }) {
-    this.logger.log(`Received SERVICE_RENEWED event for user ${data.user.username}`);
-    const { order, user } = data;
+		const admins = await this.getAdmins();
+		await this.reportingService.sendReport(message, admins);
+	}
 
-    const message = `
-*Service Renewal Report* 🔄
+	@MessagePattern(REPORTING_PATTERNS.PAYMENT_VERIFIED)
+	async handlePaymentVerified(
+		@Payload() data: { payment: any; user: UserDto; amount: number },
+	) {
+		this.logger.log(
+			`Received PAYMENT_VERIFIED event for user ${data.user.username}`,
+		);
+		const { user, amount } = data;
 
-*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
-*Service Name:* 
-${order.name}
-*New Price:* 
-${order.finalPrice}
-*Date:* 
-${new Date().toLocaleString('en-CA')}
-    `;
+		const message =
+			`<b>Successful Payment Report</b> 💰\n\n` +
+			`<b>User:</b> ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})\n` +
+			`<b>Amount:</b>\n${amount.toLocaleString()}\n` +
+			`<b>Payment Method:</b> TRX\n` +
+			`<b>Date:</b>\n${new Date().toLocaleString('en-CA')}`;
 
-    const admins = await this.getAdmins();
-    await this.reportingService.sendReport(message, admins);
-  }
+		const admins = await this.getAdmins();
+		await this.reportingService.sendReport(message, admins);
+	}
 
-  @MessagePattern(REPORTING_PATTERNS.PAYMENT_VERIFIED)
-  async handlePaymentVerified(@Payload() data: { payment: any; user: UserDto; amount: number }) {
-    this.logger.log(`Received PAYMENT_VERIFIED event for user ${data.user.username}`);
-    const { user, amount } = data;
+	@MessagePattern(REPORTING_PATTERNS.ADMIN_INCREASED_BALANCE)
+	async handleAdminIncreasedBalance(
+		@Payload() data: { admin: UserDto; user: UserDto; amount: number },
+	) {
+		this.logger.log(
+			`Received ADMIN_INCREASED_BALANCE event by ${data.admin.username}`,
+		);
+		const { admin, user, amount } = data;
 
-    const message = `*Successful Payment Report* 💰
+		const message =
+			`<b>Admin Action: Balance Increased</b> 📈\n\n` +
+			`<b>Admin:</b> ${admin.firstName || ''} (@${admin.username || 'N/A'})\n` +
+			`<b>Target User:</b> ${user.firstName || ''} (@${user.username || 'N/A'})\n` +
+			`<b>Amount Increased:</b>\n${amount.toLocaleString()}\n` +
+			`<b>Date:</b>\n${new Date().toLocaleString('en-CA')}`;
 
-*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
-*Amount:* 
-${amount.toLocaleString()}
-*Payment Method:* TRX
-*Date:* 
-${new Date().toLocaleString('en-CA')}
-    `;
+		const admins = await this.getAdmins();
+		await this.reportingService.sendReport(message, admins);
+	}
 
-    const admins = await this.getAdmins();
-    await this.reportingService.sendReport(message, admins);
-  }
+	@MessagePattern(REPORTING_PATTERNS.ADMIN_DECREASED_BALANCE)
+	async handleAdminDecreasedBalance(
+		@Payload() data: { admin: UserDto; user: UserDto; amount: number },
+	) {
+		this.logger.log(
+			`Received ADMIN_DECREASED_BALANCE event by ${data.admin.username}`,
+		);
+		const { admin, user, amount } = data;
 
-  @MessagePattern(REPORTING_PATTERNS.ADMIN_INCREASED_BALANCE)
-  async handleAdminIncreasedBalance(@Payload() data: { admin: UserDto; user: UserDto; amount: number }) {
-    this.logger.log(`Received ADMIN_INCREASED_BALANCE event by ${data.admin.username}`);
-    const { admin, user, amount } = data;
+		const message =
+			`<b>Admin Action: Balance Decreased</b> 📉\n\n` +
+			`<b>Admin:</b> ${admin.firstName || ''} (@${admin.username || 'N/A'})\n` +
+			`<b>Target User:</b> ${user.firstName || ''} (@${user.username || 'N/A'})\n` +
+			`<b>Amount Decreased:</b>\n${amount.toLocaleString()}\n` +
+			`<b>Date:</b>\n${new Date().toLocaleString('en-CA')}`;
 
-    const message = `*Admin Action: Balance Increased* 📈
+		const admins = await this.getAdmins();
+		await this.reportingService.sendReport(message, admins);
+	}
 
-*Admin:* ${admin.firstName || ''} (@${admin.username || 'N/A'})
-*Target User:* ${user.firstName || ''} (@${user.username || 'N/A'})
-*Amount Increased:* 
-${amount.toLocaleString()}
-*Date:* 
-${new Date().toLocaleString('en-CA')}
-    `;
+	@MessagePattern(REPORTING_PATTERNS.TEST_ACCOUNT_RECEIVED)
+	async handleTestAccountReceived(
+		@Payload() data: { order: OrderDto; user: UserDto },
+	) {
+		this.logger.log(
+			`Received TEST_ACCOUNT_RECEIVED event for user ${data.user.username}`,
+		);
+		const { order, user } = data;
+		const message =
+			`<b>Test Account Report</b> 🧪\n\n` +
+			`<b>User:</b> ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})\n` +
+			`<b>Order Name:</b>\n${order.name}\n` +
+			`<b>Date:</b>\n${new Date().toLocaleString('en-CA')}`;
+		const admins = await this.getAdmins();
+		await this.reportingService.sendReport(message, admins);
+	}
 
-    const admins = await this.getAdmins();
-    await this.reportingService.sendReport(message, admins);
-  }
+	@MessagePattern(REPORTING_PATTERNS.NEW_USER_REGISTERED)
+	async handleNewUserRegistered(@Payload() data: { user: UserDto }) {
+		this.logger.log(
+			`Received NEW_USER_REGISTERED event for user ${data.user.username}`,
+		);
+		const { user } = data;
+		const message =
+			`<b>New User Registered</b> ✨\n\n` +
+			`<b>User:</b> ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})\n` +
+			`<b>Date:</b>\n${new Date().toLocaleString('en-CA')}`;
+		const admins = await this.getAdmins();
+		await this.reportingService.sendReport(message, admins);
+	}
 
-  @MessagePattern(REPORTING_PATTERNS.ADMIN_DECREASED_BALANCE)
-  async handleAdminDecreasedBalance(@Payload() data: { admin: UserDto; user: UserDto; amount: number }) {
-    this.logger.log(`Received ADMIN_DECREASED_BALANCE event by ${data.admin.username}`);
-    const { admin, user, amount } = data;
+	@MessagePattern(REPORTING_PATTERNS.ADMIN_LOGGED_IN)
+	async handleAdminLoggedIn(@Payload() data: { user: UserDto }) {
+		this.logger.log(
+			`Received ADMIN_LOGGED_IN event for admin ${data.user.username}`,
+		);
+		const { user } = data;
+		const message =
+			`<b>Admin Login Alert</b> 🛡️\n\n` +
+			`<b>Admin:</b> ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})\n` +
+			`<b>Date:</b>\n${new Date().toLocaleString('en-CA')}`;
+		const admins = await this.getAdmins();
+		await this.reportingService.sendReport(message, admins);
+	}
 
-    const message = `*Admin Action: Balance Decreased* 📉
+	// --- FAILURE EVENTS ---
 
-*Admin:* ${admin.firstName || ''} (@${admin.username || 'N/A'})
-*Target User:* ${user.firstName || ''} (@${user.username || 'N/A'})
-*Amount Decreased:* 
-${amount.toLocaleString()}
-*Date:* 
-${new Date().toLocaleString('en-CA')}
-    `;
+	@MessagePattern(REPORTING_PATTERNS.INSUFFICIENT_BALANCE)
+	async handleInsufficientBalance(
+		@Payload() data: { user: UserDto; order: OrderDto; balance: number },
+	) {
+		this.logger.log(
+			`Received INSUFFICIENT_BALANCE event for user ${data.user.username}`,
+		);
+		const { user, order, balance } = data;
+		const message =
+			`<b>ALERT: Insufficient Balance</b> ⚠️\n\n` +
+			`<b>User:</b> ${user.firstName || ''} (@${user.username || 'N/A'})\n` +
+			`<b>Attempted Order:</b>\n${order.name}\n` +
+			`<b>Order Price:</b>\n${order.finalPrice}\n` +
+			`<b>User Balance:</b>\n${balance}\n` +
+			`<b>Date:</b>\n${new Date().toLocaleString('en-CA')}`;
+		const admins = await this.getAdmins();
+		await this.reportingService.sendReport(message, admins);
+	}
 
-    const admins = await this.getAdmins();
-    await this.reportingService.sendReport(message, admins);
-  }
+	@MessagePattern(REPORTING_PATTERNS.PANEL_INTEGRATION_FAILED)
+	async handlePanelIntegrationFailed(
+		@Payload() data: { user: UserDto; order: OrderDto; error: string },
+	) {
+		this.logger.log(
+			`Received PANEL_INTEGRATION_FAILED event for user ${data.user.username}`,
+		);
+		const { user, order, error } = data;
+		const message =
+			`<b>CRITICAL: Panel Integration Failed</b> ❌\n\n` +
+			`<b>User:</b> ${user.firstName || ''} (@${user.username || 'N/A'})\n` +
+			`<b>Order:</b>\n${order.name}\n` +
+			`<b>Error:</b>\n${error}\n` +
+			`<b>Date:</b>\n${new Date().toLocaleString('en-CA')}`;
+		const admins = await this.getAdmins();
+		await this.reportingService.sendReport(message, admins);
+	}
 
-  @MessagePattern(REPORTING_PATTERNS.TEST_ACCOUNT_RECEIVED)
-  async handleTestAccountReceived(@Payload() data: { order: OrderDto; user: UserDto }) {
-    this.logger.log(`Received TEST_ACCOUNT_RECEIVED event for user ${data.user.username}`);
-    const { order, user } = data;
-    const message = `*Test Account Report* 🧪
-
-*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
-*Order Name:* 
-${order.name}
-*Date:* 
-${new Date().toLocaleString('en-CA')}`;
-    const admins = await this.getAdmins();
-    await this.reportingService.sendReport(message, admins);
-  }
-
-  @MessagePattern(REPORTING_PATTERNS.NEW_USER_REGISTERED)
-  async handleNewUserRegistered(@Payload() data: { user: UserDto }) {
-    this.logger.log(`Received NEW_USER_REGISTERED event for user ${data.user.username}`);
-    const { user } = data;
-    const message = `*New User Registered* ✨
-
-*User:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
-*Date:* 
-${new Date().toLocaleString('en-CA')}`;
-    const admins = await this.getAdmins();
-    await this.reportingService.sendReport(message, admins);
-  }
-
-  @MessagePattern(REPORTING_PATTERNS.ADMIN_LOGGED_IN)
-  async handleAdminLoggedIn(@Payload() data: { user: UserDto }) {
-    this.logger.log(`Received ADMIN_LOGGED_IN event for admin ${data.user.username}`);
-    const { user } = data;
-    const message = `*Admin Login Alert* 🛡️
-
-*Admin:* ${user.firstName || ''} ${user.lastName || ''} (@${user.username || 'N/A'})
-*Date:* 
-${new Date().toLocaleString('en-CA')}`;
-    const admins = await this.getAdmins();
-    await this.reportingService.sendReport(message, admins);
-  }
-
-  // --- FAILURE EVENTS ---
-
-  @MessagePattern(REPORTING_PATTERNS.INSUFFICIENT_BALANCE)
-  async handleInsufficientBalance(@Payload() data: { user: UserDto; order: OrderDto; balance: number }) {
-    this.logger.log(`Received INSUFFICIENT_BALANCE event for user ${data.user.username}`);
-    const { user, order, balance } = data;
-    const message = `*ALERT: Insufficient Balance* ⚠️
-
-*User:* ${user.firstName || ''} (@${user.username || 'N/A'})
-*Attempted Order:* 
-${order.name}
-*Order Price:* 
-${order.finalPrice}
-*User Balance:* 
-${balance}
-*Date:* 
-${new Date().toLocaleString('en-CA')}`;
-    const admins = await this.getAdmins();
-    await this.reportingService.sendReport(message, admins);
-  }
-
-  @MessagePattern(REPORTING_PATTERNS.PANEL_INTEGRATION_FAILED)
-  async handlePanelIntegrationFailed(@Payload() data: { user: UserDto; order: OrderDto; error: string }) {
-    this.logger.log(`Received PANEL_INTEGRATION_FAILED event for user ${data.user.username}`);
-    const { user, order, error } = data;
-    const message = `*CRITICAL: Panel Integration Failed* ❌
-
-*User:* ${user.firstName || ''} (@${user.username || 'N/A'})
-*Order:* 
-${order.name}
-*Error:* 
-${error}
-*Date:* 
-${new Date().toLocaleString('en-CA')}`;
-    const admins = await this.getAdmins();
-    await this.reportingService.sendReport(message, admins);
-  }
-
-  @MessagePattern(REPORTING_PATTERNS.PAYMENT_VERIFICATION_FAILED)
-  async handlePaymentVerificationFailed(@Payload() data: { user: UserDto; reason: string; details: string }) {
-    this.logger.log(`Received PAYMENT_VERIFICATION_FAILED event for user ${data.user.username}`);
-    const { user, reason, details } = data;
-    const message = `*ALERT: Payment Verification Failed* ❗
-
-*User:* ${user.firstName || ''} (@${user.username || 'N/A'})
-*Reason:* ${reason}
-*Details:* 
-${details}
-*Date:* 
-${new Date().toLocaleString('en-CA')}`;
-    const admins = await this.getAdmins();
-    await this.reportingService.sendReport(message, admins);
-  }
+	@MessagePattern(REPORTING_PATTERNS.PAYMENT_VERIFICATION_FAILED)
+	async handlePaymentVerificationFailed(
+		@Payload() data: { user: UserDto; reason: string; details: string },
+	) {
+		this.logger.log(
+			`Received PAYMENT_VERIFICATION_FAILED event for user ${data.user.username}`,
+		);
+		const { user, reason, details } = data;
+		const message =
+			`<b>ALERT: Payment Verification Failed</b> ❗\n\n` +
+			`<b>User:</b> ${user.firstName || ''} (@${user.username || 'N/A'})\n` +
+			`<b>Reason:</b> ${reason}\n` +
+			`<b>Details:</b>\n${details}\n` +
+			`<b>Date:</b>\n${new Date().toLocaleString('en-CA')}`;
+		const admins = await this.getAdmins();
+		await this.reportingService.sendReport(message, admins);
+	}
 }

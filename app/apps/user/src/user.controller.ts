@@ -43,4 +43,9 @@ export class UserController {
   async getAdmins() {
     return await this.userService.getAdmins();
   }
+
+  @MessagePattern(USER_PATTERNS.GET_USER_FOR_REPORTING)
+  async getUserForReporting(userId: string) {
+    return await this.userService.getUserForReporting(userId);
+  }
 }

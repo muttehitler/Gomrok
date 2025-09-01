@@ -18,6 +18,8 @@ import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
 import { OrderModule } from './order/order.module';
+import { USER_PATTERNS } from '@app/contracts/patterns/userPattern';
+import { REPORTING_PATTERNS } from '@app/contracts/patterns/reportingPattern';
 
 @Global()
 @Module({
@@ -46,6 +48,26 @@ import { OrderModule } from './order/order.module';
     ClientsModule.register([
       {
         name: PANEL_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      }
+    ]),
+    ClientsModule.register([
+      {
+        name: USER_PATTERNS.CLIENT,
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST ?? 'localhost',
+          port: parseInt(process.env.REDIS_PORT ?? '6379')
+        }
+      }
+    ]),
+    ClientsModule.register([
+      {
+        name: REPORTING_PATTERNS.CLIENT,
         transport: Transport.REDIS,
         options: {
           host: process.env.REDIS_HOST ?? 'localhost',
