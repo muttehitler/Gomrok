@@ -41,13 +41,19 @@ export class OrderService {
 
     const productResult = await this.productClient.send(PRODUCT_PATTERNS.GET, product).toPromise() as ProductDto
 
-    const getUserResult = await this.panelClient.send(PANEL_PATTERNS.PANEL_SERVICE.GET_USER, {
-      user: order.name,
-      panel: productResult.panel
-    }).toPromise() as ResultDto
+    try {
+      const getUserResult = await this.panelClient.send(PANEL_PATTERNS.PANEL_SERVICE.GET_USER, {
+        user: order.name,
+        panel: productResult.panel
+      }).toPromise() as ResultDto
 
-    if (getUserResult.success)
-      throw new ConflictException("User is exits")
+      if (getUserResult.success)
+        throw new ConflictException("User is exits")
+    } catch (err) {
+      if ((err.error?.code ?? 0) != 404) {
+        throw err
+      }
+    }
 
     const user = await this.userClient.send(USER_PATTERNS.GET, { userId: authorId }).toPromise() as DataResultDto<UserDto>
 
