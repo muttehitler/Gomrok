@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import toast, { Toaster } from "react-hot-toast";
 import { getCookieCSRF } from "@/actions/auth.action";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 type Order = {
     id: string;
@@ -47,6 +48,7 @@ export default function AdminOrderListPage() {
     const [ordersLength, setOrdersLength] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize] = useState(10);
+    const [search, setSearch] = useState<string | undefined>(undefined);
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -59,6 +61,7 @@ export default function AdminOrderListPage() {
                         startIndex: (currentPage - 1) * pageSize,
                         limit: pageSize,
                         order: -1,
+                        ...(search && { search: search })
                     })
                 );
 
@@ -76,7 +79,7 @@ export default function AdminOrderListPage() {
         };
 
         fetchOrders();
-    }, [currentPage, pageSize, t]);
+    }, [currentPage, pageSize, t, search]);
 
     return (
         <Page back={true}>
@@ -90,6 +93,18 @@ export default function AdminOrderListPage() {
                         {t("view-and-manage-all-user-orders")}
                     </p>
                 </header>
+
+                <div>
+                    <Input
+                        placeholder={t(
+                            "search"
+                        )}
+                        type={"text"}
+                        onChange={(e) => {
+                            setSearch(e.target.value)
+                        }}
+                    />
+                </div>
 
                 <div>
                     {isLoading ? (
