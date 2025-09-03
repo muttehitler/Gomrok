@@ -11,6 +11,7 @@ import { getCookieCSRF } from "@/actions/auth.action";
 import { Skeleton } from "@/components/ui/skeleton";
 import { generateCsrfToken } from "@/lib/utils/csrf.helper";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 type Order = {
     id: string;
@@ -47,6 +48,7 @@ export default function UserOrderPage() {
     const [ordersLength, setOrdersLength] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize] = useState(10);
+    const [search, setSearch] = useState<string | undefined>(undefined);
 
     useEffect(() => {
         const fetchUserOrders = async () => {
@@ -58,6 +60,7 @@ export default function UserOrderPage() {
                     startIndex: (currentPage - 1) * pageSize,
                     limit: pageSize,
                     order: -1,
+                    ...(search && { search: search })
                 });
                 const result = JSON.parse(resultStr);
 
@@ -75,7 +78,7 @@ export default function UserOrderPage() {
         };
 
         fetchUserOrders();
-    }, [currentPage, pageSize, t]);
+    }, [currentPage, pageSize, t, search]);
 
     return (
         <Page back={true}>
@@ -89,7 +92,19 @@ export default function UserOrderPage() {
                         {t("my-orders-description")}
                     </p>
                 </header>
-                
+
+                <div>
+                    <Input
+                        placeholder={t(
+                            "search"
+                        )}
+                        type={"text"}
+                        onChange={(e) => {
+                            setSearch(e.target.value)
+                        }}
+                    />
+                </div>
+
                 <div>
                     {isLoading ? (
                         <OrderListSkeleton />

@@ -62,7 +62,7 @@ export async function renewOrder(data: any) {
 export async function getOrderList(data: any) {
     validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
     const response = await axios.get(process.env.API_ADDRESS + ORDER_PATTERNS.GET_LIST +
-        `?startIndex=${data.startIndex}&&limit=${data.limit}&&order=${data.order}`, {
+        `?startIndex=${data.startIndex}&&limit=${data.limit}&&order=${data.order}` + (data.search && `&search=${data.search}`), {
         headers: {
             'accept': 'application/json',
             'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export async function getOrderList(data: any) {
 export async function getMyOrders(data: any) {
     validateCsrfTokenWithEx(data.csrf, (await cookies()).get('csrf')?.value ?? '')
     const response = await axios.get(process.env.API_ADDRESS + ORDER_PATTERNS.MY_ORDERS +
-        `?startIndex=${data.startIndex}&&limit=${data.limit}&&order=${data.order}`, {
+        `?startIndex=${data.startIndex}&&limit=${data.limit}&&order=${data.order}` + (data.search && `&search=${data.search}`), {
         headers: {
             'accept': 'application/json',
             'Content-Type': 'application/json',

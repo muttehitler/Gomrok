@@ -245,8 +245,8 @@ export class OrderService {
     }
   }
 
-  async getList({ startIndex, limit, order }: FilterDto): Promise<DataResultDto<ListDto<OrderDto[]>>> {
-    const expression = { status: true }
+  async getList({ startIndex, limit, order, search }: FilterDto): Promise<DataResultDto<ListDto<OrderDto[]>>> {
+    const expression = { status: true, ...(search && { name: { $regex: search, $options: 'i' } }) }
 
     const query = this.orderModel.find(expression)
     const list = (await query.skip(startIndex).limit(limit).sort({ createdAt: order == 1 ? 1 : -1 })).map<OrderDto>(x => { return { id: String(x._id), name: x.name, payed: x.payed, product: String(x.product), price: x.price, finalPrice: x.finalPrice } })
@@ -262,11 +262,12 @@ export class OrderService {
     }
   }
 
-  async myOrders({ startIndex, limit, order, payed }: FilterDto, userId: string): Promise<DataResultDto<ListDto<OrderDto[]>>> {
+  async myOrders({ startIndex, limit, order, payed, search }: FilterDto, userId: string): Promise<DataResultDto<ListDto<OrderDto[]>>> {
     const expression = {
       status: true,
       user: new Types.ObjectId(userId),
-      ...(payed !== undefined && { payed: payed })
+      ...(payed !== undefined && { payed: payed }),
+      ...(search && { name: { $regex: search, $options: 'i' } })
     }
 
     const query = this.orderModel.find(expression)
