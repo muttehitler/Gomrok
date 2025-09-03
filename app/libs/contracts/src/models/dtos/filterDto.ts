@@ -3,5 +3,6 @@ export default interface FilterDto {
     limit: number
     order: number
 
+    search?: string
     payed?: boolean
 }
