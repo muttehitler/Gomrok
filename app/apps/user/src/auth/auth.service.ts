@@ -63,7 +63,8 @@ export class AuthService {
         languageCode: rawUser.language_code,
         allowsWriteToPm: rawUser.allows_write_to_pm,
         photoUrl: rawUser.photo_url,
-        passwordHash: rawUser.chatId + parsed.get('auth_date')
+        passwordHash: rawUser.chatId + parsed.get('auth_date'),
+        testLimit: 1
       })
 
       await userToAdd.save()
