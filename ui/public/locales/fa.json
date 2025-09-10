@@ -185,6 +185,25 @@
         "created-at": "تاریخ ایجاد",
         "updated-at": "تاریخ به‌روزرسانی",
         "select-language": "انتخاب زبان",
-        "online": "آنلاین"
+        "online": "آنلاین",
+        "no-orders-found": "هیچ سفارشی پیدا نشد",
+        "order-not-found": "سفارش پیدا نشد",
+        "no-panels-found": "هیچ پنلی پیدا نشد",
+        "user-not-found": "کاربر پیدا نشد",
+        "no-products-found": "هیچ محصولی پیدا نشد",
+        "no-users-found": "هیچ کاربری پیدا نشد",
+        "order-id-is-missing": "شناسه سفارش از دست رفته است",
+        "error-fetching-data": "خطا در دریافت داده",
+        "order-details-not-found": "جزئیات سفارش پیدا نشد",
+        "panel-id-is-missing": "شناسه پنل از دست رفته است",
+        "error-creating-test-order": "خطا در ایجاد سفارش آزمایشی",
+        "activation-failed": "فعال سازی ناموفق بود",
+        "test-plan-not-found": "طرح آزمایشی پیدا نشد",
+        "product-id-is-missing": "شناسه محصول از دست رفته است",
+        "an-unexpected-error-occurred": "یک خطای غیرمنتظره رخ داد",
+        "product-not-found": "محصول پیدا نشد",
+        "payment-verified-successfully": "پرداخت با موفقیت تأیید شد",
+        "verification-failed": "تأیید ناموفق بود",
+        "search": "جستجو"
     }
 }

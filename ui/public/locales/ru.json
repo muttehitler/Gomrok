@@ -185,6 +185,25 @@
         "created-at": "Дата создания",
         "updated-at": "Дата обновления",
         "select-language": "Выберите язык",
-        "online": "Онлайн"
+        "online": "Онлайн",
+        "no-orders-found": "Заказов не найдено",
+        "order-not-found": "Заказ не найден",
+        "no-panels-found": "Панели не найдены",
+        "user-not-found": "Пользователь не найден",
+        "no-products-found": "Товаров не найдено",
+        "no-users-found": "Пользователи не найдены",
+        "order-id-is-missing": "Отсутствует идентификатор заказа",
+        "error-fetching-data": "Ошибка при получении данных",
+        "order-details-not-found": "Детали заказа не найдены",
+        "panel-id-is-missing": "Отсутствует идентификатор панели",
+        "error-creating-test-order": "Ошибка при создании тестового заказа",
+        "activation-failed": "Активация не удалась",
+        "test-plan-not-found": "Тестовый план не найден",
+        "product-id-is-missing": "Отсутствует идентификатор товара",
+        "an-unexpected-error-occurred": "Произошла непредвиденная ошибка",
+        "product-not-found": "Товар не найден",
+        "payment-verified-successfully": "Оплата успешно подтверждена",
+        "verification-failed": "Подтверждение не удалось",
+        "search": "Поиск"
     }
 }

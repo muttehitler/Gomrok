@@ -185,6 +185,25 @@
         "created-at": "Created At",
         "updated-at": "Updated At",
         "select-language": "Select Language",
-        "online": "Online"
+        "online": "Online",
+        "no-orders-found": "No orders found",
+        "order-not-found": "Order Not Found",
+        "no-panels-found": "No Panels Found",
+        "user-not-found": "User Not Found",
+        "no-products-found": "No Products Found",
+        "no-users-found": "No Users Found",
+        "order-id-is-missing": "Order ID Is Missing",
+        "error-fetching-data": "Error Fetching Data",
+        "order-details-not-found": "Order Details Not Found",
+        "panel-id-is-missing": "Panel ID Is Missing",
+        "error-creating-test-order": "Error Creating Test Order",
+        "activation-failed": "Activation Failed",
+        "test-plan-not-found": "Test Plan Not Found",
+        "product-id-is-missing": "Product ID Is Missing",
+        "an-unexpected-error-occurred": "An Unexpected Error Occurred",
+        "product-not-found": "Product Not Found",
+        "payment-verified-successfully": "Payment Verified Successfully",
+        "verification-failed": "Verification Failed",
+        "search": "Search"
     }
 }
