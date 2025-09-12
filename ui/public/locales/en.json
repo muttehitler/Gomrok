@@ -204,6 +204,8 @@
         "product-not-found": "Product Not Found",
         "payment-verified-successfully": "Payment Verified Successfully",
         "verification-failed": "Verification Failed",
-        "search": "Search"
+        "search": "Search",
+        "updating": "Updating...",
+        "adding": "Adding..."
     }
 }

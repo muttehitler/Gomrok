@@ -204,6 +204,8 @@
         "product-not-found": "محصول پیدا نشد",
         "payment-verified-successfully": "پرداخت با موفقیت تأیید شد",
         "verification-failed": "تأیید ناموفق بود",
-        "search": "جستجو"
+        "search": "جستجو",
+        "updating": "در حال به‌روزرسانی...",
+        "adding": "در حال افزودن..."
     }
 }

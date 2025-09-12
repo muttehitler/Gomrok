@@ -204,6 +204,8 @@
         "product-not-found": "Товар не найден",
         "payment-verified-successfully": "Оплата успешно подтверждена",
         "verification-failed": "Подтверждение не удалось",
-        "search": "Поиск"
+        "search": "Поиск",
+        "updating": "Обновление...",
+        "adding": "Добавление..."
     }
 }
